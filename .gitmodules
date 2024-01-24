@@ -7,3 +7,6 @@
 [submodule "lib/solmate"]
 	path = lib/solmate
 	url = https://github.com/transmissions11/solmate
+[submodule "murky"]
+	path = murky
+	url = git@github.com:dmfxyz/murky.git
