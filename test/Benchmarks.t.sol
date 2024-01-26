@@ -1,35 +1,61 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+// Utils
 import {Test, console} from "forge-std/Test.sol";
+import {stdJson} from "forge-std/StdJson.sol";
+import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
+import {Merkle} from "murky/src/Merkle.sol";
 
+// Mocks
 import {Token} from "test/mocks/Token.sol";
 
-import {AirdropNaive} from "src/AirdropNaive.sol";
+// Tested contracts
+import {AirdropClaimMapping} from "src/AirdropClaimMapping.sol";
 import {GasliteDrop} from "src/GasliteDrop.sol";
-import {MerkleClaimERC20} from "src/MerkleClaimERC20.sol";
+import {AirdropClaimMerkle} from "src/AirdropClaimMerkle.sol";
+import {AirdropClaimSignature} from "src/AirdropClaimSignature.sol";
 
-/// @dev Test with 100 recipients
+/// @dev Test with n recipients
 /// Note: This is an extremely simplistic approach to measuring gas costs.
 /// A better way would be to leverage fuzz tests to generate a random list of recipients and amounts,
 /// perform tests over these lists, and calculate the average gas cost.
 /// Or see this much better approach by emo.eth:
 /// https://github.com/emo-eth/forge-gas-metering
 
+/// @dev Customize the amount of recipients to test with
+/// Note: Max amount of recipients is 1000, increase it only after adding inputs and
+/// generating a new output file
+uint256 constant NUM_RECIPIENTS = 200;
+
 contract Benchmarks is Test {
     Token token;
-    AirdropNaive airdropNaive;
-    GasliteDrop gasliteDrop;
-    MerkleClaimERC20 merkleClaimERC20;
 
-    address[] RECIPIENTS;
-    uint256[] AMOUNTS;
+    /* --------------------------------- MAPPING -------------------------------- */
+    AirdropClaimMapping airdropClaimMapping;
+
+    /* ------------------------------ GASLITE DROP ------------------------------ */
+    GasliteDrop gasliteDrop;
+
+    /* --------------------------------- MERKLE --------------------------------- */
+    Merkle m;
+    AirdropClaimMerkle airdropClaimMerkle;
+
+    bytes32 MERKLE_ROOT;
+    bytes32[][] MERKLE_PROOFS;
+
+    /* --------------------------------- GLOBAL --------------------------------- */
+    address[] RECIPIENTS = new address[](NUM_RECIPIENTS);
+    uint256[] AMOUNTS = new uint256[](NUM_RECIPIENTS);
     uint256 TOTAL_AMOUNT;
-    uint256 TOKEN_DECIMALS = 18;
+
+    /* -------------------------------------------------------------------------- */
+    /*                                    SETUP                                   */
+    /* -------------------------------------------------------------------------- */
 
     function setUp() public {
         // Parse airdrop data
-        (RECIPIENTS, AMOUNTS) = _parseAirdrop();
+        (RECIPIENTS, AMOUNTS, MERKLE_PROOFS, MERKLE_ROOT) = _parseAirdrop();
         TOTAL_AMOUNT = _sumArray(AMOUNTS);
 
         token = new Token(TOTAL_AMOUNT);
@@ -39,7 +65,7 @@ contract Benchmarks is Test {
     /*                               NAIVE APPROACH                               */
     /* -------------------------------------------------------------------------- */
 
-    function test_gasBenchmarks_airdropNaive() public {
+    function test_gasBenchmarks_airdropClaimMapping() public {
         uint256 totalGas;
         // Load storage to avoid gas costs from cold storage reads
         address[] memory recipients = RECIPIENTS;
@@ -48,18 +74,18 @@ contract Benchmarks is Test {
 
         // Deployment
         uint256 gasBefore = gasleft();
-        airdropNaive = new AirdropNaive(token);
+        airdropClaimMapping = new AirdropClaimMapping(token);
         uint256 gasAfter = gasleft();
         totalGas += gasBefore - gasAfter;
-        address airDropNaiveAddress = address(airdropNaive);
+        address airDropNaiveAddress = address(airdropClaimMapping);
 
-        console.log("AirdropNaive");
+        console.log("AirdropClaimMapping");
         console.log("Deployment: %d", gasBefore - gasAfter, "gas");
 
         // Deposit
         gasBefore = gasleft();
         token.approve(airDropNaiveAddress, totalAmount);
-        airdropNaive.airdrop(recipients, amounts);
+        airdropClaimMapping.airdrop(recipients, amounts);
         gasAfter = gasleft();
         totalGas += gasBefore - gasAfter;
 
@@ -70,7 +96,7 @@ contract Benchmarks is Test {
         for (uint256 i = 0; i < recipients.length; i++) {
             vm.prank(recipients[i]);
             gasBefore = gasleft();
-            airdropNaive.claim();
+            airdropClaimMapping.claim();
             gasAfter = gasleft();
             gasClaim += gasBefore - gasAfter;
         }
@@ -80,7 +106,63 @@ contract Benchmarks is Test {
         console.log("---");
         console.log("Total: %d", totalGas, "gas");
         console.log("For deployer: %d", totalGas - gasClaim, "gas");
-        console.log("For a user: %d", gasClaim / recipients.length, "gas");
+        console.log("For each user: %d", gasClaim / recipients.length, "gas");
+        console.log("-----------------------------------");
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /*                            MERKLE TREE APPROACH                            */
+    /* -------------------------------------------------------------------------- */
+
+    function test_gasBenchmarks_AirdropClaimMerkle() public {
+        uint256 totalGas;
+
+        // Load storage to avoid gas costs from cold storage reads
+        address[] memory recipients = RECIPIENTS;
+        uint256[] memory amounts = AMOUNTS;
+        bytes32[][] memory proofs = MERKLE_PROOFS;
+        bytes32 root = MERKLE_ROOT;
+        uint256 totalAmount = TOTAL_AMOUNT;
+
+        // Deployment
+        uint256 gasBefore = gasleft();
+        airdropClaimMerkle = new AirdropClaimMerkle(address(token), root);
+        uint256 gasAfter = gasleft();
+        totalGas += gasBefore - gasAfter;
+        address airdropClaimMerkleAddress = address(airdropClaimMerkle);
+
+        console.log("AirdropClaimMerkle");
+        console.log("Deployment: %d", gasBefore - gasAfter, "gas");
+
+        // Deposit
+        gasBefore = gasleft();
+        token.approve(airdropClaimMerkleAddress, totalAmount);
+        airdropClaimMerkle.deposit(totalAmount);
+        gasAfter = gasleft();
+        totalGas += gasBefore - gasAfter;
+
+        console.log("Deposit: %d", gasBefore - gasAfter, "gas");
+
+        // Claim
+        uint256 gasClaim;
+        for (uint256 i = 0; i < recipients.length; i++) {
+            address recipient = recipients[i];
+            uint256 amount = amounts[i];
+            uint256 position = i + 1;
+            bytes32[] memory proof = proofs[i];
+
+            gasBefore = gasleft();
+            airdropClaimMerkle.claim(recipient, amount, position, proof);
+            gasAfter = gasleft();
+            gasClaim += gasBefore - gasAfter;
+        }
+        totalGas += gasClaim;
+
+        console.log("Claims: %d", gasClaim, "gas");
+        console.log("---");
+        console.log("Total: %d", totalGas, "gas");
+        console.log("For deployer: %d", totalGas - gasClaim, "gas");
+        console.log("For each user: %d", gasClaim / recipients.length, "gas");
         console.log("-----------------------------------");
     }
 
@@ -122,79 +204,25 @@ contract Benchmarks is Test {
     }
 
     /* -------------------------------------------------------------------------- */
-    /*                             MERKLE CLAIM ERC20                             */
-    /* -------------------------------------------------------------------------- */
-
-    function test_gasBenchmarks_MerkleClaimERC20() public {
-        bytes32 root = _parseMerkle();
-        uint256 totalGas;
-
-        // Load storage to avoid gas costs from cold storage reads
-        address[] memory recipients = RECIPIENTS;
-        uint256[] memory amounts = AMOUNTS;
-        uint256 totalAmount = TOTAL_AMOUNT;
-
-        // Deployment
-        uint256 gasBefore = gasleft();
-        merkleClaimERC20 = new MerkleClaimERC20(token, root);
-        uint256 gasAfter = gasleft();
-        totalGas += gasBefore - gasAfter;
-        address merkleClaimERC20Address = address(merkleClaimERC20);
-
-        console.log("MerkleClaimERC20");
-        console.log("Deployment: %d", gasBefore - gasAfter, "gas");
-
-        // Deposit
-        gasBefore = gasleft();
-        token.approve(merkleClaimERC20Address, totalAmount);
-        merkleClaimERC20.deposit(totalAmount);
-        gasAfter = gasleft();
-        totalGas += gasBefore - gasAfter;
-
-        console.log("Deposit: %d", gasBefore - gasAfter, "gas");
-
-        // ! See in token.ts how generated; might need to do with Buffer
-        // ! as it's not just what I do below but more
-
-        // Claim
-        uint256 gasClaim;
-        for (uint256 i = 0; i < recipients.length; i++) {
-            // Generate merkle proof
-            bytes32 leaf = keccak256(abi.encodePacked(recipients[i], amounts[i]));
-            bytes32[] memory proof = new bytes32[](1);
-            proof[0] = leaf;
-
-            gasBefore = gasleft();
-            merkleClaimERC20.claim(recipients[i], amounts[i], proof);
-            gasAfter = gasleft();
-            gasClaim += gasBefore - gasAfter;
-        }
-        totalGas += gasClaim;
-
-        console.log("Claims: %d", gasClaim, "gas");
-        console.log("---");
-        console.log("Total: %d", totalGas, "gas");
-        console.log("For deployer: %d", totalGas - gasClaim, "gas");
-        console.log("For a user: %d", gasClaim / recipients.length, "gas");
-        console.log("-----------------------------------");
-    }
-
-    /* -------------------------------------------------------------------------- */
     /*                                    UTILS                                   */
     /* -------------------------------------------------------------------------- */
 
-    function _parseAirdrop() internal view returns (address[] memory recipients, uint256[] memory amounts) {
-        string memory file = vm.readFile("data/airdrop.json");
-        recipients = vm.parseJsonAddressArray(file, "$.recipients");
-        amounts = vm.parseJsonUintArray(file, "$.amounts");
+    function _parseAirdrop()
+        internal
+        view
+        returns (address[] memory recipients, uint256[] memory amounts, bytes32[][] memory proofs, bytes32 root)
+    {
+        string memory file = vm.readFile("merkle/output.json");
+        root = vm.parseJsonBytes32(file, "$[0].root");
 
-        amounts = _scaleToTokenDecimals(amounts);
-    }
+        recipients = new address[](NUM_RECIPIENTS);
+        amounts = new uint256[](NUM_RECIPIENTS);
+        proofs = new bytes32[][](NUM_RECIPIENTS);
 
-    function _scaleToTokenDecimals(uint256[] memory array) internal view returns (uint256[] memory scaled) {
-        scaled = new uint256[](array.length);
-        for (uint256 i = 0; i < array.length; i++) {
-            scaled[i] = array[i] * (10 ** TOKEN_DECIMALS);
+        for (uint256 i = 0; i < NUM_RECIPIENTS; i++) {
+            recipients[i] = vm.parseJsonAddress(file, string.concat("$[", Strings.toString(i), "].recipient"));
+            amounts[i] = vm.parseJsonUint(file, string.concat("$[", Strings.toString(i), "].amount"));
+            proofs[i] = vm.parseJsonBytes32Array(file, string.concat("$[", Strings.toString(i), "].proof"));
         }
     }
 
@@ -202,10 +230,5 @@ contract Benchmarks is Test {
         for (uint256 i = 0; i < array.length; i++) {
             sum += array[i];
         }
-    }
-
-    function _parseMerkle() internal view returns (bytes32 root) {
-        string memory file = vm.readFile("data/merkle.json");
-        root = vm.parseJsonBytes32(file, "$.root");
     }
 }
