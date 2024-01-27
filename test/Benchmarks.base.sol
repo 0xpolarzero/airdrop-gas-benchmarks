@@ -9,7 +9,7 @@ import {LibPRNG} from "@solady/utils/LibPRNG.sol";
 import {Merkle} from "murky/src/Merkle.sol";
 
 // Mocks
-import {Token} from "test/mocks/Token.sol";
+import {Mock_ERC20} from "test/mocks/Mock_ERC20.sol";
 
 // Tested contracts
 import {AirdropClaimMapping} from "src/AirdropClaimMapping.sol";
@@ -19,7 +19,6 @@ import {Airdrop as AirdropWentokens} from "src/AirdropWentokens.sol";
 import {GasliteDrop} from "src/GasliteDrop.sol";
 import {BytecodeDrop} from "src/BytecodeDrop.sol";
 
-// mark _randomData as virtual
 // maybe will need return additional parameters (like with ERC721, ERC1155) so inherited will retrieve only part of the return data
 // can actually keep all contracts but rename Token => ERC20Token, ERC721Token, etc
 // same for merkle data
@@ -37,7 +36,7 @@ uint256 constant NUM_RECIPIENTS = 1000;
 contract Benchmarks_Base is SoladyTest, StdCheats {
     using LibPRNG for LibPRNG.PRNG;
 
-    Token token;
+    Mock_ERC20 erc20;
     Merkle m;
 
     AirdropClaimMapping airdropClaimMapping;
@@ -75,10 +74,10 @@ contract Benchmarks_Base is SoladyTest, StdCheats {
         (SIGNER, SIGNER_KEY) = _randomSigner();
 
         // Deploy contracts
-        token = new Token(TOTAL_AMOUNT);
-        airdropClaimMapping = new AirdropClaimMapping(address(token));
-        airdropClaimMerkle = new AirdropClaimMerkle(address(token), ROOT);
-        airdropClaimSignature = new AirdropClaimSignature(address(token), SIGNER);
+        erc20 = new Mock_ERC20(TOTAL_AMOUNT);
+        airdropClaimMapping = new AirdropClaimMapping(erc20);
+        airdropClaimMerkle = new AirdropClaimMerkle(erc20, ROOT);
+        airdropClaimSignature = new AirdropClaimSignature(erc20, SIGNER);
         airdropWentokens = new AirdropWentokens();
         gasliteDrop = new GasliteDrop();
         bytecodeDrop = new BytecodeDrop();

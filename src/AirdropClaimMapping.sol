@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.20;
 
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {ERC20} from "@solady/tokens/ERC20.sol";
+import {Ownable} from "@solady/auth/Ownable.sol";
 
 contract AirdropClaimMapping is Ownable {
-    IERC20 public token;
+    ERC20 public token;
 
     mapping(address => uint256) public balances;
 
@@ -14,8 +14,10 @@ contract AirdropClaimMapping is Ownable {
     event Claimed(address indexed recipient, uint256 amount);
     event TokensRescued(address indexed token, address indexed recipient, uint256 amount);
 
-    constructor(address _token) Ownable(msg.sender) {
-        token = IERC20(_token);
+    constructor(ERC20 _token) {
+        token = _token;
+
+        _initializeOwner(msg.sender);
     }
 
     function airdrop(address[] calldata _recipients, uint256[] calldata _values) external onlyOwner {
@@ -40,7 +42,7 @@ contract AirdropClaimMapping is Ownable {
         emit Claimed(msg.sender, balance);
     }
 
-    function rescueTokens(IERC20 _token, address _recipient, uint256 _amount) external onlyOwner {
+    function rescueTokens(ERC20 _token, address _recipient, uint256 _amount) external onlyOwner {
         require(_token.transfer(_recipient, _amount), "Transfer failed");
         emit TokensRescued(address(_token), _recipient, _amount);
     }

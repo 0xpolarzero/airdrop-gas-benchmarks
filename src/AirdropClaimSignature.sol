@@ -51,8 +51,8 @@ contract AirdropClaimSignature is Ownable {
     /// @param _token to be claimed (ERC20 compatible)
     /// @param _signer of the claim messages
     /// Note: Sets owner to deployer
-    constructor(address _token, address _signer) {
-        token = ERC20(_token);
+    constructor(ERC20 _token, address _signer) {
+        token = _token;
         signer = _signer;
 
         _initializeOwner(msg.sender);

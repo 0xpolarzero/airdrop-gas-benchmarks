@@ -22,7 +22,7 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
         setup();
 
         // Deposit and set mapping
-        token.approve((address(airdropClaimMapping)), TOTAL_AMOUNT);
+        erc20.approve((address(airdropClaimMapping)), TOTAL_AMOUNT);
         airdropClaimMapping.airdrop(RECIPIENTS, AMOUNTS);
 
         // Claim
@@ -40,7 +40,7 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
         setup();
 
         // Deposit
-        token.transfer(address(airdropClaimMerkle), TOTAL_AMOUNT);
+        erc20.transfer(address(airdropClaimMerkle), TOTAL_AMOUNT);
 
         // Claim
         for (uint256 i = 0; i < RECIPIENTS.length; i++) {
@@ -59,7 +59,7 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
         setup();
 
         // Deposit
-        token.transfer(address(airdropClaimSignature), TOTAL_AMOUNT);
+        erc20.transfer(address(airdropClaimSignature), TOTAL_AMOUNT);
 
         // Claim
         for (uint256 i = 0; i < RECIPIENTS.length; i++) {
@@ -82,11 +82,11 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
         setup();
         // Deploy Disperse with cheatcode because of the pragma solidity ^0.4.25
         address deployed = deployCode("Disperse.sol");
-        token.approve(deployed, TOTAL_AMOUNT);
+        erc20.approve(deployed, TOTAL_AMOUNT);
 
         // Airdrop ("disperse")
         (bool success,) = deployed.call(
-            abi.encodeWithSignature("disperseToken(address,address[],uint256[])", address(token), RECIPIENTS, AMOUNTS)
+            abi.encodeWithSignature("disperseToken(address,address[],uint256[])", address(erc20), RECIPIENTS, AMOUNTS)
         );
         if (!success) revert("test_gasBenchmarks_Disperse_FAILED");
     }
@@ -95,14 +95,14 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
         setup();
         // Deploy Disperse with cheatcode because of the pragma solidity ^0.4.25
         address deployed = deployCode("Disperse.sol");
-        token.approve(deployed, TOTAL_AMOUNT);
+        erc20.approve(deployed, TOTAL_AMOUNT);
 
         // Airdrop ("disperse")
 
         // Airclaim (`disperseTokenSimple`)
         (bool success,) = deployed.call(
             abi.encodeWithSignature(
-                "disperseTokenSimple(address,address[],uint256[])", address(token), RECIPIENTS, AMOUNTS
+                "disperseTokenSimple(address,address[],uint256[])", address(erc20), RECIPIENTS, AMOUNTS
             )
         );
         if (!success) revert("test_gasBenchmarks_Disperse_FAILED");
@@ -116,8 +116,8 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
         setup();
 
         // Airdrop
-        token.approve(address(airdropWentokens), TOTAL_AMOUNT);
-        airdropWentokens.airdropERC20(token, RECIPIENTS, AMOUNTS, TOTAL_AMOUNT);
+        erc20.approve(address(airdropWentokens), TOTAL_AMOUNT);
+        airdropWentokens.airdropERC20(erc20, RECIPIENTS, AMOUNTS, TOTAL_AMOUNT);
     }
 
     /* -------------------------------------------------------------------------- */
@@ -128,8 +128,8 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
         setup();
 
         // Airdrop
-        token.approve(address(gasliteDrop), TOTAL_AMOUNT);
-        gasliteDrop.airdropERC20(address(token), RECIPIENTS, AMOUNTS, TOTAL_AMOUNT);
+        erc20.approve(address(gasliteDrop), TOTAL_AMOUNT);
+        gasliteDrop.airdropERC20(address(erc20), RECIPIENTS, AMOUNTS, TOTAL_AMOUNT);
     }
 
     /* -------------------------------------------------------------------------- */
@@ -142,11 +142,11 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
         address deployed = deployCode("BytecodeDrop.sol");
 
         // Airdrop
-        token.approve(deployed, TOTAL_AMOUNT);
-        // bytecodeDrop.airdropERC20(address(token), RECIPIENTS, AMOUNTS, TOTAL_AMOUNT);
+        erc20.approve(deployed, TOTAL_AMOUNT);
+        // bytecodeDrop.airdropERC20(address(erc20), RECIPIENTS, AMOUNTS, TOTAL_AMOUNT);
         (bool success,) = deployed.call(
             abi.encodeWithSignature(
-                "airdropERC20(address,address[],uint256[],uint256)", address(token), RECIPIENTS, AMOUNTS, TOTAL_AMOUNT
+                "airdropERC20(address,address[],uint256[],uint256)", address(erc20), RECIPIENTS, AMOUNTS, TOTAL_AMOUNT
             )
         );
         if (!success) revert("test_gasBenchmarks_BytecodeDrop_FAILED");

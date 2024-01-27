@@ -49,8 +49,8 @@ contract AirdropClaimMerkle is Ownable {
     /// @param _token to be claimed (ERC20 compatible)
     /// @param _merkleRoot of the merkle tree
     /// Note: Sets owner to deployer
-    constructor(address _token, bytes32 _merkleRoot) {
-        token = ERC20(_token);
+    constructor(ERC20 _token, bytes32 _merkleRoot) {
+        token = _token;
         merkleRoot = _merkleRoot;
 
         _initializeOwner(msg.sender);
