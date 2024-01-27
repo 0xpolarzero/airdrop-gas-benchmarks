@@ -47,7 +47,7 @@ contract AirdropClaimSignature is Ownable {
     /*                                 CONSTRUCTOR                                */
     /* -------------------------------------------------------------------------- */
 
-    /// @notice Initialize contract with token and merkle root
+    /// @dev Initialize contract with token and merkle root
     /// @param _token to be claimed (ERC20 compatible)
     /// @param _signer of the claim messages
     /// Note: Sets owner to deployer
@@ -62,7 +62,7 @@ contract AirdropClaimSignature is Ownable {
     /*                                  FUNCTIONS                                 */
     /* -------------------------------------------------------------------------- */
 
-    /// @notice Claim tokens share with a valid signature
+    /// @dev Claim tokens share with a valid signature
     /// @param _recipient address of the target account
     /// @param _amount of tokens to claim
     /// @param _signature of the claim message
@@ -91,7 +91,8 @@ contract AirdropClaimSignature is Ownable {
         emit Claimed(_recipient, _amount);
     }
 
-    /// @notice Allows owner to rescue tokens
+    /// @dev Allows owner to rescue tokens
+    /// @param _amount of tokens to rescue
     function rescueTokens(uint256 _amount) external onlyOwner {
         // Transfer tokens to recipient (owner)
         token.transfer(msg.sender, _amount);

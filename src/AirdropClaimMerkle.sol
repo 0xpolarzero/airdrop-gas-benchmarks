@@ -45,7 +45,7 @@ contract AirdropClaimMerkle is Ownable {
     /*                                 CONSTRUCTOR                                */
     /* -------------------------------------------------------------------------- */
 
-    /// @notice Initialize contract with token and merkle root
+    /// @dev Initialize contract with token and merkle root
     /// @param _token to be claimed (ERC20 compatible)
     /// @param _merkleRoot of the merkle tree
     /// Note: Sets owner to deployer
@@ -60,7 +60,7 @@ contract AirdropClaimMerkle is Ownable {
     /*                                  FUNCTIONS                                 */
     /* -------------------------------------------------------------------------- */
 
-    /// @notice Claim tokens share as an account part of the merkle tree
+    /// @dev Claim tokens share as an account part of the merkle tree
     /// @param _recipient address of claimee
     /// @param _amount of tokens to claim
     /// @param _proof merkle proof to prove the 2 above parameters are part of the merkle tree
@@ -85,7 +85,8 @@ contract AirdropClaimMerkle is Ownable {
         emit Claimed(_recipient, _amount);
     }
 
-    /// @notice Allows owner to rescue tokens
+    /// @dev Allows owner to rescue tokens
+    /// @param _amount of tokens to rescue
     function rescueTokens(uint256 _amount) external onlyOwner {
         // Transfer tokens to recipient (owner)
         token.transfer(msg.sender, _amount);
