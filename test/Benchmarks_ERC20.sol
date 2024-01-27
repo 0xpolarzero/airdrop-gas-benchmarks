@@ -1,0 +1,154 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "./Benchmarks.base.sol";
+
+// See Benchmarks.base.sol for more info and to modify the amount of recipients to test with
+
+// 1. MAPPING APPROACH
+// 2. MERKLE TREE APPROACH
+// 3. SIGNATURE APPROACH
+// 4. DISPERSE APP
+// 5. WENTOKENS
+// 6. GASLITE DROP
+// 7. BYTECODE DROP
+
+contract Benchmarks_ERC20 is Benchmarks_Base {
+    /* -------------------------------------------------------------------------- */
+    /*                             1. MAPPING APPROACH                            */
+    /* -------------------------------------------------------------------------- */
+
+    function test_gasBenchmarks_AirdropClaimMapping(uint256) public {
+        setup();
+
+        // Deposit and set mapping
+        token.approve((address(airdropClaimMapping)), TOTAL_AMOUNT);
+        airdropClaimMapping.airdrop(RECIPIENTS, AMOUNTS);
+
+        // Claim
+        for (uint256 i = 0; i < RECIPIENTS.length; i++) {
+            vm.prank(RECIPIENTS[i]);
+            airdropClaimMapping.claim();
+        }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /*                           2. MERKLE TREE APPROACH                          */
+    /* -------------------------------------------------------------------------- */
+
+    function test_gasBenchmarks_AirdropClaimMerkle(uint256) public {
+        setup();
+
+        // Deposit
+        token.transfer(address(airdropClaimMerkle), TOTAL_AMOUNT);
+
+        // Claim
+        for (uint256 i = 0; i < RECIPIENTS.length; i++) {
+            bytes32[] memory proof = m.getProof(DATA, i);
+            // prank doesn't really matter as anyone can claim with a valid proof, since tokens are sent to the recipient
+            vm.prank(RECIPIENTS[i]);
+            airdropClaimMerkle.claim(RECIPIENTS[i], AMOUNTS[i], proof);
+        }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /*                            3. SIGNATURE APPROACH                           */
+    /* -------------------------------------------------------------------------- */
+
+    function test_gasBenchmarks_AirdropClaimSignature(uint256) public {
+        setup();
+
+        // Deposit
+        token.transfer(address(airdropClaimSignature), TOTAL_AMOUNT);
+
+        // Claim
+        for (uint256 i = 0; i < RECIPIENTS.length; i++) {
+            bytes32 messageHash = keccak256(abi.encodePacked(RECIPIENTS[i], AMOUNTS[i]));
+            bytes32 prefixedHash = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", messageHash));
+            (uint8 v, bytes32 r, bytes32 s) = vm.sign(SIGNER_KEY, prefixedHash);
+            bytes memory signature = abi.encodePacked(r, s, v);
+
+            // Same here with prank, some can claim on behalf of the recipient (but tokens are sent to the recipient)
+            vm.prank(RECIPIENTS[i]);
+            airdropClaimSignature.claim(RECIPIENTS[i], AMOUNTS[i], signature);
+        }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /*                               4. DISPERSE APP                              */
+    /* -------------------------------------------------------------------------- */
+
+    function test_gasBenchmarks_Disperse_disperseToken(uint256) public {
+        setup();
+        // Deploy Disperse with cheatcode because of the pragma solidity ^0.4.25
+        address deployed = deployCode("Disperse.sol");
+        token.approve(deployed, TOTAL_AMOUNT);
+
+        // Airdrop ("disperse")
+        (bool success,) = deployed.call(
+            abi.encodeWithSignature("disperseToken(address,address[],uint256[])", address(token), RECIPIENTS, AMOUNTS)
+        );
+        if (!success) revert("test_gasBenchmarks_Disperse_FAILED");
+    }
+
+    function test_gasBenchmarks_Disperse_disperseTokenSimple(uint256) public {
+        setup();
+        // Deploy Disperse with cheatcode because of the pragma solidity ^0.4.25
+        address deployed = deployCode("Disperse.sol");
+        token.approve(deployed, TOTAL_AMOUNT);
+
+        // Airdrop ("disperse")
+
+        // Airclaim (`disperseTokenSimple`)
+        (bool success,) = deployed.call(
+            abi.encodeWithSignature(
+                "disperseTokenSimple(address,address[],uint256[])", address(token), RECIPIENTS, AMOUNTS
+            )
+        );
+        if (!success) revert("test_gasBenchmarks_Disperse_FAILED");
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /*                                5. WENTOKENS                                */
+    /* -------------------------------------------------------------------------- */
+
+    function test_gasBenchmarks_AirdropWentokens(uint256) public {
+        setup();
+
+        // Airdrop
+        token.approve(address(airdropWentokens), TOTAL_AMOUNT);
+        airdropWentokens.airdropERC20(token, RECIPIENTS, AMOUNTS, TOTAL_AMOUNT);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /*                               6. GASLITE DROP                              */
+    /* -------------------------------------------------------------------------- */
+
+    function test_gasBenchmarks_GasliteDrop(uint256) public {
+        setup();
+
+        // Airdrop
+        token.approve(address(gasliteDrop), TOTAL_AMOUNT);
+        gasliteDrop.airdropERC20(address(token), RECIPIENTS, AMOUNTS, TOTAL_AMOUNT);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /*                              7. BYTECODE DROP                              */
+    /* -------------------------------------------------------------------------- */
+
+    function test_gasBenchmarks_BytecodeDrop(uint256) public {
+        setup();
+
+        address deployed = deployCode("BytecodeDrop.sol");
+
+        // Airdrop
+        token.approve(deployed, TOTAL_AMOUNT);
+        // bytecodeDrop.airdropERC20(address(token), RECIPIENTS, AMOUNTS, TOTAL_AMOUNT);
+        (bool success,) = deployed.call(
+            abi.encodeWithSignature(
+                "airdropERC20(address,address[],uint256[],uint256)", address(token), RECIPIENTS, AMOUNTS, TOTAL_AMOUNT
+            )
+        );
+        if (!success) revert("test_gasBenchmarks_BytecodeDrop_FAILED");
+    }
+}

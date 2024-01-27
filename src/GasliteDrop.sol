@@ -1,4 +1,5 @@
 // From: https://github.com/PopPunkLLC/GasliteDrop/blob/main/contracts/src/GasliteDrop.sol
+// Pragma modified to 0.8.20
 pragma solidity 0.8.20;
 
 /**
