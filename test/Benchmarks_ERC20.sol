@@ -153,12 +153,6 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
 
         // Airdrop
         erc20.approve(deployed, TOTAL_AMOUNT);
-        // bytecodeDrop.airdropERC20(address(erc20), RECIPIENTS, AMOUNTS, TOTAL_AMOUNT);
-        (bool success,) = deployed.call(
-            abi.encodeWithSignature(
-                "airdropERC20(address,address[],uint256[],uint256)", address(erc20), RECIPIENTS, AMOUNTS, TOTAL_AMOUNT
-            )
-        );
-        if (!success) revert("test_ERC20_BytecodeDrop_FAILED");
+        bytecodeDrop.airdropERC20(address(erc20), RECIPIENTS, AMOUNTS, TOTAL_AMOUNT);
     }
 }
