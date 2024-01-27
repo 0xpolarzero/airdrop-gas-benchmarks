@@ -28,17 +28,17 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
     /*                             1. MAPPING APPROACH                            */
     /* -------------------------------------------------------------------------- */
 
-    function test_gasBenchmarks_AirdropClaimMapping(uint256) public {
+    function test_ERC20_AirdropClaimMapping(uint256) public {
         setup();
 
         // Deposit and set mapping
         erc20.approve((address(airdropClaimMapping)), TOTAL_AMOUNT);
-        airdropClaimMapping.airdrop(RECIPIENTS, AMOUNTS);
+        airdropClaimMapping.airdropERC20(RECIPIENTS, AMOUNTS);
 
         // Claim
         for (uint256 i = 0; i < RECIPIENTS.length; i++) {
             vm.prank(RECIPIENTS[i]);
-            airdropClaimMapping.claim();
+            airdropClaimMapping.claimERC20();
         }
     }
 
@@ -46,7 +46,7 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
     /*                           2. MERKLE TREE APPROACH                          */
     /* -------------------------------------------------------------------------- */
 
-    function test_gasBenchmarks_AirdropClaimMerkle(uint256) public {
+    function test_ERC20_AirdropClaimMerkle(uint256) public {
         setup();
 
         // Deposit
@@ -54,10 +54,10 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
 
         // Claim
         for (uint256 i = 0; i < RECIPIENTS.length; i++) {
-            bytes32[] memory proof = m.getProof(DATA, i);
+            bytes32[] memory proof = m.getProof(DATA_ERC20, i);
             // prank doesn't really matter as anyone can claim with a valid proof, since tokens are sent to the recipient
             vm.prank(RECIPIENTS[i]);
-            airdropClaimMerkle.claim(RECIPIENTS[i], AMOUNTS[i], proof);
+            airdropClaimMerkle.claimERC20(RECIPIENTS[i], AMOUNTS[i], proof);
         }
     }
 
@@ -65,7 +65,7 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
     /*                            3. SIGNATURE APPROACH                           */
     /* -------------------------------------------------------------------------- */
 
-    function test_gasBenchmarks_AirdropClaimSignature(uint256) public {
+    function test_ERC20_AirdropClaimSignature(uint256) public {
         setup();
 
         // Deposit
@@ -80,7 +80,7 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
 
             // Same here with prank, some can claim on behalf of the recipient (but tokens are sent to the recipient)
             vm.prank(RECIPIENTS[i]);
-            airdropClaimSignature.claim(RECIPIENTS[i], AMOUNTS[i], signature);
+            airdropClaimSignature.claimERC20(RECIPIENTS[i], AMOUNTS[i], signature);
         }
     }
 
@@ -88,7 +88,7 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
     /*                               4. DISPERSE APP                              */
     /* -------------------------------------------------------------------------- */
 
-    function test_gasBenchmarks_Disperse_disperseToken(uint256) public {
+    function test_ERC20_Disperse_disperseToken(uint256) public {
         setup();
         // Deploy Disperse with cheatcode because of the pragma solidity ^0.4.25
         address deployed = deployCode("Disperse.sol");
@@ -98,10 +98,10 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
         (bool success,) = deployed.call(
             abi.encodeWithSignature("disperseToken(address,address[],uint256[])", address(erc20), RECIPIENTS, AMOUNTS)
         );
-        if (!success) revert("test_gasBenchmarks_Disperse_FAILED");
+        if (!success) revert("test_ERC20_Disperse_FAILED");
     }
 
-    function test_gasBenchmarks_Disperse_disperseTokenSimple(uint256) public {
+    function test_ERC20_Disperse_disperseTokenSimple(uint256) public {
         setup();
         // Deploy Disperse with cheatcode because of the pragma solidity ^0.4.25
         address deployed = deployCode("Disperse.sol");
@@ -115,14 +115,14 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
                 "disperseTokenSimple(address,address[],uint256[])", address(erc20), RECIPIENTS, AMOUNTS
             )
         );
-        if (!success) revert("test_gasBenchmarks_Disperse_FAILED");
+        if (!success) revert("test_ERC20_Disperse_FAILED");
     }
 
     /* -------------------------------------------------------------------------- */
     /*                                5. WENTOKENS                                */
     /* -------------------------------------------------------------------------- */
 
-    function test_gasBenchmarks_AirdropWentokens(uint256) public {
+    function test_ERC20_AirdropWentokens(uint256) public {
         setup();
 
         // Airdrop
@@ -134,7 +134,7 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
     /*                               6. GASLITE DROP                              */
     /* -------------------------------------------------------------------------- */
 
-    function test_gasBenchmarks_GasliteDrop(uint256) public {
+    function test_ERC20_GasliteDrop(uint256) public {
         setup();
 
         // Airdrop
@@ -146,7 +146,7 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
     /*                              7. BYTECODE DROP                              */
     /* -------------------------------------------------------------------------- */
 
-    function test_gasBenchmarks_BytecodeDrop(uint256) public {
+    function test_ERC20_BytecodeDrop(uint256) public {
         setup();
 
         address deployed = deployCode("BytecodeDrop.sol");
@@ -159,6 +159,6 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
                 "airdropERC20(address,address[],uint256[],uint256)", address(erc20), RECIPIENTS, AMOUNTS, TOTAL_AMOUNT
             )
         );
-        if (!success) revert("test_gasBenchmarks_BytecodeDrop_FAILED");
+        if (!success) revert("test_ERC20_BytecodeDrop_FAILED");
     }
 }

@@ -3,16 +3,18 @@ pragma solidity 0.8.20;
 
 // Solady
 import {ERC20} from "@solady/tokens/ERC20.sol";
+import {ERC721} from "@solady/tokens/ERC721.sol";
 import {ECDSA} from "@solady/utils/ECDSA.sol";
 import {Ownable} from "@solady/auth/Ownable.sol";
 
 import {console} from "forge-std/console.sol";
 
 /// @title AirdropClaimSignature
-/// @notice ERC20 claimable with signature
+/// @notice ERC20 & ERC721 claimable with signature
 /// @dev Just an example - not audited
 contract AirdropClaimSignature is Ownable {
-    ERC20 public token;
+    ERC20 public erc20;
+    ERC721 public erc721;
 
     /* -------------------------------------------------------------------------- */
     /*                                   ERRORS                                   */
@@ -27,10 +29,15 @@ contract AirdropClaimSignature is Ownable {
     /*                                   EVENTS                                   */
     /* -------------------------------------------------------------------------- */
 
-    /// @dev Emitted after a successful claim
+    /// @dev Emitted after a successful ERC20 claim
     /// @param recipient of the ERC20 tokens
     /// @param amount of tokens claimed
-    event Claimed(address indexed recipient, uint256 amount);
+    event ClaimedERC20(address indexed recipient, uint256 amount);
+
+    /// @dev Emitted after a successful ERC721 claim
+    /// @param recipient of the ERC721 token
+    /// @param tokenId of the ERC721 token claimed
+    event ClaimedERC721(address indexed recipient, uint256 tokenId);
 
     /* -------------------------------------------------------------------------- */
     /*                                   STORAGE                                  */
@@ -40,19 +47,23 @@ contract AirdropClaimSignature is Ownable {
     address public immutable signer;
 
     /* ---------------------------------- STATE --------------------------------- */
-    /// @dev Whether account has claimed tokens already
-    mapping(address account => bool claimed) public hasClaimed;
+    /// @dev Whether account has claimed ERC20 tokens already
+    mapping(address account => bool claimed) public hasClaimed_erc20;
+    /// @dev Whether account has claimed ERC721 tokens already
+    mapping(address account => bool claimed) public hasClaimed_erc721;
 
     /* -------------------------------------------------------------------------- */
     /*                                 CONSTRUCTOR                                */
     /* -------------------------------------------------------------------------- */
 
-    /// @dev Initialize contract with token and merkle root
-    /// @param _token to be claimed (ERC20 compatible)
+    /// @dev Initialize contract with tokens and merkle root
+    /// @param _tokenERC20 to be claimed (ERC20 compatible)
+    /// @param _tokenERC721 to be claimed (ERC721 compatible)
     /// @param _signer of the claim messages
     /// Note: Sets owner to deployer
-    constructor(ERC20 _token, address _signer) {
-        token = _token;
+    constructor(ERC20 _tokenERC20, ERC721 _tokenERC721, address _signer) {
+        erc20 = _tokenERC20;
+        erc721 = _tokenERC721;
         signer = _signer;
 
         _initializeOwner(msg.sender);
@@ -62,17 +73,13 @@ contract AirdropClaimSignature is Ownable {
     /*                                  FUNCTIONS                                 */
     /* -------------------------------------------------------------------------- */
 
-    /// @dev Claim tokens share with a valid signature
+    /// @dev Claim ERC20 tokens share with a valid signature
     /// @param _recipient address of the target account
     /// @param _amount of tokens to claim
     /// @param _signature of the claim message
-    function claim(address _recipient, uint256 _amount, bytes calldata _signature) external {
-        console.log("Signer: %s", signer);
-        console.log("Recipient: %s", _recipient);
-        console.log("Amount: %s", _amount);
-
+    function claimERC20(address _recipient, uint256 _amount, bytes calldata _signature) external {
         // Throw if address has already claimed tokens
-        if (hasClaimed[_recipient]) revert AirdropClaimSignature_AlreadyClaimed();
+        if (hasClaimed_erc20[_recipient]) revert AirdropClaimSignature_AlreadyClaimed();
 
         // Recover signer from signature
         address recoveredSigner = ECDSA.recoverCalldata(
@@ -83,18 +90,36 @@ contract AirdropClaimSignature is Ownable {
         if (recoveredSigner != signer) revert AirdropClaimSignature_InvalidSignature();
 
         // Mark account as claimed
-        hasClaimed[_recipient] = true;
+        hasClaimed_erc20[_recipient] = true;
         // Transfer tokens to recipient
-        token.transfer(_recipient, _amount);
+        erc20.transfer(_recipient, _amount);
 
         // Emit claim event
-        emit Claimed(_recipient, _amount);
+        emit ClaimedERC20(_recipient, _amount);
     }
 
-    /// @dev Allows owner to rescue tokens
-    /// @param _amount of tokens to rescue
-    function rescueTokens(uint256 _amount) external onlyOwner {
-        // Transfer tokens to recipient (owner)
-        token.transfer(msg.sender, _amount);
+    /// @dev Claim ERC721 token with a valid signature
+    /// @param _recipient address of the target account
+    /// @param _tokenId of the token to claim
+    /// @param _signature of the claim message
+    function claimERC721(address _recipient, uint256 _tokenId, bytes calldata _signature) external {
+        // Throw if address has already claimed tokens
+        if (hasClaimed_erc721[_recipient]) revert AirdropClaimSignature_AlreadyClaimed();
+
+        // Recover signer from signature
+        address recoveredSigner = ECDSA.recoverCalldata(
+            ECDSA.toEthSignedMessageHash(keccak256(abi.encodePacked(_recipient, _tokenId))), _signature
+        );
+
+        // Revert if recovered signer is not the signer
+        if (recoveredSigner != signer) revert AirdropClaimSignature_InvalidSignature();
+
+        // Mark account as claimed
+        hasClaimed_erc721[_recipient] = true;
+        // Transfer token to recipient
+        erc721.transferFrom(address(this), _recipient, _tokenId);
+
+        // Emit claim event
+        emit ClaimedERC721(_recipient, _tokenId);
     }
 }

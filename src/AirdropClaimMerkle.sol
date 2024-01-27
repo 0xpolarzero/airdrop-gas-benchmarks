@@ -3,14 +3,16 @@ pragma solidity 0.8.20;
 
 // Solady
 import {ERC20} from "@solady/tokens/ERC20.sol";
+import {ERC721} from "@solady/tokens/ERC721.sol";
 import {MerkleProofLib} from "@solady/utils/MerkleProofLib.sol";
 import {Ownable} from "@solady/auth/Ownable.sol";
 
 /// @title AirdropClaimMerkle
-/// @notice ERC20 claimable with Merkle tree
+/// @notice ERC20 & ERC721 claimable with Merkle tree
 /// @dev Just an example - not audited
 contract AirdropClaimMerkle is Ownable {
-    ERC20 public token;
+    ERC20 public erc20;
+    ERC721 public erc721;
 
     /* -------------------------------------------------------------------------- */
     /*                                   ERRORS                                   */
@@ -25,33 +27,46 @@ contract AirdropClaimMerkle is Ownable {
     /*                                   EVENTS                                   */
     /* -------------------------------------------------------------------------- */
 
-    /// @dev Emitted after a successful claim
+    /// @dev Emitted after a successful ERC20 claim
     /// @param recipient of the ERC20 tokens
     /// @param amount of tokens claimed
-    event Claimed(address indexed recipient, uint256 amount);
+    event ClaimedERC20(address indexed recipient, uint256 amount);
+
+    /// @dev Emitted after a successful ERC721 claim
+    /// @param recipient of the ERC721 tokens
+    /// @param tokenId of the ERC721 token claimed
+    event ClaimedERC721(address indexed recipient, uint256 tokenId);
 
     /* -------------------------------------------------------------------------- */
     /*                                   STORAGE                                  */
     /* -------------------------------------------------------------------------- */
     /* -------------------------------- IMMUTABLE ------------------------------- */
     /// @dev ERC20-claimee inclusion root
-    bytes32 public immutable merkleRoot;
+    bytes32 public immutable merkleRoot_erc20;
+    /// @dev ERC721-claimee inclusion root
+    bytes32 public immutable merkleRoot_erc721;
 
     /* ---------------------------------- STATE --------------------------------- */
-    /// @dev Whether account has claimed tokens already
-    mapping(address account => bool claimed) public hasClaimed;
+    /// @dev Whether account has claimed ERC20 tokens already
+    mapping(address account => bool claimed) public hasClaimed_erc20;
+    /// @dev Whether account has claimed ERC721 tokens already
+    mapping(address account => bool claimed) public hasClaimed_erc721;
 
     /* -------------------------------------------------------------------------- */
     /*                                 CONSTRUCTOR                                */
     /* -------------------------------------------------------------------------- */
 
     /// @dev Initialize contract with token and merkle root
-    /// @param _token to be claimed (ERC20 compatible)
-    /// @param _merkleRoot of the merkle tree
+    /// @param _tokenERC20 to be claimed (ERC20 compatible)
+    /// @param _tokenERC721 to be claimed (ERC721 compatible)
+    /// @param _merkleRootERC20 inclusion root for ERC20-claimees
+    /// @param _merkleRootERC721 inclusion root for ERC721-claimees
     /// Note: Sets owner to deployer
-    constructor(ERC20 _token, bytes32 _merkleRoot) {
-        token = _token;
-        merkleRoot = _merkleRoot;
+    constructor(ERC20 _tokenERC20, ERC721 _tokenERC721, bytes32 _merkleRootERC20, bytes32 _merkleRootERC721) {
+        erc20 = _tokenERC20;
+        erc721 = _tokenERC721;
+        merkleRoot_erc20 = _merkleRootERC20;
+        merkleRoot_erc721 = _merkleRootERC721;
 
         _initializeOwner(msg.sender);
     }
@@ -60,36 +75,54 @@ contract AirdropClaimMerkle is Ownable {
     /*                                  FUNCTIONS                                 */
     /* -------------------------------------------------------------------------- */
 
-    /// @dev Claim tokens share as an account part of the merkle tree
+    /// @dev Claim ERC20 tokens share as an account part of the merkle tree
     /// @param _recipient address of claimee
     /// @param _amount of tokens to claim
     /// @param _proof merkle proof to prove the 2 above parameters are part of the merkle tree
     /// Note: Uses `verifyCalldata` from `MerkleProofLib` as it is cheaper
-    function claim(address _recipient, uint256 _amount, bytes32[] calldata _proof) external {
+    function claimERC20(address _recipient, uint256 _amount, bytes32[] calldata _proof) external {
         // Throw if address has already claimed tokens
-        if (hasClaimed[_recipient]) revert AirdropClaimMerkle_AlreadyClaimed();
+        if (hasClaimed_erc20[_recipient]) revert AirdropClaimMerkle_AlreadyClaimed();
 
         // Generate leaf
         bytes32 leaf = keccak256(abi.encodePacked(_recipient, _amount));
 
         // Verify leaf is part of merkle tree given proof
-        bool isValidLeaf = MerkleProofLib.verifyCalldata(_proof, merkleRoot, leaf);
+        bool isValidLeaf = MerkleProofLib.verifyCalldata(_proof, merkleRoot_erc20, leaf);
         if (!isValidLeaf) revert AirdropClaimMerkle_NotInMerkle();
 
         // Mark account as claimed
-        hasClaimed[_recipient] = true;
+        hasClaimed_erc20[_recipient] = true;
         // Transfer tokens to recipient
-        token.transfer(_recipient, _amount);
+        erc20.transfer(_recipient, _amount);
 
         // Emit claim event
-        emit Claimed(_recipient, _amount);
+        emit ClaimedERC20(_recipient, _amount);
     }
 
-    /// @dev Allows owner to rescue tokens
-    /// @param _amount of tokens to rescue
-    function rescueTokens(uint256 _amount) external onlyOwner {
-        // Transfer tokens to recipient (owner)
-        token.transfer(msg.sender, _amount);
+    /// @dev Claim ERC721 token as an account part of the merkle tree
+    /// @param _recipient address of claimee
+    /// @param _tokenId of the token to claim
+    /// @param _proof merkle proof to prove the 2 above parameters are part of the merkle tree
+    /// Note: Uses `verifyCalldata` from `MerkleProofLib` as it is cheaper
+    function claimERC721(address _recipient, uint256 _tokenId, bytes32[] calldata _proof) external {
+        // Throw if address has already claimed tokens
+        if (hasClaimed_erc721[_recipient]) revert AirdropClaimMerkle_AlreadyClaimed();
+
+        // Generate leaf
+        bytes32 leaf = keccak256(abi.encodePacked(_recipient, _tokenId));
+
+        // Verify leaf is part of merkle tree given proof
+        bool isValidLeaf = MerkleProofLib.verifyCalldata(_proof, merkleRoot_erc721, leaf);
+        if (!isValidLeaf) revert AirdropClaimMerkle_NotInMerkle();
+
+        // Mark account as claimed
+        hasClaimed_erc721[_recipient] = true;
+        // Transfer tokens to recipient
+        erc721.transferFrom(address(this), _recipient, _tokenId);
+
+        // Emit claim event
+        emit ClaimedERC721(_recipient, _tokenId);
     }
 
     /* -------------------------------------------------------------------------- */

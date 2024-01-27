@@ -10,6 +10,7 @@ import {Merkle} from "murky/src/Merkle.sol";
 
 // Mocks
 import {Mock_ERC20} from "test/mocks/Mock_ERC20.sol";
+import {Mock_ERC721} from "test/mocks/Mock_ERC721.sol";
 
 // Tested contracts
 import {AirdropClaimMapping} from "src/AirdropClaimMapping.sol";
@@ -33,10 +34,11 @@ import {BytecodeDrop} from "src/BytecodeDrop.sol";
 /// @dev Customize the amount of recipients to test with
 uint256 constant NUM_RECIPIENTS = 1000;
 
-contract Benchmarks_Base is SoladyTest, StdCheats {
+abstract contract Benchmarks_Base is SoladyTest, StdCheats {
     using LibPRNG for LibPRNG.PRNG;
 
     Mock_ERC20 erc20;
+    Mock_ERC721 erc721;
     Merkle m;
 
     AirdropClaimMapping airdropClaimMapping;
@@ -46,17 +48,31 @@ contract Benchmarks_Base is SoladyTest, StdCheats {
     GasliteDrop gasliteDrop;
     BytecodeDrop bytecodeDrop;
 
+    // ERC20, ERC721
     address[] RECIPIENTS = new address[](NUM_RECIPIENTS);
+    // ERC20
     uint256[] AMOUNTS = new uint256[](NUM_RECIPIENTS);
     uint256 TOTAL_AMOUNT;
+    // ERC721
+    uint256[] TOKEN_IDS = new uint256[](NUM_RECIPIENTS);
 
     // Merkle
-    bytes32 ROOT;
-    bytes32[] DATA = new bytes32[](NUM_RECIPIENTS);
+    bytes32 ROOT_ERC20;
+    bytes32 ROOT_ERC721;
+    bytes32[] DATA_ERC20 = new bytes32[](NUM_RECIPIENTS);
+    bytes32[] DATA_ERC721 = new bytes32[](NUM_RECIPIENTS);
 
     // Signature
     address SIGNER;
     uint256 SIGNER_KEY;
+
+    enum TEST_TYPE {
+        ETH,
+        ERC20,
+        ERC721
+    }
+
+    TEST_TYPE testType;
 
     /* -------------------------------------------------------------------------- */
     /*                                    SETUP                                   */
@@ -65,19 +81,31 @@ contract Benchmarks_Base is SoladyTest, StdCheats {
     /// @dev Should be called at the beginning of each test to take advantage of the random
     /// calldata passed for fuzzing, to generate random data
     function setup() internal {
+        _setType();
+        _generate();
+        _deploy();
+    }
+
+    /// @dev This needs to be implemented in each contract
+    function _setType() internal virtual;
+
+    function _generate() internal virtual {
         // Generate random airdrop data
-        (RECIPIENTS, AMOUNTS, TOTAL_AMOUNT) = _randomData();
+        (RECIPIENTS, AMOUNTS, TOTAL_AMOUNT, TOKEN_IDS) = _randomData();
         // Generate Merkle data
         m = new Merkle();
-        (ROOT, DATA) = _generateMerkleData(RECIPIENTS, AMOUNTS);
+        (ROOT_ERC20, ROOT_ERC721, DATA_ERC20, DATA_ERC721) = _generateMerkleData(RECIPIENTS, AMOUNTS, TOKEN_IDS);
         // Generate signature data
         (SIGNER, SIGNER_KEY) = _randomSigner();
+    }
 
+    function _deploy() internal virtual {
         // Deploy contracts
         erc20 = new Mock_ERC20(TOTAL_AMOUNT);
-        airdropClaimMapping = new AirdropClaimMapping(erc20);
-        airdropClaimMerkle = new AirdropClaimMerkle(erc20, ROOT);
-        airdropClaimSignature = new AirdropClaimSignature(erc20, SIGNER);
+        erc721 = new Mock_ERC721(TOKEN_IDS);
+        airdropClaimMapping = new AirdropClaimMapping(erc20, erc721);
+        airdropClaimMerkle = new AirdropClaimMerkle(erc20, erc721, ROOT_ERC20, ROOT_ERC721);
+        airdropClaimSignature = new AirdropClaimSignature(erc20, erc721, SIGNER);
         airdropWentokens = new AirdropWentokens();
         gasliteDrop = new GasliteDrop();
         bytecodeDrop = new BytecodeDrop();
@@ -92,36 +120,44 @@ contract Benchmarks_Base is SoladyTest, StdCheats {
     function _randomData()
         internal
         virtual
-        returns (address[] memory recipients, uint256[] memory amounts, uint256 totalAmount)
+        returns (address[] memory recipients, uint256[] memory amounts, uint256 totalAmount, uint256[] memory tokenIds)
     {
         // Initialize PRNG
         LibPRNG.PRNG memory prng = LibPRNG.PRNG(_random());
         // Initialize arrays
         recipients = new address[](NUM_RECIPIENTS);
         amounts = new uint256[](NUM_RECIPIENTS);
+        tokenIds = new uint256[](NUM_RECIPIENTS);
 
         // Populate arrays with random data
         for (uint256 i = 0; i < NUM_RECIPIENTS; i++) {
             recipients[i] = address(uint160(prng.next() % 2 ** 160));
+
             // Bound amount: 1e10 <= amount <= 1e19
             amounts[i] = _bound(prng.next(), 1e10, 1e19);
             totalAmount += amounts[i];
+
+            tokenIds[i] = i;
         }
     }
 
-    function _generateMerkleData(address[] memory recipients, uint256[] memory amounts)
+    function _generateMerkleData(address[] memory recipients, uint256[] memory amounts, uint256[] memory tokenIds)
         internal
         view
         virtual
-        returns (bytes32 root, bytes32[] memory data)
+        returns (bytes32 root_erc20, bytes32 root_erc721, bytes32[] memory data_erc20, bytes32[] memory data_erc721)
     {
+        data_erc20 = new bytes32[](NUM_RECIPIENTS);
+        data_erc721 = new bytes32[](NUM_RECIPIENTS);
+
         // Populate data array with leaf hashes
-        data = new bytes32[](NUM_RECIPIENTS);
         for (uint256 i = 0; i < NUM_RECIPIENTS; i++) {
-            data[i] = keccak256(abi.encodePacked(recipients[i], amounts[i]));
+            data_erc20[i] = keccak256(abi.encodePacked(recipients[i], amounts[i]));
+            data_erc721[i] = keccak256(abi.encodePacked(recipients[i], tokenIds[i]));
         }
 
         // Get the Merkle root
-        root = m.getRoot(data);
+        root_erc20 = m.getRoot(data_erc20);
+        root_erc721 = m.getRoot(data_erc721);
     }
 }
