@@ -14,10 +14,10 @@ contract Mock_ERC20 is ERC20 {
     /* -------------------------------------------------------------------------- */
 
     function name() public pure override returns (string memory) {
-        return "Token";
+        return "Mock_ERC20";
     }
 
     function symbol() public pure override returns (string memory) {
-        return "TKN";
+        return "M20";
     }
 }
