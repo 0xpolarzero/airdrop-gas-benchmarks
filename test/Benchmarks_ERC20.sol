@@ -3,6 +3,8 @@ pragma solidity ^0.8.0;
 
 import "./Benchmarks.base.sol";
 
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
 // See Benchmarks.base.sol for more info and to modify the amount of recipients to test with
 
 // 1. MAPPING APPROACH
@@ -117,7 +119,7 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
 
         // Airdrop
         erc20.approve(address(airdropWentokens), TOTAL_AMOUNT);
-        airdropWentokens.airdropERC20(erc20, RECIPIENTS, AMOUNTS, TOTAL_AMOUNT);
+        airdropWentokens.airdropERC20(IERC20(address(erc20)), RECIPIENTS, AMOUNTS, TOTAL_AMOUNT);
     }
 
     /* -------------------------------------------------------------------------- */
