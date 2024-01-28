@@ -2,7 +2,6 @@
 pragma solidity ^0.8.0;
 
 import "./Benchmarks.base.sol";
-
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 // See Benchmarks.base.sol for more info and to modify the amount of recipients to test with
@@ -146,13 +145,38 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
     /*                              7. BYTECODE DROP                              */
     /* -------------------------------------------------------------------------- */
 
+    /// Note: Forge won't report gas usage for a bytecode contract, so we'll just use
+    /// console and `gasleft` to get an idea.
+    /// This is not consistent with the other benchmarks, but it's good enough.
     function test_ERC20_BytecodeDrop(uint256) public {
         setup();
-
-        address deployed = deployCode("BytecodeDrop.sol");
+        // (address deployed, uint256 gasUsed) = _deployAndReturnGas("BytecodeDrop.sol");
+        // console.log("Deployment: %s gas", gasUsed);
 
         // Airdrop
-        erc20.approve(deployed, TOTAL_AMOUNT);
+        erc20.approve(address(bytecodeDrop), TOTAL_AMOUNT);
+        // console.log(
+        //     "Approval: %s gas",
+        //     _callAndReturnGas(
+        //         address(erc20),
+        //         abi.encodeWithSignature("approve(address,uint256)", deployed, TOTAL_AMOUNT),
+        //         "test_ERC20_BytecodeDrop_FAILED"
+        //     )
+        // );
         bytecodeDrop.airdropERC20(address(erc20), RECIPIENTS, AMOUNTS, TOTAL_AMOUNT);
+        // console.log(
+        //     "Airdrop: %s gas",
+        //     _callAndReturnGas(
+        //         deployed,
+        //         abi.encodeWithSignature(
+        //             "airdropERC20(address,address[],uint256[],uint256)",
+        //             address(erc20),
+        //             RECIPIENTS,
+        //             AMOUNTS,
+        //             TOTAL_AMOUNT
+        //         ),
+        //         "test_ERC20_BytecodeDrop_FAILED"
+        //     )
+        // );
     }
 }
