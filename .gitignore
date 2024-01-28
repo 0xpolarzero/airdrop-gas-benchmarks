@@ -1,6 +1,9 @@
-# Compiler files
+# Compiler files (Foundry)
 cache/
 out/
+# Compiler files (Hardhat)
+artifacts/
+cache_hardhat/
 
 # Ignores development broadcast logs
 !/broadcast

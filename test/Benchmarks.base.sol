@@ -9,8 +9,8 @@ import {LibPRNG} from "@solady/utils/LibPRNG.sol";
 import {Merkle} from "murky/src/Merkle.sol";
 
 // Mocks
-import {Mock_ERC20} from "test/mocks/Mock_ERC20.sol";
-import {Mock_ERC721} from "test/mocks/Mock_ERC721.sol";
+import {Mock_ERC20} from "src/mocks/Mock_ERC20.sol";
+import {Mock_ERC721} from "src/mocks/Mock_ERC721.sol";
 
 // Tested contracts
 import {AirdropClaimMapping} from "src/AirdropClaimMapping.sol";
