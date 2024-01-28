@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-// Utils
+// Test Utils
 import {SoladyTest} from "solady/test/utils/SoladyTest.sol";
 import {StdCheats} from "forge-std/StdCheats.sol";
 
+// Libs
 import {LibPRNG} from "@solady/utils/LibPRNG.sol";
 import {Merkle} from "murky/src/Merkle.sol";
 
