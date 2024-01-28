@@ -42,7 +42,7 @@ contract Benchmarks_ETH is Benchmarks_Base {
         setup();
 
         // Airdrop
-        airdropWentokens.airdropETH{value: TOTAL_AMOUNT}(RECIPIENTS, AMOUNTS);
+        wentokens_airdrop.airdropETH{value: TOTAL_AMOUNT}(RECIPIENTS, AMOUNTS);
     }
 
     /* -------------------------------------------------------------------------- */

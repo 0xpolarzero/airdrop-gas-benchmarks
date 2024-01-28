@@ -17,9 +17,13 @@ import {Mock_ERC721} from "test/mocks/Mock_ERC721.sol";
 import {AirdropClaimMapping} from "src/AirdropClaimMapping.sol";
 import {AirdropClaimMerkle} from "src/AirdropClaimMerkle.sol";
 import {AirdropClaimSignature} from "src/AirdropClaimSignature.sol";
-import {Airdrop as AirdropWentokens} from "src/Wentokens.sol";
-import {GasliteDrop} from "src/GasliteDrop.sol";
 import {BytecodeDrop} from "src/BytecodeDrop.sol";
+// wentokens
+import {Airdrop as Wentokens_Airdrop} from "src/Wentokens.sol";
+// Gaslite
+import {GasliteDrop} from "src/GasliteDrop.sol";
+// Thirdweb
+import {AirdropERC20 as Thirdweb_AirdropERC20} from "src/thirdweb/AirdropERC20.sol";
 
 // maybe will need return additional parameters (like with ERC721, ERC1155) so inherited will retrieve only part of the return data
 // can actually keep all contracts but rename Token => ERC20Token, ERC721Token, etc
@@ -45,7 +49,7 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
     AirdropClaimMapping airdropClaimMapping;
     AirdropClaimMerkle airdropClaimMerkle;
     AirdropClaimSignature airdropClaimSignature;
-    AirdropWentokens airdropWentokens;
+    Wentokens_Airdrop wentokens_airdrop;
     GasliteDrop gasliteDrop;
     BytecodeDrop bytecodeDrop;
 
@@ -107,7 +111,7 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
         airdropClaimMapping = new AirdropClaimMapping(erc20, erc721);
         airdropClaimMerkle = new AirdropClaimMerkle(erc20, erc721, ROOT_ERC20, ROOT_ERC721);
         airdropClaimSignature = new AirdropClaimSignature(erc20, erc721, SIGNER);
-        airdropWentokens = new AirdropWentokens();
+        wentokens_airdrop = new Wentokens_Airdrop();
         gasliteDrop = new GasliteDrop();
         bytecodeDrop = new BytecodeDrop();
     }

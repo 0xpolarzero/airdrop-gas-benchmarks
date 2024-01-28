@@ -121,12 +121,12 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
     /*                                5. WENTOKENS                                */
     /* -------------------------------------------------------------------------- */
 
-    function test_ERC20_AirdropWentokens(uint256) public {
+    function test_ERC20_wentokens_airdrop(uint256) public {
         setup();
 
         // Airdrop
-        erc20.approve(address(airdropWentokens), TOTAL_AMOUNT);
-        airdropWentokens.airdropERC20(IERC20(address(erc20)), RECIPIENTS, AMOUNTS, TOTAL_AMOUNT);
+        erc20.approve(address(wentokens_airdrop), TOTAL_AMOUNT);
+        wentokens_airdrop.airdropERC20(IERC20(address(erc20)), RECIPIENTS, AMOUNTS, TOTAL_AMOUNT);
     }
 
     /* -------------------------------------------------------------------------- */
