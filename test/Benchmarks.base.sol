@@ -17,7 +17,7 @@ import {Mock_ERC721} from "test/mocks/Mock_ERC721.sol";
 import {AirdropClaimMapping} from "src/AirdropClaimMapping.sol";
 import {AirdropClaimMerkle} from "src/AirdropClaimMerkle.sol";
 import {AirdropClaimSignature} from "src/AirdropClaimSignature.sol";
-import {Airdrop as AirdropWentokens} from "src/AirdropWentokens.sol";
+import {Airdrop as AirdropWentokens} from "src/Wentokens.sol";
 import {GasliteDrop} from "src/GasliteDrop.sol";
 import {BytecodeDrop} from "src/BytecodeDrop.sol";
 
