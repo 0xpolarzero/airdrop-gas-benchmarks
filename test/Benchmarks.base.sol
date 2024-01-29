@@ -26,6 +26,7 @@ import {Airdrop as Wentokens_Airdrop} from "src/Wentokens.sol";
 import {GasliteDrop} from "src/GasliteDrop.sol";
 // Thirdweb
 import {AirdropERC20 as Thirdweb_AirdropERC20} from "src/thirdweb/AirdropERC20.sol";
+import {AirdropERC20Claimable as Thirdweb_AirdropERC20Claimable} from "src/thirdweb/AirdropERC20Claimable.sol";
 
 // maybe will need return additional parameters (like with ERC721, ERC1155) so inherited will retrieve only part of the return data
 // can actually keep all contracts but rename Token => ERC20Token, ERC721Token, etc
@@ -55,6 +56,7 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
     GasliteDrop gasliteDrop;
     BytecodeDrop bytecodeDrop;
     Thirdweb_AirdropERC20 thirdweb_airdropERC20;
+    Thirdweb_AirdropERC20Claimable thirdweb_airdropERC20Claimable;
 
     // ERC20, ERC721
     address[] RECIPIENTS = new address[](NUM_RECIPIENTS);
@@ -119,8 +121,21 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
         bytecodeDrop = new BytecodeDrop();
 
         Thirdweb_AirdropERC20 thirdweb_airdropERC20Impl = new Thirdweb_AirdropERC20();
-        thirdweb_airdropERC20 = Thirdweb_AirdropERC20(LibClone.deployERC1967(address(thirdweb_airdropERC20Impl)));
+        Thirdweb_AirdropERC20Claimable thirdweb_airdropERC20ClaimableImpl = new Thirdweb_AirdropERC20Claimable();
+        _deployProxiesAndInit(address(thirdweb_airdropERC20Impl), address(thirdweb_airdropERC20ClaimableImpl));
+    }
+
+    function _deployProxiesAndInit(address _airdropERC20Impl, address _airdropERC20ClaimableImpl) internal {
+        // Deploy proxies
+        thirdweb_airdropERC20 = Thirdweb_AirdropERC20(LibClone.deployERC1967(_airdropERC20Impl));
+        thirdweb_airdropERC20Claimable =
+            Thirdweb_AirdropERC20Claimable(LibClone.deployERC1967(_airdropERC20ClaimableImpl));
+
+        // Initialize
         thirdweb_airdropERC20.initialize(address(this), "https://example.com", new address[](0));
+        thirdweb_airdropERC20Claimable.initialize(
+            new address[](0), address(this), address(erc20), TOTAL_AMOUNT, 0, 0, ROOT_ERC20
+        );
     }
 
     /* -------------------------------------------------------------------------- */

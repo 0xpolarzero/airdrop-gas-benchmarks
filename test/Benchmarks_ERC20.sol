@@ -7,14 +7,15 @@ import {IAirdropERC20} from "src/thirdweb/deps/IAirdropERC20.sol";
 
 // See Benchmarks.base.sol for more info and to modify the amount of recipients to test with
 
-// 1. MAPPING APPROACH
-// 2. MERKLE TREE APPROACH
-// 3. SIGNATURE APPROACH
-// 4. DISPERSE APP
-// 5. WENTOKENS
-// 6. GASLITE DROP
-// 7. BYTECODE DROP
-// 8. THIRDWEB AIRDROP
+// 1. MAPPING APPROACH (claim)
+// 2. MERKLE TREE APPROACH (claim)
+// 3. SIGNATURE APPROACH (claim)
+// 4. DISPERSE APP (airdrop)
+// 5. WENTOKENS (airdrop)
+// 6. GASLITE DROP (airdrop)
+// 7. BYTECODE DROP (airdrop)
+// 8. THIRDWEB AIRDROP (airdrop)
+// 9. THIRDWEB AIRDROP (claim)
 
 contract Benchmarks_ERC20 is Benchmarks_Base {
     /* -------------------------------------------------------------------------- */
@@ -202,6 +203,25 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
         contents = new IAirdropERC20.AirdropContent[](recipients.length);
         for (uint256 i = 0; i < recipients.length; i++) {
             contents[i] = IAirdropERC20.AirdropContent({recipient: recipients[i], amount: amounts[i]});
+        }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /*                             9. THIRDWEB CLAIM                             */
+    /* -------------------------------------------------------------------------- */
+
+    function test_ERC20_AirdropERC20ClaimableThirdweb(uint256) public {
+        setup();
+
+        // Approve
+        erc20.approve(address(thirdweb_airdropERC20Claimable), TOTAL_AMOUNT);
+
+        // Claim
+        for (uint256 i = 0; i < RECIPIENTS.length; i++) {
+            bytes32[] memory proof = m.getProof(DATA_ERC20, i);
+            // prank doesn't really matter as anyone can claim with a valid proof, since tokens are sent to the recipient
+            vm.prank(RECIPIENTS[i]);
+            thirdweb_airdropERC20Claimable.claim(RECIPIENTS[i], AMOUNTS[i], proof, AMOUNTS[i]);
         }
     }
 }
