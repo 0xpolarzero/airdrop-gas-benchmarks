@@ -29,6 +29,16 @@ contract Benchmarks_ERC1155 is Benchmarks_Base, ERC1155Holder {
 
     function test_ERC1155_AirdropClaimMapping(uint256) public {
         setup();
+
+        // Airdrop
+        erc1155.setApprovalForAll(address(airdropClaimMapping), true);
+        airdropClaimMapping.airdropERC1155(RECIPIENTS, TOKEN_IDS_ERC1155, AMOUNTS);
+
+        // Claim
+        for (uint256 i = 0; i < RECIPIENTS.length; i++) {
+            vm.prank(RECIPIENTS[i]);
+            airdropClaimMapping.claimERC1155(TOKEN_IDS_ERC1155[i]);
+        }
     }
 
     /* -------------------------------------------------------------------------- */
