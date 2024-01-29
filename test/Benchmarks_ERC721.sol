@@ -2,13 +2,16 @@
 pragma solidity ^0.8.0;
 
 import "./Benchmarks.base.sol";
+import {IAirdropERC721} from "src/thirdweb/deps/IAirdropERC721.sol";
 
 // See Benchmarks.base.sol for more info and to modify the amount of recipients to test with
 
-// 1. MAPPING APPROACH
-// 2. MERKLE TREE APPROACH
-// 3. SIGNATURE APPROACH
-// 4. GASLITE DROP
+// 1. MAPPING APPROACH (claim)
+// 2. MERKLE TREE APPROACH (claim)
+// 3. SIGNATURE APPROACH (claim)
+// 4. GASLITE DROP (airdrop)
+// 5. THIRDWEB AIRDROP (airdrop)
+// 6. THIRDWEB AIRDROP (claim)
 
 contract Benchmarks_ERC721 is Benchmarks_Base {
     /* -------------------------------------------------------------------------- */
@@ -93,5 +96,28 @@ contract Benchmarks_ERC721 is Benchmarks_Base {
         // Airdrop
         erc721.setApprovalForAll(address(gasliteDrop), true);
         gasliteDrop.airdropERC721(address(erc721), RECIPIENTS, TOKEN_IDS);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /*                             5. THIRDWEB AIRDROP                            */
+    /* -------------------------------------------------------------------------- */
+
+    function test_ERC721_ThirdwebAirdrop(uint256) public {
+        setup();
+
+        // Airdrop
+        erc721.setApprovalForAll(address(thirdweb_airdropERC721), true);
+        thirdweb_airdropERC721.airdropERC721(address(erc721), address(this), _toAirdropContent(RECIPIENTS, TOKEN_IDS));
+    }
+
+    function _toAirdropContent(address[] memory _recipients, uint256[] memory _tokenIds)
+        internal
+        pure
+        returns (IAirdropERC721.AirdropContent[] memory contents)
+    {
+        contents = new IAirdropERC721.AirdropContent[](_recipients.length);
+        for (uint256 i = 0; i < _recipients.length; i++) {
+            contents[i] = IAirdropERC721.AirdropContent({recipient: _recipients[i], tokenId: _tokenIds[i]});
+        }
     }
 }
