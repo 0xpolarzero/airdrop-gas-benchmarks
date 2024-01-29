@@ -150,7 +150,7 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
 
         airdropClaimMapping = new AirdropClaimMapping(erc20, erc721, erc1155);
         airdropClaimMerkle = new AirdropClaimMerkle(erc20, erc721, erc1155, ROOT_ERC20, ROOT_ERC721, ROOT_ERC1155);
-        airdropClaimSignature = new AirdropClaimSignature(erc20, erc721, SIGNER);
+        airdropClaimSignature = new AirdropClaimSignature(erc20, erc721, erc1155, SIGNER);
         wentokens_airdrop = new Wentokens_Airdrop();
         gasliteDrop = new GasliteDrop();
         gasliteDrop1155 = new GasliteDrop1155();

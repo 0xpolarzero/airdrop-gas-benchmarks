@@ -49,11 +49,7 @@ contract Benchmarks_ERC1155 is Benchmarks_Base, ERC1155Holder {
         setup();
 
         // Deposit
-        uint256[] memory ids = new uint256[](NUM_ERC1155_IDS);
-        for (uint256 i = 0; i < NUM_ERC1155_IDS; i++) {
-            ids[i] = i;
-        }
-        erc1155.safeBatchTransferFrom(address(this), address(airdropClaimMerkle), ids, TOTAL_AMOUNTS_ERC1155, "");
+        _depositERC1155(address(airdropClaimMerkle));
 
         // Claim
         for (uint256 i = 0; i < RECIPIENTS.length; i++) {
@@ -70,6 +66,21 @@ contract Benchmarks_ERC1155 is Benchmarks_Base, ERC1155Holder {
 
     function test_ERC1155_AirdropClaimSignature(uint256) public {
         setup();
+
+        // Deposit
+        _depositERC1155(address(airdropClaimSignature));
+
+        // Claim
+        for (uint256 i = 0; i < RECIPIENTS.length; i++) {
+            bytes32 messageHash = keccak256(abi.encodePacked(RECIPIENTS[i], TOKEN_IDS_ERC1155[i], AMOUNTS[i]));
+            bytes32 prefixedHash = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", messageHash));
+            (uint8 v, bytes32 r, bytes32 s) = vm.sign(SIGNER_KEY, prefixedHash);
+            bytes memory signature = abi.encodePacked(r, s, v);
+
+            // Same here with prank, some can claim on behalf of the recipient (but tokens are sent to the recipient)
+            vm.prank(RECIPIENTS[i]);
+            airdropClaimSignature.claimERC1155(RECIPIENTS[i], TOKEN_IDS_ERC1155[i], AMOUNTS[i], signature);
+        }
     }
 
     /* -------------------------------------------------------------------------- */
@@ -187,5 +198,18 @@ contract Benchmarks_ERC1155 is Benchmarks_Base, ERC1155Holder {
             vm.prank(RECIPIENTS[i]);
             thirdweb_airdropERC1155Claimable.claim(RECIPIENTS[i], AMOUNTS[i], TOKEN_IDS_ERC1155[i], proof, AMOUNTS[i]);
         }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /*                                    UTILS                                   */
+    /* -------------------------------------------------------------------------- */
+
+    function _depositERC1155(address _target) internal {
+        uint256[] memory ids = new uint256[](NUM_ERC1155_IDS);
+        for (uint256 i = 0; i < NUM_ERC1155_IDS; i++) {
+            ids[i] = i;
+        }
+
+        erc1155.safeBatchTransferFrom(address(this), _target, ids, TOTAL_AMOUNTS_ERC1155, "");
     }
 }
