@@ -75,11 +75,7 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
 
         // Claim
         for (uint256 i = 0; i < RECIPIENTS.length; i++) {
-            bytes32 messageHash = keccak256(abi.encodePacked(RECIPIENTS[i], AMOUNTS[i]));
-            bytes32 prefixedHash = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", messageHash));
-            (uint8 v, bytes32 r, bytes32 s) = vm.sign(SIGNER_KEY, prefixedHash);
-            bytes memory signature = abi.encodePacked(r, s, v);
-
+            bytes memory signature = _sign(keccak256(abi.encodePacked(RECIPIENTS[i], AMOUNTS[i])));
             // Same here with prank, some can claim on behalf of the recipient (but tokens are sent to the recipient)
             vm.prank(RECIPIENTS[i]);
             airdropClaimSignature.claimERC20(RECIPIENTS[i], AMOUNTS[i], signature);

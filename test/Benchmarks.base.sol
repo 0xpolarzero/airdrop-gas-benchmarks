@@ -195,7 +195,7 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
     }
 
     /* -------------------------------------------------------------------------- */
-    /*                                    UTILS                                   */
+    /*                             INTERNAL FUNCTIONS                             */
     /* -------------------------------------------------------------------------- */
 
     /// Note: We're using Solady `LibPRNG` to generate random addresses over a simple
@@ -335,5 +335,15 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
         for (uint256 i = 0; i < NUM_ERC1155_IDS; i++) {
             root_erc1155_thirdweb[i] = m.getRoot(data_erc1155_thirdweb[i]);
         }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /*                                    UTILS                                   */
+    /* -------------------------------------------------------------------------- */
+
+    function _sign(bytes32 _messageHash) internal view returns (bytes memory signature) {
+        bytes32 prefixedHash = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", _messageHash));
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(SIGNER_KEY, prefixedHash);
+        signature = abi.encodePacked(r, s, v);
     }
 }
