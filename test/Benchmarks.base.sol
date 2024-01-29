@@ -83,8 +83,10 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
     // Merkle
     bytes32 ROOT_ERC20;
     bytes32 ROOT_ERC721;
+    bytes32 ROOT_ERC1155;
     bytes32[] DATA_ERC20 = new bytes32[](NUM_RECIPIENTS);
     bytes32[] DATA_ERC721 = new bytes32[](NUM_RECIPIENTS);
+    bytes32[] DATA_ERC1155 = new bytes32[](NUM_RECIPIENTS);
     // We need special variables for Thirdweb because it doesn't actually transfer specific tokens, but only specific quantities
     bytes32 ROOT_ERC721_THIRDWEB;
     bytes32[] DATA_ERC721_THIRDWEB = new bytes32[](NUM_RECIPIENTS);
@@ -126,7 +128,8 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
             _randomData();
         // Generate Merkle data
         m = new Merkle();
-        (ROOT_ERC20, ROOT_ERC721, DATA_ERC20, DATA_ERC721) = _generateMerkleData(RECIPIENTS, AMOUNTS, TOKEN_IDS_ERC721);
+        (ROOT_ERC20, ROOT_ERC721, ROOT_ERC1155, DATA_ERC20, DATA_ERC721, DATA_ERC1155) =
+            _generateMerkleData(RECIPIENTS, AMOUNTS, TOKEN_IDS_ERC721, TOKEN_IDS_ERC1155);
         // Generate Thirdweb Merkle data that doesn't fit the way above
         (ROOT_ERC721_THIRDWEB, ROOT_ERC1155_THIRDWEB, DATA_ERC721_THIRDWEB, DATA_ERC1155_THIRDWEB) =
             _thirdweb_generateMerkleData(RECIPIENTS, AMOUNTS, TOKEN_IDS_ERC1155);
@@ -146,7 +149,7 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
         erc1155 = new Mock_ERC1155(ids, TOTAL_AMOUNTS_ERC1155);
 
         airdropClaimMapping = new AirdropClaimMapping(erc20, erc721, erc1155);
-        airdropClaimMerkle = new AirdropClaimMerkle(erc20, erc721, ROOT_ERC20, ROOT_ERC721);
+        airdropClaimMerkle = new AirdropClaimMerkle(erc20, erc721, erc1155, ROOT_ERC20, ROOT_ERC721, ROOT_ERC1155);
         airdropClaimSignature = new AirdropClaimSignature(erc20, erc721, SIGNER);
         wentokens_airdrop = new Wentokens_Airdrop();
         gasliteDrop = new GasliteDrop();
@@ -258,30 +261,45 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
         }
     }
 
-    function _generateMerkleData(address[] memory recipients, uint256[] memory amounts, uint256[] memory tokenIds)
+    function _generateMerkleData(
+        address[] memory _recipients,
+        uint256[] memory _amounts,
+        uint256[] memory _tokenIds_erc721,
+        uint256[] memory _tokenIds_erc1155
+    )
         internal
         view
         virtual
-        returns (bytes32 root_erc20, bytes32 root_erc721, bytes32[] memory data_erc20, bytes32[] memory data_erc721)
+        returns (
+            bytes32 root_erc20,
+            bytes32 root_erc721,
+            bytes32 root_erc1155,
+            bytes32[] memory data_erc20,
+            bytes32[] memory data_erc721,
+            bytes32[] memory data_erc1155
+        )
     {
         data_erc20 = new bytes32[](NUM_RECIPIENTS);
         data_erc721 = new bytes32[](NUM_RECIPIENTS);
+        data_erc1155 = new bytes32[](NUM_RECIPIENTS);
 
         // Populate data array with leaf hashes
         for (uint256 i = 0; i < NUM_RECIPIENTS; i++) {
-            data_erc20[i] = keccak256(abi.encodePacked(recipients[i], amounts[i]));
-            data_erc721[i] = keccak256(abi.encodePacked(recipients[i], tokenIds[i]));
+            data_erc20[i] = keccak256(abi.encodePacked(_recipients[i], _amounts[i]));
+            data_erc721[i] = keccak256(abi.encodePacked(_recipients[i], _tokenIds_erc721[i]));
+            data_erc1155[i] = keccak256(abi.encodePacked(_recipients[i], _tokenIds_erc1155[i], _amounts[i]));
         }
 
         // Get the Merkle root
         root_erc20 = m.getRoot(data_erc20);
         root_erc721 = m.getRoot(data_erc721);
+        root_erc1155 = m.getRoot(data_erc1155);
     }
 
     function _thirdweb_generateMerkleData(
-        address[] memory recipients,
-        uint256[] memory amounts,
-        uint256[] memory tokenIds
+        address[] memory _recipients,
+        uint256[] memory _amounts,
+        uint256[] memory _tokenIds
     )
         internal
         view
@@ -298,14 +316,14 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
 
         // Populate data array with leaf hashes
         for (uint256 i = 0; i < NUM_RECIPIENTS; i++) {
-            data_erc721_thirdweb[i] = keccak256(abi.encodePacked(recipients[i], uint256(1)));
+            data_erc721_thirdweb[i] = keccak256(abi.encodePacked(_recipients[i], uint256(1)));
         }
         // Same for each Thirdweb ERC1155 data array
         for (uint256 i = 0; i < NUM_ERC1155_IDS; i++) {
             data_erc1155_thirdweb[i] = new bytes32[](NUM_RECIPIENTS);
             for (uint256 j = 0; j < NUM_RECIPIENTS; j++) {
-                if (tokenIds[j] == i) {
-                    data_erc1155_thirdweb[i][j] = keccak256(abi.encodePacked(recipients[j], amounts[j]));
+                if (_tokenIds[j] == i) {
+                    data_erc1155_thirdweb[i][j] = keccak256(abi.encodePacked(_recipients[j], _amounts[j]));
                 }
             }
         }

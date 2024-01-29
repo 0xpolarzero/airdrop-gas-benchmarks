@@ -4,15 +4,17 @@ pragma solidity 0.8.20;
 // Solady
 import {ERC20} from "@solady/tokens/ERC20.sol";
 import {ERC721} from "@solady/tokens/ERC721.sol";
+import {ERC1155} from "@solady/tokens/ERC1155.sol";
 import {MerkleProofLib} from "@solady/utils/MerkleProofLib.sol";
 import {Ownable} from "@solady/auth/Ownable.sol";
 
 /// @title AirdropClaimMerkle
-/// @notice ERC20 & ERC721 claimable with Merkle tree
+/// @notice ERC20, ERC721 & ERC1155 claimable with Merkle tree
 /// @dev Just an example - not audited
 contract AirdropClaimMerkle is Ownable {
     ERC20 public erc20;
     ERC721 public erc721;
+    ERC1155 public erc1155;
 
     /* -------------------------------------------------------------------------- */
     /*                                   ERRORS                                   */
@@ -22,6 +24,8 @@ contract AirdropClaimMerkle is Ownable {
     error AirdropClaimMerkle_AlreadyClaimed();
     /// @dev The account is not part of the merkle tree
     error AirdropClaimMerkle_NotInMerkle();
+    /// @dev The transfer of tokens failed
+    error AirdropClaimMerkle_TransferFailed();
 
     /* -------------------------------------------------------------------------- */
     /*                                   EVENTS                                   */
@@ -37,20 +41,26 @@ contract AirdropClaimMerkle is Ownable {
     /// @param tokenId of the ERC721 token claimed
     event ClaimedERC721(address indexed recipient, uint256 tokenId);
 
+    /// @dev Emitted after a successful ERC1155 claim
+    /// @param recipient of the ERC1155 tokens
+    /// @param tokenId of the ERC1155 token claimed
+    /// @param amount of tokens claimed
+    event ClaimedERC1155(address indexed recipient, uint256 tokenId, uint256 amount);
+
     /* -------------------------------------------------------------------------- */
     /*                                   STORAGE                                  */
     /* -------------------------------------------------------------------------- */
     /* -------------------------------- IMMUTABLE ------------------------------- */
-    /// @dev ERC20-claimee inclusion root
+    /// @dev ERCx-claimee inclusion root
     bytes32 public immutable merkleRoot_erc20;
-    /// @dev ERC721-claimee inclusion root
     bytes32 public immutable merkleRoot_erc721;
+    bytes32 public immutable merkleRoot_erc1155;
 
     /* ---------------------------------- STATE --------------------------------- */
-    /// @dev Whether account has claimed ERC20 tokens already
+    /// @dev Whether account has claimed their ERCx tokens already
     mapping(address account => bool claimed) public hasClaimed_erc20;
-    /// @dev Whether account has claimed ERC721 tokens already
     mapping(address account => bool claimed) public hasClaimed_erc721;
+    mapping(address account => bool claimed) public hasClaimed_erc1155;
 
     /* -------------------------------------------------------------------------- */
     /*                                 CONSTRUCTOR                                */
@@ -59,14 +69,25 @@ contract AirdropClaimMerkle is Ownable {
     /// @dev Initialize contract with token and merkle root
     /// @param _tokenERC20 to be claimed (ERC20 compatible)
     /// @param _tokenERC721 to be claimed (ERC721 compatible)
+    /// @param _tokenERC1155 to be claimed (ERC1155 compatible)
     /// @param _merkleRootERC20 inclusion root for ERC20-claimees
     /// @param _merkleRootERC721 inclusion root for ERC721-claimees
+    /// @param _merkleRootERC1155 inclusion root for ERC1155-claimees
     /// Note: Sets owner to deployer
-    constructor(ERC20 _tokenERC20, ERC721 _tokenERC721, bytes32 _merkleRootERC20, bytes32 _merkleRootERC721) {
+    constructor(
+        ERC20 _tokenERC20,
+        ERC721 _tokenERC721,
+        ERC1155 _tokenERC1155,
+        bytes32 _merkleRootERC20,
+        bytes32 _merkleRootERC721,
+        bytes32 _merkleRootERC1155
+    ) {
         erc20 = _tokenERC20;
         erc721 = _tokenERC721;
+        erc1155 = _tokenERC1155;
         merkleRoot_erc20 = _merkleRootERC20;
         merkleRoot_erc721 = _merkleRootERC721;
+        merkleRoot_erc1155 = _merkleRootERC1155;
 
         _initializeOwner(msg.sender);
     }
@@ -76,7 +97,7 @@ contract AirdropClaimMerkle is Ownable {
     /* -------------------------------------------------------------------------- */
 
     /// @dev Claim ERC20 tokens share as an account part of the merkle tree
-    /// @param _recipient address of claimee
+    /// @param _recipient address of claimee that will receive the tokens
     /// @param _amount of tokens to claim
     /// @param _proof merkle proof to prove the 2 above parameters are part of the merkle tree
     /// Note: Uses `verifyCalldata` from `MerkleProofLib` as it is cheaper
@@ -94,14 +115,15 @@ contract AirdropClaimMerkle is Ownable {
         // Mark account as claimed
         hasClaimed_erc20[_recipient] = true;
         // Transfer tokens to recipient
-        erc20.transfer(_recipient, _amount);
+        bool success = erc20.transfer(_recipient, _amount);
+        if (!success) revert AirdropClaimMerkle_TransferFailed();
 
         // Emit claim event
         emit ClaimedERC20(_recipient, _amount);
     }
 
     /// @dev Claim ERC721 token as an account part of the merkle tree
-    /// @param _recipient address of claimee
+    /// @param _recipient address of claimee that will receive the token
     /// @param _tokenId of the token to claim
     /// @param _proof merkle proof to prove the 2 above parameters are part of the merkle tree
     /// Note: Uses `verifyCalldata` from `MerkleProofLib` as it is cheaper
@@ -125,49 +147,45 @@ contract AirdropClaimMerkle is Ownable {
         emit ClaimedERC721(_recipient, _tokenId);
     }
 
-    /* -------------------------------------------------------------------------- */
-    /*                                  UTILITIES                                 */
-    /* -------------------------------------------------------------------------- */
+    /// @dev Claim ERC1155 tokens share as an account part of the merkle tree
+    /// @param _recipient address of claimee that will receive the tokens
+    /// @param _tokenId of the token to claim
+    /// @param _amount of tokens to claim
+    /// @param _proof merkle proof to prove the 3 above parameters are part of the merkle tree
+    /// Note: Uses `verifyCalldata` from `MerkleProofLib` as it is cheaper
+    function claimERC1155(address _recipient, uint256 _tokenId, uint256 _amount, bytes32[] calldata _proof) external {
+        // Throw if address has already claimed tokens
+        if (hasClaimed_erc1155[_recipient]) revert AirdropClaimMerkle_AlreadyClaimed();
 
-    /// @dev Returns a slice of `_bytes` with the first 64 bytes removed.
-    /// Note: Copied from Murky: https://github.com/dmfxyz/murky/blob/main/script/common/ScriptHelper.sol#L15
-    function ltrim64(bytes memory _bytes) internal pure returns (bytes memory) {
-        return slice(_bytes, 64, _bytes.length - 64);
+        // Generate leaf
+        bytes32 leaf = keccak256(abi.encodePacked(_recipient, _tokenId, _amount));
+
+        // Verify leaf is part of merkle tree given proof
+        bool isValidLeaf = MerkleProofLib.verifyCalldata(_proof, merkleRoot_erc1155, leaf);
+        if (!isValidLeaf) revert AirdropClaimMerkle_NotInMerkle();
+
+        // Mark account as claimed
+        hasClaimed_erc1155[_recipient] = true;
+        // Transfer tokens to recipient
+        erc1155.safeTransferFrom(address(this), _recipient, _tokenId, _amount, "");
+
+        // Emit claim event
+        emit ClaimedERC1155(_recipient, _tokenId, _amount);
     }
 
-    /// @dev Returns a slice of `_bytes` starting at index `_start` and of length `_length`.
-    /// Note: Copied from Murky: https://github.com/dmfxyz/murky/blob/main/script/common/ScriptHelper.sol#L21
-    /// referenece: https://github.com/GNSPS/solidity-bytes-utils/blob/6458fb2780a3092bc756e737f246be1de6d3d362/contracts/BytesLib.sol#L228
-    function slice(bytes memory _bytes, uint256 _start, uint256 _length) internal pure returns (bytes memory) {
-        require(_length + 31 >= _length, "slice_overflow");
-        require(_bytes.length >= _start + _length, "slice_outOfBounds");
+    /* -------------------------------------------------------------------------- */
+    /*                                   ERC1155                                  */
+    /* -------------------------------------------------------------------------- */
 
-        bytes memory tempBytes;
+    function onERC1155Received(address, address, uint256, uint256, bytes calldata) external pure returns (bytes4) {
+        return this.onERC1155Received.selector;
+    }
 
-        assembly {
-            switch iszero(_length)
-            case 0 {
-                tempBytes := mload(0x40)
-
-                let lengthmod := and(_length, 31)
-                let mc := add(add(tempBytes, lengthmod), mul(0x20, iszero(lengthmod)))
-                let end := add(mc, _length)
-
-                for { let cc := add(add(add(_bytes, lengthmod), mul(0x20, iszero(lengthmod))), _start) } lt(mc, end) {
-                    mc := add(mc, 0x20)
-                    cc := add(cc, 0x20)
-                } { mstore(mc, mload(cc)) }
-
-                mstore(tempBytes, _length)
-                mstore(0x40, and(add(mc, 31), not(31)))
-            }
-            default {
-                tempBytes := mload(0x40)
-
-                mstore(tempBytes, 0)
-                mstore(0x40, add(tempBytes, 0x20))
-            }
-        }
-        return tempBytes;
+    function onERC1155BatchReceived(address, address, uint256[] calldata, uint256[] calldata, bytes calldata)
+        external
+        pure
+        returns (bytes4)
+    {
+        return this.onERC1155BatchReceived.selector;
     }
 }

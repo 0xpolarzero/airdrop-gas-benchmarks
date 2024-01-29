@@ -47,6 +47,21 @@ contract Benchmarks_ERC1155 is Benchmarks_Base, ERC1155Holder {
 
     function test_ERC1155_AirdropClaimMerkle(uint256) public {
         setup();
+
+        // Deposit
+        uint256[] memory ids = new uint256[](NUM_ERC1155_IDS);
+        for (uint256 i = 0; i < NUM_ERC1155_IDS; i++) {
+            ids[i] = i;
+        }
+        erc1155.safeBatchTransferFrom(address(this), address(airdropClaimMerkle), ids, TOTAL_AMOUNTS_ERC1155, "");
+
+        // Claim
+        for (uint256 i = 0; i < RECIPIENTS.length; i++) {
+            bytes32[] memory proof = m.getProof(DATA_ERC1155, i);
+            // prank doesn't really matter as anyone can claim with a valid proof, since tokens are sent to the recipient
+            vm.prank(RECIPIENTS[i]);
+            airdropClaimMerkle.claimERC1155(RECIPIENTS[i], TOKEN_IDS_ERC1155[i], AMOUNTS[i], proof);
+        }
     }
 
     /* -------------------------------------------------------------------------- */
