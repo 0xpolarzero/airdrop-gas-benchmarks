@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "./Benchmarks.base.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {IAirdropERC20} from "src/thirdweb/deps/IAirdropERC20.sol";
 
 // See Benchmarks.base.sol for more info and to modify the amount of recipients to test with
 
@@ -13,6 +14,7 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 // 5. WENTOKENS
 // 6. GASLITE DROP
 // 7. BYTECODE DROP
+// 8. THIRDWEB AIRDROP
 
 contract Benchmarks_ERC20 is Benchmarks_Base {
     /* -------------------------------------------------------------------------- */
@@ -178,5 +180,28 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
         //         "test_ERC20_BytecodeDrop_FAILED"
         //     )
         // );
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /*                             8. THIRDWEB AIRDROP                            */
+    /* -------------------------------------------------------------------------- */
+
+    function test_ERC20_AirdropERC20Thirdweb(uint256) public {
+        setup();
+
+        // Airdrop
+        erc20.approve(address(thirdweb_airdropERC20), TOTAL_AMOUNT);
+        thirdweb_airdropERC20.airdropERC20(address(erc20), address(this), _toAirdropContent(RECIPIENTS, AMOUNTS));
+    }
+
+    function _toAirdropContent(address[] memory recipients, uint256[] memory amounts)
+        internal
+        pure
+        returns (IAirdropERC20.AirdropContent[] memory contents)
+    {
+        contents = new IAirdropERC20.AirdropContent[](recipients.length);
+        for (uint256 i = 0; i < recipients.length; i++) {
+            contents[i] = IAirdropERC20.AirdropContent({recipient: recipients[i], amount: amounts[i]});
+        }
     }
 }

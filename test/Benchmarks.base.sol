@@ -4,9 +4,11 @@ pragma solidity ^0.8.0;
 // Test Utils
 import {SoladyTest} from "solady/test/utils/SoladyTest.sol";
 import {StdCheats} from "forge-std/StdCheats.sol";
+import {console} from "forge-std/console.sol";
 
 // Libs
 import {LibPRNG} from "@solady/utils/LibPRNG.sol";
+import {LibClone} from "@solady/utils/LibClone.sol";
 import {Merkle} from "murky/src/Merkle.sol";
 
 // Mocks
@@ -52,6 +54,7 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
     Wentokens_Airdrop wentokens_airdrop;
     GasliteDrop gasliteDrop;
     BytecodeDrop bytecodeDrop;
+    Thirdweb_AirdropERC20 thirdweb_airdropERC20;
 
     // ERC20, ERC721
     address[] RECIPIENTS = new address[](NUM_RECIPIENTS);
@@ -114,6 +117,10 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
         wentokens_airdrop = new Wentokens_Airdrop();
         gasliteDrop = new GasliteDrop();
         bytecodeDrop = new BytecodeDrop();
+
+        Thirdweb_AirdropERC20 thirdweb_airdropERC20Impl = new Thirdweb_AirdropERC20();
+        thirdweb_airdropERC20 = Thirdweb_AirdropERC20(LibClone.deployERC1967(address(thirdweb_airdropERC20Impl)));
+        thirdweb_airdropERC20.initialize(address(this), "https://example.com", new address[](0));
     }
 
     /* -------------------------------------------------------------------------- */
