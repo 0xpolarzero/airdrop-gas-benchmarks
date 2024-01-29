@@ -195,14 +195,14 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
         thirdweb_airdropERC20.airdropERC20(address(erc20), address(this), _toAirdropContent(RECIPIENTS, AMOUNTS));
     }
 
-    function _toAirdropContent(address[] memory recipients, uint256[] memory amounts)
+    function _toAirdropContent(address[] memory _recipients, uint256[] memory _amounts)
         internal
         pure
         returns (IAirdropERC20.AirdropContent[] memory contents)
     {
-        contents = new IAirdropERC20.AirdropContent[](recipients.length);
-        for (uint256 i = 0; i < recipients.length; i++) {
-            contents[i] = IAirdropERC20.AirdropContent({recipient: recipients[i], amount: amounts[i]});
+        contents = new IAirdropERC20.AirdropContent[](_recipients.length);
+        for (uint256 i = 0; i < _recipients.length; i++) {
+            contents[i] = IAirdropERC20.AirdropContent({recipient: _recipients[i], amount: _amounts[i]});
         }
     }
 
