@@ -79,6 +79,7 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
     // ERC1155
     uint256[] TOKEN_IDS_ERC1155 = new uint256[](NUM_RECIPIENTS);
     uint256[] TOTAL_AMOUNTS_ERC1155 = new uint256[](NUM_ERC1155_IDS);
+    uint256[] TOKEN_IDS_AT_INDEX_ERC1155 = new uint256[](NUM_ERC1155_IDS);
 
     // Merkle
     bytes32 ROOT_ERC20;
@@ -124,8 +125,15 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
 
     function _generate() internal virtual {
         // Generate random airdrop data
-        (RECIPIENTS, AMOUNTS, TOTAL_AMOUNT_ERC20, TOKEN_IDS_ERC721, TOKEN_IDS_ERC1155, TOTAL_AMOUNTS_ERC1155) =
-            _randomData();
+        (
+            RECIPIENTS,
+            AMOUNTS,
+            TOTAL_AMOUNT_ERC20,
+            TOKEN_IDS_ERC721,
+            TOKEN_IDS_ERC1155,
+            TOTAL_AMOUNTS_ERC1155,
+            TOKEN_IDS_AT_INDEX_ERC1155
+        ) = _randomData();
         // Generate Merkle data
         m = new Merkle();
         (ROOT_ERC20, ROOT_ERC721, ROOT_ERC1155, DATA_ERC20, DATA_ERC721, DATA_ERC1155) =
@@ -141,12 +149,10 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
         // Deploy contracts
         erc20 = new Mock_ERC20(TOTAL_AMOUNT_ERC20);
         erc721 = new Mock_ERC721(TOKEN_IDS_ERC721);
-
-        uint256[] memory ids = new uint256[](NUM_ERC1155_IDS);
-        for (uint256 i = 0; i < NUM_ERC1155_IDS; i++) {
-            ids[i] = i;
+        // Don't deploy if it's not an ERC1155 test (non ERC1155 receiver)
+        if (testType == TEST_TYPE.ERC1155) {
+            erc1155 = new Mock_ERC1155(TOKEN_IDS_AT_INDEX_ERC1155, TOTAL_AMOUNTS_ERC1155);
         }
-        erc1155 = new Mock_ERC1155(ids, TOTAL_AMOUNTS_ERC1155);
 
         airdropClaimMapping = new AirdropClaimMapping(erc20, erc721, erc1155);
         airdropClaimMerkle = new AirdropClaimMerkle(erc20, erc721, erc1155, ROOT_ERC20, ROOT_ERC721, ROOT_ERC1155);
@@ -156,10 +162,10 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
         gasliteDrop1155 = new GasliteDrop1155();
         bytecodeDrop = new BytecodeDrop();
 
-        _deployThirdwebProxiesAndInit(ids);
+        _deployThirdwebProxiesAndInit();
     }
 
-    function _deployThirdwebProxiesAndInit(uint256[] memory _ids) internal {
+    function _deployThirdwebProxiesAndInit() internal {
         // Deploy proxies
         thirdweb_airdropERC20 = Thirdweb_AirdropERC20(LibClone.deployERC1967(address(new Thirdweb_AirdropERC20())));
         thirdweb_airdropERC20Claimable =
@@ -186,7 +192,7 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
             new address[](0),
             address(this),
             address(erc1155),
-            _ids,
+            TOKEN_IDS_AT_INDEX_ERC1155,
             TOTAL_AMOUNTS_ERC1155,
             0,
             new uint256[](NUM_ERC1155_IDS),
@@ -209,7 +215,8 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
             uint256 totalAmount_erc20,
             uint256[] memory tokenIds_erc721,
             uint256[] memory tokenIds_erc1155,
-            uint256[] memory totalAmounts_erc1155
+            uint256[] memory totalAmounts_erc1155,
+            uint256[] memory tokenIdsAtIndex_erc1155
         )
     {
         // Initialize PRNG
@@ -241,6 +248,12 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
             // Bound id: 0 <= id <= NUM_ERC1155_IDS
             tokenIds_erc1155[i] = prng.next() % NUM_ERC1155_IDS;
             totalAmounts_erc1155[tokenIds_erc1155[i]] += amounts[i];
+        }
+
+        // Just set the ids array
+        tokenIdsAtIndex_erc1155 = new uint256[](NUM_ERC1155_IDS);
+        for (uint256 i = 0; i < NUM_ERC1155_IDS; i++) {
+            tokenIdsAtIndex_erc1155[i] = i;
         }
     }
 
