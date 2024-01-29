@@ -102,7 +102,7 @@ contract Benchmarks_ERC721 is Benchmarks_Base {
     /*                             5. THIRDWEB AIRDROP                            */
     /* -------------------------------------------------------------------------- */
 
-    function test_ERC721_ThirdwebAirdrop(uint256) public {
+    function test_ERC721_AirdropERC721Thirdweb(uint256) public {
         setup();
 
         // Airdrop
@@ -118,6 +118,27 @@ contract Benchmarks_ERC721 is Benchmarks_Base {
         contents = new IAirdropERC721.AirdropContent[](_recipients.length);
         for (uint256 i = 0; i < _recipients.length; i++) {
             contents[i] = IAirdropERC721.AirdropContent({recipient: _recipients[i], tokenId: _tokenIds[i]});
+        }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /*                             6. THIRDWEB CLAIM                              */
+    /* -------------------------------------------------------------------------- */
+
+    function test_ERC721_AirdropERC721ClaimableThirdweb(uint256) public {
+        setup();
+
+        // Airdrop
+        erc721.setApprovalForAll(address(thirdweb_airdropERC721Claimable), true);
+
+        // Claim
+        for (uint256 i = 0; i < RECIPIENTS.length; i++) {
+            bytes32[] memory proof = m.getProof(DATA_ERC721_THIRDWEB, i);
+            // prank doesn't really matter as anyone can claim with a valid proof, since tokens are sent to the recipient
+            vm.prank(RECIPIENTS[i]);
+            // You can't claim a specific token with this contract, but you can get a specific quantity
+            // which is basically a mint
+            thirdweb_airdropERC721Claimable.claim(RECIPIENTS[i], 1, proof, 1);
         }
     }
 }

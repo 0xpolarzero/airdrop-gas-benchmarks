@@ -28,6 +28,7 @@ import {GasliteDrop} from "src/GasliteDrop.sol";
 import {AirdropERC20 as Thirdweb_AirdropERC20} from "src/thirdweb/AirdropERC20.sol";
 import {AirdropERC20Claimable as Thirdweb_AirdropERC20Claimable} from "src/thirdweb/AirdropERC20Claimable.sol";
 import {AirdropERC721 as Thirdweb_AirdropERC721} from "src/thirdweb/AirdropERC721.sol";
+import {AirdropERC721Claimable as Thirdweb_AirdropERC721Claimable} from "src/thirdweb/AirdropERC721Claimable.sol";
 
 // maybe will need return additional parameters (like with ERC721, ERC1155) so inherited will retrieve only part of the return data
 // can actually keep all contracts but rename Token => ERC20Token, ERC721Token, etc
@@ -59,6 +60,7 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
     Thirdweb_AirdropERC20 thirdweb_airdropERC20;
     Thirdweb_AirdropERC20Claimable thirdweb_airdropERC20Claimable;
     Thirdweb_AirdropERC721 thirdweb_airdropERC721;
+    Thirdweb_AirdropERC721Claimable thirdweb_airdropERC721Claimable;
 
     // ERC20, ERC721
     address[] RECIPIENTS = new address[](NUM_RECIPIENTS);
@@ -73,6 +75,9 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
     bytes32 ROOT_ERC721;
     bytes32[] DATA_ERC20 = new bytes32[](NUM_RECIPIENTS);
     bytes32[] DATA_ERC721 = new bytes32[](NUM_RECIPIENTS);
+    // We need special variables for Thirdweb because it doesn't actually transfer specific tokens, but only specific quantities
+    bytes32 ROOT_ERC721_THIRDWEB;
+    bytes32[] DATA_ERC721_THIRDWEB = new bytes32[](NUM_RECIPIENTS);
 
     // Signature
     address SIGNER;
@@ -106,7 +111,8 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
         (RECIPIENTS, AMOUNTS, TOTAL_AMOUNT, TOKEN_IDS) = _randomData();
         // Generate Merkle data
         m = new Merkle();
-        (ROOT_ERC20, ROOT_ERC721, DATA_ERC20, DATA_ERC721) = _generateMerkleData(RECIPIENTS, AMOUNTS, TOKEN_IDS);
+        (ROOT_ERC20, ROOT_ERC721, ROOT_ERC721_THIRDWEB, DATA_ERC20, DATA_ERC721, DATA_ERC721_THIRDWEB) =
+            _generateMerkleData(RECIPIENTS, AMOUNTS, TOKEN_IDS);
         // Generate signature data
         (SIGNER, SIGNER_KEY) = _randomSigner();
     }
@@ -131,6 +137,8 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
         thirdweb_airdropERC20Claimable =
             Thirdweb_AirdropERC20Claimable(LibClone.deployERC1967(address(new Thirdweb_AirdropERC20Claimable())));
         thirdweb_airdropERC721 = Thirdweb_AirdropERC721(LibClone.deployERC1967(address(new Thirdweb_AirdropERC721())));
+        thirdweb_airdropERC721Claimable =
+            Thirdweb_AirdropERC721Claimable(LibClone.deployERC1967(address(new Thirdweb_AirdropERC721Claimable())));
 
         // Initialize
         thirdweb_airdropERC20.initialize(address(this), "https://example.com", new address[](0));
@@ -138,6 +146,9 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
             new address[](0), address(this), address(erc20), TOTAL_AMOUNT, 0, 0, ROOT_ERC20
         );
         thirdweb_airdropERC721.initialize(address(this), "https://example.com", new address[](0));
+        thirdweb_airdropERC721Claimable.initialize(
+            new address[](0), address(this), address(erc721), TOKEN_IDS, 0, 0, ROOT_ERC721_THIRDWEB
+        );
     }
 
     /* -------------------------------------------------------------------------- */
@@ -174,19 +185,31 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
         internal
         view
         virtual
-        returns (bytes32 root_erc20, bytes32 root_erc721, bytes32[] memory data_erc20, bytes32[] memory data_erc721)
+        returns (
+            bytes32 root_erc20,
+            bytes32 root_erc721,
+            bytes32 root_erc721_thirdweb,
+            bytes32[] memory data_erc20,
+            bytes32[] memory data_erc721,
+            bytes32[] memory data_erc721_thirdweb
+        )
     {
         data_erc20 = new bytes32[](NUM_RECIPIENTS);
         data_erc721 = new bytes32[](NUM_RECIPIENTS);
+        // Thirdweb needs a specific array because it doesn't actually transfer specific tokens, but only specific quantities
+        // We will use a quantity of 1 for each recipient
+        data_erc721_thirdweb = new bytes32[](NUM_RECIPIENTS);
 
         // Populate data array with leaf hashes
         for (uint256 i = 0; i < NUM_RECIPIENTS; i++) {
             data_erc20[i] = keccak256(abi.encodePacked(recipients[i], amounts[i]));
             data_erc721[i] = keccak256(abi.encodePacked(recipients[i], tokenIds[i]));
+            data_erc721_thirdweb[i] = keccak256(abi.encodePacked(recipients[i], uint256(1)));
         }
 
         // Get the Merkle root
         root_erc20 = m.getRoot(data_erc20);
         root_erc721 = m.getRoot(data_erc721);
+        root_erc721_thirdweb = m.getRoot(data_erc721_thirdweb);
     }
 }
