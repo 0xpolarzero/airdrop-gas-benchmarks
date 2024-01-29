@@ -34,7 +34,7 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
         setup();
 
         // Deposit and set mapping
-        erc20.approve((address(airdropClaimMapping)), TOTAL_AMOUNT);
+        erc20.approve((address(airdropClaimMapping)), TOTAL_AMOUNT_ERC20);
         airdropClaimMapping.airdropERC20(RECIPIENTS, AMOUNTS);
 
         // Claim
@@ -52,7 +52,7 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
         setup();
 
         // Deposit
-        erc20.transfer(address(airdropClaimMerkle), TOTAL_AMOUNT);
+        erc20.transfer(address(airdropClaimMerkle), TOTAL_AMOUNT_ERC20);
 
         // Claim
         for (uint256 i = 0; i < RECIPIENTS.length; i++) {
@@ -71,7 +71,7 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
         setup();
 
         // Deposit
-        erc20.transfer(address(airdropClaimSignature), TOTAL_AMOUNT);
+        erc20.transfer(address(airdropClaimSignature), TOTAL_AMOUNT_ERC20);
 
         // Claim
         for (uint256 i = 0; i < RECIPIENTS.length; i++) {
@@ -94,7 +94,7 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
         setup();
         // Deploy Disperse with cheatcode because of the pragma solidity ^0.4.25
         address deployed = deployCode("Disperse.sol");
-        erc20.approve(deployed, TOTAL_AMOUNT);
+        erc20.approve(deployed, TOTAL_AMOUNT_ERC20);
 
         // Airdrop ("disperse")
         (bool success,) = deployed.call(
@@ -107,7 +107,7 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
         setup();
         // Deploy Disperse with cheatcode because of the pragma solidity ^0.4.25
         address deployed = deployCode("Disperse.sol");
-        erc20.approve(deployed, TOTAL_AMOUNT);
+        erc20.approve(deployed, TOTAL_AMOUNT_ERC20);
 
         // Airdrop ("disperse")
 
@@ -128,8 +128,8 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
         setup();
 
         // Airdrop
-        erc20.approve(address(wentokens_airdrop), TOTAL_AMOUNT);
-        wentokens_airdrop.airdropERC20(IERC20(address(erc20)), RECIPIENTS, AMOUNTS, TOTAL_AMOUNT);
+        erc20.approve(address(wentokens_airdrop), TOTAL_AMOUNT_ERC20);
+        wentokens_airdrop.airdropERC20(IERC20(address(erc20)), RECIPIENTS, AMOUNTS, TOTAL_AMOUNT_ERC20);
     }
 
     /* -------------------------------------------------------------------------- */
@@ -140,8 +140,8 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
         setup();
 
         // Airdrop
-        erc20.approve(address(gasliteDrop), TOTAL_AMOUNT);
-        gasliteDrop.airdropERC20(address(erc20), RECIPIENTS, AMOUNTS, TOTAL_AMOUNT);
+        erc20.approve(address(gasliteDrop), TOTAL_AMOUNT_ERC20);
+        gasliteDrop.airdropERC20(address(erc20), RECIPIENTS, AMOUNTS, TOTAL_AMOUNT_ERC20);
     }
 
     /* -------------------------------------------------------------------------- */
@@ -157,16 +157,16 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
         // console.log("Deployment: %s gas", gasUsed);
 
         // Airdrop
-        erc20.approve(address(bytecodeDrop), TOTAL_AMOUNT);
+        erc20.approve(address(bytecodeDrop), TOTAL_AMOUNT_ERC20);
         // console.log(
         //     "Approval: %s gas",
         //     _callAndReturnGas(
         //         address(erc20),
-        //         abi.encodeWithSignature("approve(address,uint256)", deployed, TOTAL_AMOUNT),
+        //         abi.encodeWithSignature("approve(address,uint256)", deployed, TOTAL_AMOUNT_ERC20),
         //         "test_ERC20_BytecodeDrop_FAILED"
         //     )
         // );
-        bytecodeDrop.airdropERC20(address(erc20), RECIPIENTS, AMOUNTS, TOTAL_AMOUNT);
+        bytecodeDrop.airdropERC20(address(erc20), RECIPIENTS, AMOUNTS, TOTAL_AMOUNT_ERC20);
         // console.log(
         //     "Airdrop: %s gas",
         //     _callAndReturnGas(
@@ -176,7 +176,7 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
         //             address(erc20),
         //             RECIPIENTS,
         //             AMOUNTS,
-        //             TOTAL_AMOUNT
+        //             TOTAL_AMOUNT_ERC20
         //         ),
         //         "test_ERC20_BytecodeDrop_FAILED"
         //     )
@@ -191,7 +191,7 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
         setup();
 
         // Airdrop
-        erc20.approve(address(thirdweb_airdropERC20), TOTAL_AMOUNT);
+        erc20.approve(address(thirdweb_airdropERC20), TOTAL_AMOUNT_ERC20);
         thirdweb_airdropERC20.airdropERC20(address(erc20), address(this), _toAirdropContent(RECIPIENTS, AMOUNTS));
     }
 
@@ -214,7 +214,7 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
         setup();
 
         // Approve
-        erc20.approve(address(thirdweb_airdropERC20Claimable), TOTAL_AMOUNT);
+        erc20.approve(address(thirdweb_airdropERC20Claimable), TOTAL_AMOUNT_ERC20);
 
         // Claim
         for (uint256 i = 0; i < RECIPIENTS.length; i++) {

@@ -14,6 +14,7 @@ import {Merkle} from "murky/src/Merkle.sol";
 // Mocks
 import {Mock_ERC20} from "test/mocks/Mock_ERC20.sol";
 import {Mock_ERC721} from "test/mocks/Mock_ERC721.sol";
+import {Mock_ERC1155} from "test/mocks/Mock_ERC1155.sol";
 
 // Tested contracts
 import {AirdropClaimMapping} from "src/AirdropClaimMapping.sol";
@@ -24,6 +25,7 @@ import {BytecodeDrop} from "src/BytecodeDrop.sol";
 import {Airdrop as Wentokens_Airdrop} from "src/Wentokens.sol";
 // Gaslite
 import {GasliteDrop} from "src/GasliteDrop.sol";
+import {GasliteDrop1155} from "src/GasliteDrop1155.sol";
 // Thirdweb
 import {AirdropERC20 as Thirdweb_AirdropERC20} from "src/thirdweb/AirdropERC20.sol";
 import {AirdropERC20Claimable as Thirdweb_AirdropERC20Claimable} from "src/thirdweb/AirdropERC20Claimable.sol";
@@ -43,12 +45,15 @@ import {AirdropERC721Claimable as Thirdweb_AirdropERC721Claimable} from "src/thi
 
 /// @dev Customize the amount of recipients to test with
 uint256 constant NUM_RECIPIENTS = 1000;
+/// @dev Customize the amount of different ERC1155 ids to distribute
+uint256 constant NUM_ERC1155_IDS = 20;
 
 abstract contract Benchmarks_Base is SoladyTest, StdCheats {
     using LibPRNG for LibPRNG.PRNG;
 
     Mock_ERC20 erc20;
     Mock_ERC721 erc721;
+    Mock_ERC1155 erc1155;
     Merkle m;
 
     AirdropClaimMapping airdropClaimMapping;
@@ -56,19 +61,24 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
     AirdropClaimSignature airdropClaimSignature;
     Wentokens_Airdrop wentokens_airdrop;
     GasliteDrop gasliteDrop;
+    GasliteDrop1155 gasliteDrop1155;
     BytecodeDrop bytecodeDrop;
     Thirdweb_AirdropERC20 thirdweb_airdropERC20;
     Thirdweb_AirdropERC20Claimable thirdweb_airdropERC20Claimable;
     Thirdweb_AirdropERC721 thirdweb_airdropERC721;
     Thirdweb_AirdropERC721Claimable thirdweb_airdropERC721Claimable;
 
-    // ERC20, ERC721
+    // ERC20, ERC721, ERC1155
     address[] RECIPIENTS = new address[](NUM_RECIPIENTS);
-    // ERC20
+    // ERC20, ERC1155
     uint256[] AMOUNTS = new uint256[](NUM_RECIPIENTS);
-    uint256 TOTAL_AMOUNT;
+    // ERC20
+    uint256 TOTAL_AMOUNT_ERC20;
     // ERC721
-    uint256[] TOKEN_IDS = new uint256[](NUM_RECIPIENTS);
+    uint256[] TOKEN_IDS_ERC721 = new uint256[](NUM_RECIPIENTS);
+    // ERC1155
+    uint256[] TOKEN_IDS_ERC1155 = new uint256[](NUM_RECIPIENTS);
+    uint256[] TOTAL_AMOUNTS_ERC1155 = new uint256[](NUM_ERC1155_IDS);
 
     // Merkle
     bytes32 ROOT_ERC20;
@@ -86,7 +96,8 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
     enum TEST_TYPE {
         ETH,
         ERC20,
-        ERC721
+        ERC721,
+        ERC1155
     }
 
     TEST_TYPE testType;
@@ -108,24 +119,27 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
 
     function _generate() internal virtual {
         // Generate random airdrop data
-        (RECIPIENTS, AMOUNTS, TOTAL_AMOUNT, TOKEN_IDS) = _randomData();
+        (RECIPIENTS, AMOUNTS, TOTAL_AMOUNT_ERC20, TOKEN_IDS_ERC721, TOKEN_IDS_ERC1155, TOTAL_AMOUNTS_ERC1155) =
+            _randomData();
         // Generate Merkle data
         m = new Merkle();
         (ROOT_ERC20, ROOT_ERC721, ROOT_ERC721_THIRDWEB, DATA_ERC20, DATA_ERC721, DATA_ERC721_THIRDWEB) =
-            _generateMerkleData(RECIPIENTS, AMOUNTS, TOKEN_IDS);
+            _generateMerkleData(RECIPIENTS, AMOUNTS, TOKEN_IDS_ERC721);
         // Generate signature data
         (SIGNER, SIGNER_KEY) = _randomSigner();
     }
 
     function _deploy() internal virtual {
         // Deploy contracts
-        erc20 = new Mock_ERC20(TOTAL_AMOUNT);
-        erc721 = new Mock_ERC721(TOKEN_IDS);
+        erc20 = new Mock_ERC20(TOTAL_AMOUNT_ERC20);
+        erc721 = new Mock_ERC721(TOKEN_IDS_ERC721);
+        erc1155 = new Mock_ERC1155(TOTAL_AMOUNTS_ERC1155);
         airdropClaimMapping = new AirdropClaimMapping(erc20, erc721);
         airdropClaimMerkle = new AirdropClaimMerkle(erc20, erc721, ROOT_ERC20, ROOT_ERC721);
         airdropClaimSignature = new AirdropClaimSignature(erc20, erc721, SIGNER);
         wentokens_airdrop = new Wentokens_Airdrop();
         gasliteDrop = new GasliteDrop();
+        gasliteDrop1155 = new GasliteDrop1155();
         bytecodeDrop = new BytecodeDrop();
 
         _deployThirdwebProxiesAndInit();
@@ -143,11 +157,11 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
         // Initialize
         thirdweb_airdropERC20.initialize(address(this), "https://example.com", new address[](0));
         thirdweb_airdropERC20Claimable.initialize(
-            new address[](0), address(this), address(erc20), TOTAL_AMOUNT, 0, 0, ROOT_ERC20
+            new address[](0), address(this), address(erc20), TOTAL_AMOUNT_ERC20, 0, 0, ROOT_ERC20
         );
         thirdweb_airdropERC721.initialize(address(this), "https://example.com", new address[](0));
         thirdweb_airdropERC721Claimable.initialize(
-            new address[](0), address(this), address(erc721), TOKEN_IDS, 0, 0, ROOT_ERC721_THIRDWEB
+            new address[](0), address(this), address(erc721), TOKEN_IDS_ERC721, 0, 0, ROOT_ERC721_THIRDWEB
         );
     }
 
@@ -160,24 +174,61 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
     function _randomData()
         internal
         virtual
-        returns (address[] memory recipients, uint256[] memory amounts, uint256 totalAmount, uint256[] memory tokenIds)
+        returns (
+            address[] memory recipients,
+            uint256[] memory amounts,
+            uint256 totalAmount_erc20,
+            uint256[] memory tokenIds_erc721,
+            uint256[] memory tokenIds_erc1155,
+            uint256[] memory totalAmounts_erc1155
+        )
     {
         // Initialize PRNG
         LibPRNG.PRNG memory prng = LibPRNG.PRNG(_random());
         // Initialize arrays
         recipients = new address[](NUM_RECIPIENTS);
         amounts = new uint256[](NUM_RECIPIENTS);
-        tokenIds = new uint256[](NUM_RECIPIENTS);
+        tokenIds_erc721 = new uint256[](NUM_RECIPIENTS);
+        tokenIds_erc1155 = new uint256[](NUM_RECIPIENTS);
+        totalAmounts_erc1155 = new uint256[](NUM_ERC1155_IDS);
 
         // Populate arrays with random data
         for (uint256 i = 0; i < NUM_RECIPIENTS; i++) {
+            // ERC20, ERC721, ERC1155
             recipients[i] = address(uint160(prng.next() % 2 ** 160));
 
-            // Bound amount: 1e10 <= amount <= 1e19
-            amounts[i] = _bound(prng.next(), 1e10, 1e19);
-            totalAmount += amounts[i];
+            // ERC20, ERC1155
+            // Get a random or similar amount (more realistic as multiple recipients would often receive the same amount)
+            // Solady's `_random()` would do this, but with not enough similarity
+            amounts[i] = _getRandomOrSimilarAmount(prng, amounts, i);
 
-            tokenIds[i] = i;
+            // ERC20
+            totalAmount_erc20 += amounts[i];
+
+            // ERC721
+            tokenIds_erc721[i] = i;
+
+            // ERC1155
+            // Bound id: 0 <= id <= NUM_ERC1155_IDS
+            tokenIds_erc1155[i] = prng.next() % NUM_ERC1155_IDS;
+            totalAmounts_erc1155[tokenIds_erc1155[i]] += amounts[i];
+        }
+    }
+
+    function _getRandomOrSimilarAmount(LibPRNG.PRNG memory _prng, uint256[] memory _amounts, uint256 _index)
+        internal
+        virtual
+        returns (uint256 amount)
+    {
+        // Bound amount: 1e10 <= amount <= 1e19
+        amount = _bound(_prng.next(), 1e10, 1e19);
+
+        // 60% chance of returning an amount already used
+        // This will produce realistic results as this is associated with the {1/NUM_TOKEN_IDS}
+        // probability of getting the same id as the copied amount
+        // e.g. with 1,000 recipients and 20 ids, we get an average of 14% of similar amounts on the same id
+        if (_index > 0 && _prng.next() % 100 < 60) {
+            amount = _amounts[_prng.next() % _index];
         }
     }
 

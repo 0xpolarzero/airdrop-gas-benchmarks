@@ -28,7 +28,7 @@ contract Benchmarks_ETH is Benchmarks_Base {
         address deployed = deployCode("Disperse.sol");
 
         // Airdrop ("disperse")
-        (bool success,) = deployed.call{value: TOTAL_AMOUNT}(
+        (bool success,) = deployed.call{value: TOTAL_AMOUNT_ERC20}(
             abi.encodeWithSignature("disperseEther(address[],uint256[])", RECIPIENTS, AMOUNTS)
         );
         if (!success) revert("test_ETH_Disperse_FAILED");
@@ -42,7 +42,7 @@ contract Benchmarks_ETH is Benchmarks_Base {
         setup();
 
         // Airdrop
-        wentokens_airdrop.airdropETH{value: TOTAL_AMOUNT}(RECIPIENTS, AMOUNTS);
+        wentokens_airdrop.airdropETH{value: TOTAL_AMOUNT_ERC20}(RECIPIENTS, AMOUNTS);
     }
 
     /* -------------------------------------------------------------------------- */
@@ -53,6 +53,6 @@ contract Benchmarks_ETH is Benchmarks_Base {
         setup();
 
         // Airdrop
-        gasliteDrop.airdropETH{value: TOTAL_AMOUNT}(RECIPIENTS, AMOUNTS);
+        gasliteDrop.airdropETH{value: TOTAL_AMOUNT_ERC20}(RECIPIENTS, AMOUNTS);
     }
 }
