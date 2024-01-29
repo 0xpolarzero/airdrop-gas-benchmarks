@@ -31,17 +31,15 @@ import {AirdropERC20 as Thirdweb_AirdropERC20} from "src/thirdweb/AirdropERC20.s
 import {AirdropERC20Claimable as Thirdweb_AirdropERC20Claimable} from "src/thirdweb/AirdropERC20Claimable.sol";
 import {AirdropERC721 as Thirdweb_AirdropERC721} from "src/thirdweb/AirdropERC721.sol";
 import {AirdropERC721Claimable as Thirdweb_AirdropERC721Claimable} from "src/thirdweb/AirdropERC721Claimable.sol";
-
-// maybe will need return additional parameters (like with ERC721, ERC1155) so inherited will retrieve only part of the return data
-// can actually keep all contracts but rename Token => ERC20Token, ERC721Token, etc
-// same for merkle data
-// same for signature data
-// Actually can only implement the tests in inherited contracts, and maybe override (e.g. ERC721, even if might call super to get some of the data)
+import {AirdropERC1155 as Thirdweb_AirdropERC1155} from "src/thirdweb/AirdropERC1155.sol";
+import {AirdropERC1155Claimable as Thirdweb_AirdropERC1155Claimable} from "src/thirdweb/AirdropERC1155Claimable.sol";
 
 /// @dev Test with n recipients
 /// Note: This is an extremely simplistic approach to measuring gas costs.
 /// This, for instance is a much better approach by emo.eth:
 /// https://github.com/emo-eth/forge-gas-metering
+/// But this won't (as of 2024-01) allow for multiple calls to be measured in a single test
+/// A better way right now would be to use Hardhat's gas reporter; which you can actually find in this repo.
 
 /// @dev Customize the amount of recipients to test with
 uint256 constant NUM_RECIPIENTS = 1000;
@@ -67,6 +65,8 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
     Thirdweb_AirdropERC20Claimable thirdweb_airdropERC20Claimable;
     Thirdweb_AirdropERC721 thirdweb_airdropERC721;
     Thirdweb_AirdropERC721Claimable thirdweb_airdropERC721Claimable;
+    Thirdweb_AirdropERC1155 thirdweb_airdropERC1155;
+    Thirdweb_AirdropERC1155Claimable thirdweb_airdropERC1155Claimable;
 
     // ERC20, ERC721, ERC1155
     address[] RECIPIENTS = new address[](NUM_RECIPIENTS);
@@ -88,6 +88,9 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
     // We need special variables for Thirdweb because it doesn't actually transfer specific tokens, but only specific quantities
     bytes32 ROOT_ERC721_THIRDWEB;
     bytes32[] DATA_ERC721_THIRDWEB = new bytes32[](NUM_RECIPIENTS);
+    // Thirdweb also takes a series of roots for ERC1155 (one for each id)
+    bytes32[] ROOT_ERC1155_THIRDWEB = new bytes32[](NUM_ERC1155_IDS);
+    bytes32[][] DATA_ERC1155_THIRDWEB = new bytes32[][](NUM_ERC1155_IDS);
 
     // Signature
     address SIGNER;
@@ -123,8 +126,10 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
             _randomData();
         // Generate Merkle data
         m = new Merkle();
-        (ROOT_ERC20, ROOT_ERC721, ROOT_ERC721_THIRDWEB, DATA_ERC20, DATA_ERC721, DATA_ERC721_THIRDWEB) =
-            _generateMerkleData(RECIPIENTS, AMOUNTS, TOKEN_IDS_ERC721);
+        (ROOT_ERC20, ROOT_ERC721, DATA_ERC20, DATA_ERC721) = _generateMerkleData(RECIPIENTS, AMOUNTS, TOKEN_IDS_ERC721);
+        // Generate Thirdweb Merkle data that doesn't fit the way above
+        (ROOT_ERC721_THIRDWEB, ROOT_ERC1155_THIRDWEB, DATA_ERC721_THIRDWEB, DATA_ERC1155_THIRDWEB) =
+            _thirdweb_generateMerkleData(RECIPIENTS, AMOUNTS, TOKEN_IDS_ERC1155);
         // Generate signature data
         (SIGNER, SIGNER_KEY) = _randomSigner();
     }
@@ -133,7 +138,13 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
         // Deploy contracts
         erc20 = new Mock_ERC20(TOTAL_AMOUNT_ERC20);
         erc721 = new Mock_ERC721(TOKEN_IDS_ERC721);
-        erc1155 = new Mock_ERC1155(TOTAL_AMOUNTS_ERC1155);
+
+        uint256[] memory ids = new uint256[](NUM_ERC1155_IDS);
+        for (uint256 i = 0; i < NUM_ERC1155_IDS; i++) {
+            ids[i] = i;
+        }
+        erc1155 = new Mock_ERC1155(ids, TOTAL_AMOUNTS_ERC1155);
+
         airdropClaimMapping = new AirdropClaimMapping(erc20, erc721);
         airdropClaimMerkle = new AirdropClaimMerkle(erc20, erc721, ROOT_ERC20, ROOT_ERC721);
         airdropClaimSignature = new AirdropClaimSignature(erc20, erc721, SIGNER);
@@ -142,10 +153,10 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
         gasliteDrop1155 = new GasliteDrop1155();
         bytecodeDrop = new BytecodeDrop();
 
-        _deployThirdwebProxiesAndInit();
+        _deployThirdwebProxiesAndInit(ids);
     }
 
-    function _deployThirdwebProxiesAndInit() internal {
+    function _deployThirdwebProxiesAndInit(uint256[] memory _ids) internal {
         // Deploy proxies
         thirdweb_airdropERC20 = Thirdweb_AirdropERC20(LibClone.deployERC1967(address(new Thirdweb_AirdropERC20())));
         thirdweb_airdropERC20Claimable =
@@ -153,6 +164,10 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
         thirdweb_airdropERC721 = Thirdweb_AirdropERC721(LibClone.deployERC1967(address(new Thirdweb_AirdropERC721())));
         thirdweb_airdropERC721Claimable =
             Thirdweb_AirdropERC721Claimable(LibClone.deployERC1967(address(new Thirdweb_AirdropERC721Claimable())));
+        thirdweb_airdropERC1155 =
+            Thirdweb_AirdropERC1155(LibClone.deployERC1967(address(new Thirdweb_AirdropERC1155())));
+        thirdweb_airdropERC1155Claimable =
+            Thirdweb_AirdropERC1155Claimable(LibClone.deployERC1967(address(new Thirdweb_AirdropERC1155Claimable())));
 
         // Initialize
         thirdweb_airdropERC20.initialize(address(this), "https://example.com", new address[](0));
@@ -162,6 +177,17 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
         thirdweb_airdropERC721.initialize(address(this), "https://example.com", new address[](0));
         thirdweb_airdropERC721Claimable.initialize(
             new address[](0), address(this), address(erc721), TOKEN_IDS_ERC721, 0, 0, ROOT_ERC721_THIRDWEB
+        );
+        thirdweb_airdropERC1155.initialize(address(this), "https://example.com", new address[](0));
+        thirdweb_airdropERC1155Claimable.initialize(
+            new address[](0),
+            address(this),
+            address(erc1155),
+            _ids,
+            TOTAL_AMOUNTS_ERC1155,
+            0,
+            new uint256[](NUM_ERC1155_IDS),
+            ROOT_ERC1155_THIRDWEB
         );
     }
 
@@ -236,31 +262,60 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
         internal
         view
         virtual
-        returns (
-            bytes32 root_erc20,
-            bytes32 root_erc721,
-            bytes32 root_erc721_thirdweb,
-            bytes32[] memory data_erc20,
-            bytes32[] memory data_erc721,
-            bytes32[] memory data_erc721_thirdweb
-        )
+        returns (bytes32 root_erc20, bytes32 root_erc721, bytes32[] memory data_erc20, bytes32[] memory data_erc721)
     {
         data_erc20 = new bytes32[](NUM_RECIPIENTS);
         data_erc721 = new bytes32[](NUM_RECIPIENTS);
-        // Thirdweb needs a specific array because it doesn't actually transfer specific tokens, but only specific quantities
-        // We will use a quantity of 1 for each recipient
-        data_erc721_thirdweb = new bytes32[](NUM_RECIPIENTS);
 
         // Populate data array with leaf hashes
         for (uint256 i = 0; i < NUM_RECIPIENTS; i++) {
             data_erc20[i] = keccak256(abi.encodePacked(recipients[i], amounts[i]));
             data_erc721[i] = keccak256(abi.encodePacked(recipients[i], tokenIds[i]));
-            data_erc721_thirdweb[i] = keccak256(abi.encodePacked(recipients[i], uint256(1)));
         }
 
         // Get the Merkle root
         root_erc20 = m.getRoot(data_erc20);
         root_erc721 = m.getRoot(data_erc721);
+    }
+
+    function _thirdweb_generateMerkleData(
+        address[] memory recipients,
+        uint256[] memory amounts,
+        uint256[] memory tokenIds
+    )
+        internal
+        view
+        virtual
+        returns (
+            bytes32 root_erc721_thirdweb,
+            bytes32[] memory root_erc1155_thirdweb,
+            bytes32[] memory data_erc721_thirdweb,
+            bytes32[][] memory data_erc1155_thirdweb
+        )
+    {
+        data_erc721_thirdweb = new bytes32[](NUM_RECIPIENTS);
+        data_erc1155_thirdweb = new bytes32[][](NUM_ERC1155_IDS);
+
+        // Populate data array with leaf hashes
+        for (uint256 i = 0; i < NUM_RECIPIENTS; i++) {
+            data_erc721_thirdweb[i] = keccak256(abi.encodePacked(recipients[i], uint256(1)));
+        }
+        // Same for each Thirdweb ERC1155 data array
+        for (uint256 i = 0; i < NUM_ERC1155_IDS; i++) {
+            data_erc1155_thirdweb[i] = new bytes32[](NUM_RECIPIENTS);
+            for (uint256 j = 0; j < NUM_RECIPIENTS; j++) {
+                if (tokenIds[j] == i) {
+                    data_erc1155_thirdweb[i][j] = keccak256(abi.encodePacked(recipients[j], amounts[j]));
+                }
+            }
+        }
+
+        // Get the Merkle root
         root_erc721_thirdweb = m.getRoot(data_erc721_thirdweb);
+
+        root_erc1155_thirdweb = new bytes32[](NUM_ERC1155_IDS);
+        for (uint256 i = 0; i < NUM_ERC1155_IDS; i++) {
+            root_erc1155_thirdweb[i] = m.getRoot(data_erc1155_thirdweb[i]);
+        }
     }
 }

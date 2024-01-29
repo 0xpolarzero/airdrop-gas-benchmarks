@@ -2,6 +2,8 @@
 pragma solidity ^0.8.0;
 
 import "./Benchmarks.base.sol";
+import {ERC1155Holder} from "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
+import {IAirdropERC1155} from "src/thirdweb/deps/IAirdropERC1155.sol";
 
 // See Benchmarks.base.sol for more info and to modify the amount of recipients to test with
 
@@ -12,7 +14,7 @@ import "./Benchmarks.base.sol";
 // 5. THIRDWEB AIRDROP (airdrop)
 // 6. THIRDWEB AIRDROP (claim)
 
-contract Benchmarks_ERC1155 is Benchmarks_Base {
+contract Benchmarks_ERC1155 is Benchmarks_Base, ERC1155Holder {
     /* -------------------------------------------------------------------------- */
     /*                                    SETUP                                   */
     /* -------------------------------------------------------------------------- */
@@ -49,7 +51,7 @@ contract Benchmarks_ERC1155 is Benchmarks_Base {
     /*                               4. GASLITE DROP                              */
     /* -------------------------------------------------------------------------- */
 
-    function test_ERC1155_GasliteDrop1155() public {
+    function test_ERC1155_GasliteDrop1155(uint256) public {
         setup();
 
         // Approval
@@ -76,22 +78,10 @@ contract Benchmarks_ERC1155 is Benchmarks_Base {
         uint256[] memory _amounts,
         uint256[] memory _tokenIds
     ) internal returns (GasliteDrop1155.AirdropToken[] memory airdropTokens) {
-        // Find the amount of unique amounts for each tokenId & aggregate the recipients who have the same amount
-        uint256[] memory uniqueAmountsForTokenId = new uint256[](NUM_ERC1155_IDS);
-        for (uint256 i = 0; i < _recipients.length; i++) {
-            bool found = false;
-            for (uint256 j = 0; j < i; j++) {
-                if (_amounts[i] == _amounts[j] && _tokenIds[i] == _tokenIds[j]) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) uniqueAmountsForTokenId[_tokenIds[i]]++;
-        }
-
         // For each tokenId
         for (uint256 i = 0; i < NUM_ERC1155_IDS; i++) {
             uint256 currentAmountIndex = 0;
+
             // For each recipient
             for (uint256 j = 0; j < _recipients.length; j++) {
                 // If the tokenId matches
@@ -133,18 +123,27 @@ contract Benchmarks_ERC1155 is Benchmarks_Base {
 
     function test_ERC1155_AirdropERC1155Thirdweb(uint256) public {
         setup();
+
+        // Approval
+        erc1155.setApprovalForAll(address(thirdweb_airdropERC1155), true);
+
+        // Airdrop
+        thirdweb_airdropERC1155.airdropERC1155(
+            address(erc1155), address(this), _toThirdwebAirdropContent(RECIPIENTS, TOKEN_IDS_ERC1155, AMOUNTS)
+        );
     }
 
-    // function _toAirdropContent(address[] memory _recipients, uint256[] memory _tokenIds)
-    //     internal
-    //     pure
-    //     returns (IAirdropERC721.AirdropContent[] memory contents)
-    // {
-    //     contents = new IAirdropERC721.AirdropContent[](_recipients.length);
-    //     for (uint256 i = 0; i < _recipients.length; i++) {
-    //         contents[i] = IAirdropERC721.AirdropContent({recipient: _recipients[i], tokenId: _tokenIds[i]});
-    //     }
-    // }
+    function _toThirdwebAirdropContent(
+        address[] memory _recipients,
+        uint256[] memory _tokenIds,
+        uint256[] memory _amounts
+    ) internal pure returns (IAirdropERC1155.AirdropContent[] memory contents) {
+        contents = new IAirdropERC1155.AirdropContent[](_recipients.length);
+        for (uint256 i = 0; i < _recipients.length; i++) {
+            contents[i] =
+                IAirdropERC1155.AirdropContent({recipient: _recipients[i], tokenId: _tokenIds[i], amount: _amounts[i]});
+        }
+    }
 
     /* -------------------------------------------------------------------------- */
     /*                             6. THIRDWEB CLAIM                              */
@@ -152,13 +151,16 @@ contract Benchmarks_ERC1155 is Benchmarks_Base {
 
     function test_ERC1155_AirdropERC1155ClaimableThirdweb(uint256) public {
         setup();
-    }
 
-    /* -------------------------------------------------------------------------- */
-    /*                                   ERC1155                                  */
-    /* -------------------------------------------------------------------------- */
+        // Approval
+        erc1155.setApprovalForAll(address(thirdweb_airdropERC1155Claimable), true);
 
-    function onERC1155Received(address, address, uint256, uint256, bytes memory) public pure returns (bytes4) {
-        return this.onERC1155Received.selector;
+        // Claim
+        for (uint256 i = 0; i < RECIPIENTS.length; i++) {
+            uint256 tokenId = TOKEN_IDS_ERC1155[i];
+            bytes32[] memory proof = m.getProof(DATA_ERC1155_THIRDWEB[tokenId], i);
+            vm.prank(RECIPIENTS[i]);
+            thirdweb_airdropERC1155Claimable.claim(RECIPIENTS[i], AMOUNTS[i], TOKEN_IDS_ERC1155[i], proof, AMOUNTS[i]);
+        }
     }
 }

@@ -219,7 +219,6 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
         // Claim
         for (uint256 i = 0; i < RECIPIENTS.length; i++) {
             bytes32[] memory proof = m.getProof(DATA_ERC20, i);
-            // prank doesn't really matter as anyone can claim with a valid proof, since tokens are sent to the recipient
             vm.prank(RECIPIENTS[i]);
             thirdweb_airdropERC20Claimable.claim(RECIPIENTS[i], AMOUNTS[i], proof, AMOUNTS[i]);
         }

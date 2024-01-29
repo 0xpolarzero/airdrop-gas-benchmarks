@@ -136,7 +136,6 @@ contract Benchmarks_ERC721 is Benchmarks_Base {
         // Claim
         for (uint256 i = 0; i < RECIPIENTS.length; i++) {
             bytes32[] memory proof = m.getProof(DATA_ERC721_THIRDWEB, i);
-            // prank doesn't really matter as anyone can claim with a valid proof, since tokens are sent to the recipient
             vm.prank(RECIPIENTS[i]);
             // You can't claim a specific token with this contract, but you can get a specific quantity
             // which is basically a mint
