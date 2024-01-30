@@ -44,12 +44,9 @@ contract AirdropClaimMapping_ERC721 is Ownable {
     /*                                   STORAGE                                  */
     /* -------------------------------------------------------------------------- */
 
-    /// @dev Mapping of NFT available for claim for each account
+    /// @dev Mapping of NFT available for claim for each account...
+    /// + 1; a trick to avoid a zero value in the mapping, for unauthorized accounts
     mapping(address account => uint256 tokenId) public balances;
-    /// @dev Mapping of whether an account has claimed their NFT
-    /// Note: Necessary only because an account might have tokenID 0 available for claim
-    /// which is the default value
-    mapping(address account => bool canClaim) public allowed;
 
     /* -------------------------------------------------------------------------- */
     /*                                 CONSTRUCTOR                                */
@@ -72,16 +69,15 @@ contract AirdropClaimMapping_ERC721 is Ownable {
     /// @param _tokenIds of NFT to be claimed
     /// Note: There are many flaws with this approach, such as:
     /// - Writing every single recipient/tokenId pair to storage
-    /// - Using two mappings to track the associated id AND whether it can be claimed, due to the fact
-    /// that the ERC721 token might have the id 0, which is the default value for the mapping
+    /// - Using a mapping to store the data
     /// - Emitting an event for each operation
     /// - Using an ERC721 token that does not support batch transfers
     function airdropERC721(address[] calldata _recipients, uint256[] calldata _tokenIds) external onlyOwner {
         if (_recipients.length != _tokenIds.length) revert AirdropClaimMapping_MismatchedArrays();
 
         for (uint256 i = 0; i < _recipients.length; i++) {
-            balances[_recipients[i]] = _tokenIds[i];
-            allowed[_recipients[i]] = true;
+            // Store at index + 1 to avoid storing 0 (= no balance) for tokenId 0
+            balances[_recipients[i]] = _tokenIds[i] + 1;
             token.transferFrom(msg.sender, address(this), _tokenIds[i]);
 
             emit Airdropped(_recipients[i], _tokenIds[i]);
@@ -91,10 +87,11 @@ contract AirdropClaimMapping_ERC721 is Ownable {
     /// @dev Claim ERC721 tokens share as an account part of the mapping
     function claimERC721() external {
         uint256 tokenId = balances[msg.sender];
-        if (!allowed[msg.sender]) revert AirdropClaimMapping_NothingToClaim();
+        if (balances[msg.sender] == 0) revert AirdropClaimMapping_NothingToClaim();
 
-        allowed[msg.sender] = false;
-        token.transferFrom(address(this), msg.sender, tokenId);
+        balances[msg.sender] = 0;
+        // Subtract 1 to get the actual tokenId
+        token.transferFrom(address(this), msg.sender, tokenId - 1);
 
         emit Claimed(msg.sender, tokenId);
     }
