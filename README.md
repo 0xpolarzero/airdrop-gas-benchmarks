@@ -134,7 +134,7 @@ It's also worth noting that Thirdweb does not allow for claiming on behalf of an
 
 It really hurts to not put `AirdropClaimMapping` in the last place, but Thirdweb's `AirdropERC721Claimable` really is too much with both the ~30M gas deployment and the ~218k gas claims. With 1,000 recipients, it is more than 218M in gas wasted for users to claim their tokens...
 
-These contracts allow only for claiming a single token per recipient, to fit the Thirdweb pattern.
+Also, `AirdropERC721Claimable` does not allow for airdroping specific tokens to specific accounts, it will just allow to claim `n` amount of tokens, and read the tokenIds array in ascending order. So it basically looks like a minting function.
 
 ### ERC1155 (direct airdrop)
 
@@ -230,10 +230,3 @@ forge test --mt AirdropClaimMapping --gas-report
 # See the name of each test
 forge test --mt test_ERC20_GasliteDrop --gas-report
 ```
-
-## Notes
-
-- Thirdweb claimable airdrop contracts do not allow for claiming on behalf of another account
-- Thirdweb `AirdropERC721Claimable` does not allow for airdroping specific tokens to specific accounts, it will just allow to claim x tokens, and read the tokenIds array. So it's basically a mint function.
-- Thirdweb `AirdropERC1155Claimable` does not allow for claiming multiple ids as a single account
-- Same for `AirdropClaimMerkle` and `AirdropClaimSignature`, they won't allow for claiming multiple ids as a single account
