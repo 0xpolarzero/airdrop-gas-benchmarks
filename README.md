@@ -100,12 +100,12 @@ BytecodeDrop is not included yet, but it should be able to be measured consisten
 
 ### ERC20 (claim-based airdrop)
 
-| Rank | Contract                       | Gas deployment (1,000 recipients) | Difference from #1      | Gas claim (1 recipient) | Difference from #1 | Difference from #1 (1,000 claims) |
-| ---- | ------------------------------ | --------------------------------- | ----------------------- | ----------------------- | ------------------ | --------------------------------- |
-| 1    | AirdropClaimMerkle_ERC20       | 381,660 (381,660 + 0)             | 0                       | 51,217                  | 0                  | 0                                 |
-| 2    | AirdropClaimSignature_ERC20    | 410,807 (410,807 + 0)             | + 29,147 (+ 8%)         | 53,376                  | + 2,159 (+ 4%)     | + 2,159,000                       |
-| 3    | Thirdweb AirdropERC20Claimable | 207,525 (66,769 + 140,756)        | - 174,135 (- 46%)       | 60,563                  | + 9,346 (+ 18%)    | + 9,346,000                       |
-| 4    | AirdropClaimMapping_ERC20      | 24,959,529 (450,852 + 24,508,677) | + 24,577,869 (+ 6,440%) | 27,272                  | - 23,945 (- 47%)   | - 23,945,000                      |
+| Rank | Contract                       | Gas deployment (1,000 recipients) | Difference from #1      | Gas claim (1 recipient) | Difference from #1 |
+| ---- | ------------------------------ | --------------------------------- | ----------------------- | ----------------------- | ------------------ |
+| 1    | AirdropClaimMerkle             | 381,660 (381,660 + 0)             | 0                       | 51,217                  | 0                  |
+| 2    | AirdropClaimSignature          | 410,807 (410,807 + 0)             | + 29,147 (+ 8%)         | 53,376                  | + 2,159 (+ 4%)     |
+| 3    | Thirdweb AirdropERC20Claimable | 207,525 (66,769 + 140,756)        | - 174,135 (- 46%)       | 60,563                  | + 9,346 (+ 18%)    |
+| 4    | AirdropClaimMapping            | 24,959,529 (450,852 + 24,508,677) | + 24,577,869 (+ 6,440%) | 27,272                  | - 23,945 (- 47%)   |
 
 This comparison is opinionated. Some arguments to support it:
 
@@ -125,14 +125,14 @@ It's also worth noting that Thirdweb does not allow for claiming on behalf of an
 
 ### ERC721 (claim-based airdrop)
 
-| Rank | Contract                        | Gas deployment (1,000 recipients) | Difference from #1      | Gas claim (1 recipient) | Difference from #1 | Difference from #1 (1,000 claims) |
-| ---- | ------------------------------- | --------------------------------- | ----------------------- | ----------------------- | ------------------ | --------------------------------- |
-| 1    | AirdropClaimMerkle_ERC721       | 366,041 (366,041 + 0)             | 0                       | 51,897                  | 0                  | 0                                 |
-| 2    | AirdropClaimSignature_ERC721    | 394,994 (394,994 + 0)             | + 28,953 (+ 8%)         | 53,968                  | + 2,071 (+ 4%)     | + 2,071,000                       |
-| 3    | AirdropClaimMapping_ERC721      | 31,039,669 (433,833 + 30,605,836) | + 30,673,628 (+ 8,380%) | 28,003                  | - 23,894 (- 46%%)  | + 23,894,000                      |
-| 4    | Thirdweb AirdropERC721Claimable | 22,452,426 (66,769 + 22,385,657)  | + 22,086,385 (+ 3,034%) | 219,101                 | + 167,204 (+ 322%) | + 167,204,000                     |
+| Rank | Contract                        | Gas deployment (1,000 recipients) | Difference from #1      | Gas claim (1 recipient) | Difference from #1 |
+| ---- | ------------------------------- | --------------------------------- | ----------------------- | ----------------------- | ------------------ |
+| 1    | AirdropClaimMerkle              | 366,041 (366,041 + 0)             | 0                       | 51,897                  | 0                  |
+| 2    | AirdropClaimSignature           | 394,994 (394,994 + 0)             | + 28,953 (+ 8%)         | 53,968                  | + 2,071 (+ 4%)     |
+| 3    | AirdropClaimMapping             | 31,039,669 (433,833 + 30,605,836) | + 30,673,628 (+ 8,380%) | 28,003                  | - 23,894 (- 46%%)  |
+| 4    | Thirdweb AirdropERC721Claimable | 22,452,426 (66,769 + 22,385,657)  | + 22,086,385 (+ 3,034%) | 219,101                 | + 167,204 (+ 322%) |
 
-It really hurts to not put `AirdropClaimMapping` in the last place, but Thirdweb's `AirdropERC721Claimable` really is too much with both the ~30M gas deployment and the ~218k gas claims. With 1,000 recipients, it is more than 218M in gas wasted for users to claim their tokens...
+It really hurts to not put `AirdropClaimMapping` in the last place, but Thirdweb's `AirdropERC721Claimable` really is too much with both the ~30M gas deployment and the ~218k gas claims. With 1,000 recipients, it is more than 219M in gas just for users to claim their tokens...
 
 Also, `AirdropERC721Claimable` does not allow for airdroping specific tokens to specific accounts, it will just allow to claim `n` amount of tokens, and read the tokenIds array in ascending order. So it basically looks like a minting function.
 
@@ -156,12 +156,12 @@ In these tests, there are ~14% of recipients aggregated with the same amount. As
 
 ### ERC1155 (claim-based airdrop)
 
-| Rank | Contract                         | Gas deployment (1,000 recipients) | Difference from #1      | Gas claim (1 recipient) | Difference from #1 | Difference from #1 (1,000 claims) |
-| ---- | -------------------------------- | --------------------------------- | ----------------------- | ----------------------- | ------------------ | --------------------------------- |
-| 1    | AirdropClaimMerkle_ERC1155       | 486,360 (486360 + 0)              | 0                       | 52,873                  | 0                  | 0                                 |
-| 2    | AirdropClaimSignature_ERC1155    | 516,113 (516113 + 0)              | + 29,753 (+ 6%)         | 54,966                  | + 2,093 (+ 4%)     | + 2,093,000                       |
-| 3    | Thirdweb AirdropERC1155Claimable | 1,556,310 (66769 + 1489541)       | + 1,069,950 (+ 220%)    | 62,083                  | + 9,210 (+ 17%)    | + 9,210,000                       |
-| 4    | AirdropClaimMapping_ERC1155      | 27,069,815 (598196 + 26471619)    | + 26,583,455 (+ 5,466%) | 28,995                  | - 23,878 (- 45%)   | - 23,878,000                      |
+| Rank | Contract                         | Gas deployment (1,000 recipients) | Difference from #1      | Gas claim (1 recipient) | Difference from #1 |
+| ---- | -------------------------------- | --------------------------------- | ----------------------- | ----------------------- | ------------------ |
+| 1    | AirdropClaimMerkle               | 486,360 (486360 + 0)              | 0                       | 52,873                  | 0                  |
+| 2    | AirdropClaimSignature            | 516,113 (516113 + 0)              | + 29,753 (+ 6%)         | 54,966                  | + 2,093 (+ 4%)     |
+| 3    | Thirdweb AirdropERC1155Claimable | 1,556,310 (66769 + 1489541)       | + 1,069,950 (+ 220%)    | 62,083                  | + 9,210 (+ 17%)    |
+| 4    | AirdropClaimMapping              | 27,069,815 (598196 + 26471619)    | + 26,583,455 (+ 5,466%) | 28,995                  | - 23,878 (- 45%)   |
 
 These contracts allow only for claiming a single token ID per recipient, to fit the Thirdweb pattern.
 
