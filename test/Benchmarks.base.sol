@@ -4,7 +4,6 @@ pragma solidity ^0.8.0;
 // Test Utils
 import {SoladyTest} from "solady/test/utils/SoladyTest.sol";
 import {StdCheats} from "forge-std/StdCheats.sol";
-import {console} from "forge-std/console.sol";
 
 // Libs
 import {LibPRNG} from "@solady/utils/LibPRNG.sol";
