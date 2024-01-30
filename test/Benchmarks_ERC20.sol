@@ -34,13 +34,13 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
         setup();
 
         // Deposit and set mapping
-        erc20.approve((address(airdropClaimMapping)), TOTAL_AMOUNT_ERC20);
-        airdropClaimMapping.airdropERC20(RECIPIENTS, AMOUNTS);
+        erc20.approve((address(airdropClaimMapping_erc20)), TOTAL_AMOUNT_ERC20);
+        airdropClaimMapping_erc20.airdropERC20(RECIPIENTS, AMOUNTS);
 
         // Claim
         for (uint256 i = 0; i < RECIPIENTS.length; i++) {
             vm.prank(RECIPIENTS[i]);
-            airdropClaimMapping.claimERC20();
+            airdropClaimMapping_erc20.claimERC20();
         }
     }
 
@@ -52,14 +52,14 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
         setup();
 
         // Deposit
-        erc20.transfer(address(airdropClaimMerkle), TOTAL_AMOUNT_ERC20);
+        erc20.transfer(address(airdropClaimMerkle_erc20), TOTAL_AMOUNT_ERC20);
 
         // Claim
         for (uint256 i = 0; i < RECIPIENTS.length; i++) {
             bytes32[] memory proof = m.getProof(DATA_ERC20, i);
             // prank doesn't really matter as anyone can claim with a valid proof, since tokens are sent to the recipient
             vm.prank(RECIPIENTS[i]);
-            airdropClaimMerkle.claimERC20(RECIPIENTS[i], AMOUNTS[i], proof);
+            airdropClaimMerkle_erc20.claimERC20(RECIPIENTS[i], AMOUNTS[i], proof);
         }
     }
 
@@ -71,14 +71,14 @@ contract Benchmarks_ERC20 is Benchmarks_Base {
         setup();
 
         // Deposit
-        erc20.transfer(address(airdropClaimSignature), TOTAL_AMOUNT_ERC20);
+        erc20.transfer(address(airdropClaimSignature_erc20), TOTAL_AMOUNT_ERC20);
 
         // Claim
         for (uint256 i = 0; i < RECIPIENTS.length; i++) {
             bytes memory signature = _sign(keccak256(abi.encodePacked(RECIPIENTS[i], AMOUNTS[i])));
             // Same here with prank, some can claim on behalf of the recipient (but tokens are sent to the recipient)
             vm.prank(RECIPIENTS[i]);
-            airdropClaimSignature.claimERC20(RECIPIENTS[i], AMOUNTS[i], signature);
+            airdropClaimSignature_erc20.claimERC20(RECIPIENTS[i], AMOUNTS[i], signature);
         }
     }
 

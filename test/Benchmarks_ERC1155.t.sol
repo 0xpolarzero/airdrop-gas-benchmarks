@@ -31,13 +31,13 @@ contract Benchmarks_ERC1155 is Benchmarks_Base, ERC1155Holder {
         setup();
 
         // Airdrop
-        erc1155.setApprovalForAll(address(airdropClaimMapping), true);
-        airdropClaimMapping.airdropERC1155(RECIPIENTS, TOKEN_IDS_ERC1155, AMOUNTS);
+        erc1155.setApprovalForAll(address(airdropClaimMapping_erc1155), true);
+        airdropClaimMapping_erc1155.airdropERC1155(RECIPIENTS, TOKEN_IDS_ERC1155, AMOUNTS);
 
         // Claim
         for (uint256 i = 0; i < RECIPIENTS.length; i++) {
             vm.prank(RECIPIENTS[i]);
-            airdropClaimMapping.claimERC1155(TOKEN_IDS_ERC1155[i]);
+            airdropClaimMapping_erc1155.claimERC1155(TOKEN_IDS_ERC1155[i]);
         }
     }
 
@@ -49,14 +49,14 @@ contract Benchmarks_ERC1155 is Benchmarks_Base, ERC1155Holder {
         setup();
 
         // Deposit
-        _depositERC1155(address(airdropClaimMerkle));
+        _depositERC1155(address(airdropClaimMerkle_erc1155));
 
         // Claim
         for (uint256 i = 0; i < RECIPIENTS.length; i++) {
             bytes32[] memory proof = m.getProof(DATA_ERC1155, i);
             // prank doesn't really matter as anyone can claim with a valid proof, since tokens are sent to the recipient
             vm.prank(RECIPIENTS[i]);
-            airdropClaimMerkle.claimERC1155(RECIPIENTS[i], TOKEN_IDS_ERC1155[i], AMOUNTS[i], proof);
+            airdropClaimMerkle_erc1155.claimERC1155(RECIPIENTS[i], TOKEN_IDS_ERC1155[i], AMOUNTS[i], proof);
         }
     }
 
@@ -68,14 +68,14 @@ contract Benchmarks_ERC1155 is Benchmarks_Base, ERC1155Holder {
         setup();
 
         // Deposit
-        _depositERC1155(address(airdropClaimSignature));
+        _depositERC1155(address(airdropClaimSignature_erc1155));
 
         // Claim
         for (uint256 i = 0; i < RECIPIENTS.length; i++) {
             bytes memory signature = _sign(keccak256(abi.encodePacked(RECIPIENTS[i], TOKEN_IDS_ERC1155[i], AMOUNTS[i])));
             // Same here with prank, some can claim on behalf of the recipient (but tokens are sent to the recipient)
             vm.prank(RECIPIENTS[i]);
-            airdropClaimSignature.claimERC1155(RECIPIENTS[i], TOKEN_IDS_ERC1155[i], AMOUNTS[i], signature);
+            airdropClaimSignature_erc1155.claimERC1155(RECIPIENTS[i], TOKEN_IDS_ERC1155[i], AMOUNTS[i], signature);
         }
     }
 

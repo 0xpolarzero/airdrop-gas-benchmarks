@@ -30,13 +30,13 @@ contract Benchmarks_ERC721 is Benchmarks_Base {
         setup();
 
         // Airdrop
-        erc721.setApprovalForAll(address(airdropClaimMapping), true);
-        airdropClaimMapping.airdropERC721(RECIPIENTS, TOKEN_IDS_ERC721);
+        erc721.setApprovalForAll(address(airdropClaimMapping_erc721), true);
+        airdropClaimMapping_erc721.airdropERC721(RECIPIENTS, TOKEN_IDS_ERC721);
 
         // Claim
         for (uint256 i = 0; i < RECIPIENTS.length; i++) {
             vm.prank(RECIPIENTS[i]);
-            airdropClaimMapping.claimERC721();
+            airdropClaimMapping_erc721.claimERC721();
         }
     }
 
@@ -49,7 +49,7 @@ contract Benchmarks_ERC721 is Benchmarks_Base {
 
         // Deposit
         for (uint256 i = 0; i < TOKEN_IDS_ERC721.length; i++) {
-            erc721.transferFrom(address(this), address(airdropClaimMerkle), TOKEN_IDS_ERC721[i]);
+            erc721.transferFrom(address(this), address(airdropClaimMerkle_erc721), TOKEN_IDS_ERC721[i]);
         }
 
         // Claim
@@ -57,7 +57,7 @@ contract Benchmarks_ERC721 is Benchmarks_Base {
             bytes32[] memory proof = m.getProof(DATA_ERC721, i);
             // prank doesn't really matter as anyone can claim with a valid proof, since tokens are sent to the recipient
             vm.prank(RECIPIENTS[i]);
-            airdropClaimMerkle.claimERC721(RECIPIENTS[i], TOKEN_IDS_ERC721[i], proof);
+            airdropClaimMerkle_erc721.claimERC721(RECIPIENTS[i], TOKEN_IDS_ERC721[i], proof);
         }
     }
 
@@ -70,7 +70,7 @@ contract Benchmarks_ERC721 is Benchmarks_Base {
 
         // Deposit
         for (uint256 i = 0; i < TOKEN_IDS_ERC721.length; i++) {
-            erc721.transferFrom(address(this), address(airdropClaimSignature), TOKEN_IDS_ERC721[i]);
+            erc721.transferFrom(address(this), address(airdropClaimSignature_erc721), TOKEN_IDS_ERC721[i]);
         }
 
         // Claim
@@ -78,7 +78,7 @@ contract Benchmarks_ERC721 is Benchmarks_Base {
             bytes memory signature = _sign(keccak256(abi.encodePacked(RECIPIENTS[i], TOKEN_IDS_ERC721[i])));
             // Same here with prank, some can claim on behalf of the recipient (but tokens are sent to the recipient)
             vm.prank(RECIPIENTS[i]);
-            airdropClaimSignature.claimERC721(RECIPIENTS[i], TOKEN_IDS_ERC721[i], signature);
+            airdropClaimSignature_erc721.claimERC721(RECIPIENTS[i], TOKEN_IDS_ERC721[i], signature);
         }
     }
 

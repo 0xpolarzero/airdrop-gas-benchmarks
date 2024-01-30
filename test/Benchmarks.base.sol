@@ -17,10 +17,9 @@ import {Mock_ERC721} from "test/mocks/Mock_ERC721.sol";
 import {Mock_ERC1155} from "test/mocks/Mock_ERC1155.sol";
 
 // Tested contracts
-import {AirdropClaimMapping} from "src/AirdropClaimMapping.sol";
-import {AirdropClaimMerkle} from "src/AirdropClaimMerkle.sol";
-import {AirdropClaimSignature} from "src/AirdropClaimSignature.sol";
 import {BytecodeDrop} from "src/BytecodeDrop.sol";
+// Custom contracts
+import "src/custom/index.sol";
 // wentokens
 import {Airdrop as Wentokens_Airdrop} from "src/Wentokens.sol";
 // Gaslite
@@ -54,13 +53,21 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
     Mock_ERC1155 erc1155;
     Merkle m;
 
-    AirdropClaimMapping airdropClaimMapping;
-    AirdropClaimMerkle airdropClaimMerkle;
-    AirdropClaimSignature airdropClaimSignature;
+    // Custom
+    AirdropClaimMapping_ERC20 airdropClaimMapping_erc20;
+    AirdropClaimMapping_ERC721 airdropClaimMapping_erc721;
+    AirdropClaimMapping_ERC1155 airdropClaimMapping_erc1155;
+    AirdropClaimMerkle_ERC20 airdropClaimMerkle_erc20;
+    AirdropClaimMerkle_ERC721 airdropClaimMerkle_erc721;
+    AirdropClaimMerkle_ERC1155 airdropClaimMerkle_erc1155;
+    AirdropClaimSignature_ERC20 airdropClaimSignature_erc20;
+    AirdropClaimSignature_ERC721 airdropClaimSignature_erc721;
+    AirdropClaimSignature_ERC1155 airdropClaimSignature_erc1155;
+    BytecodeDrop bytecodeDrop;
+    // Solutions
     Wentokens_Airdrop wentokens_airdrop;
     GasliteDrop gasliteDrop;
     GasliteDrop1155 gasliteDrop1155;
-    BytecodeDrop bytecodeDrop;
     Thirdweb_AirdropERC20 thirdweb_airdropERC20;
     Thirdweb_AirdropERC20Claimable thirdweb_airdropERC20Claimable;
     Thirdweb_AirdropERC721 thirdweb_airdropERC721;
@@ -123,6 +130,8 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
     /// @dev This needs to be implemented in each contract
     function _setType() internal virtual;
 
+    /* ----------------------------- DATA GENERATION ---------------------------- */
+
     function _generate() internal virtual {
         // Generate random airdrop data
         (
@@ -140,53 +149,82 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
             _generateMerkleData(RECIPIENTS, AMOUNTS, TOKEN_IDS_ERC721, TOKEN_IDS_ERC1155);
         // Generate Thirdweb Merkle data that doesn't fit the way above
         (ROOT_ERC721_THIRDWEB, ROOT_ERC1155_THIRDWEB, DATA_ERC721_THIRDWEB, DATA_ERC1155_THIRDWEB) =
-            _thirdweb_generateMerkleData(RECIPIENTS, AMOUNTS, TOKEN_IDS_ERC1155);
+            _generateMerkleData_Thirdweb(RECIPIENTS, AMOUNTS, TOKEN_IDS_ERC1155);
         // Generate signature data
         (SIGNER, SIGNER_KEY) = _randomSigner();
     }
 
+    /* ---------------------- DEPLOYMENT AND INITIALIZATION --------------------- */
+
     function _deploy() internal virtual {
-        // Deploy contracts
-        erc20 = new Mock_ERC20(TOTAL_AMOUNT_ERC20);
-        erc721 = new Mock_ERC721(TOKEN_IDS_ERC721);
-        // Don't deploy if it's not an ERC1155 test (non ERC1155 receiver)
-        if (testType == TEST_TYPE.ERC1155) {
-            erc1155 = new Mock_ERC1155(TOKEN_IDS_AT_INDEX_ERC1155, TOTAL_AMOUNTS_ERC1155);
+        if (testType == TEST_TYPE.ERC20) {
+            _deploy_ERC20();
+        } else if (testType == TEST_TYPE.ERC721) {
+            _deploy_ERC721();
+        } else if (testType == TEST_TYPE.ERC1155) {
+            _deploy_ERC1155();
         }
 
-        airdropClaimMapping = new AirdropClaimMapping(erc20, erc721, erc1155);
-        airdropClaimMerkle = new AirdropClaimMerkle(erc20, erc721, erc1155, ROOT_ERC20, ROOT_ERC721, ROOT_ERC1155);
-        airdropClaimSignature = new AirdropClaimSignature(erc20, erc721, erc1155, SIGNER);
-        wentokens_airdrop = new Wentokens_Airdrop();
         gasliteDrop = new GasliteDrop();
-        gasliteDrop1155 = new GasliteDrop1155();
-        bytecodeDrop = new BytecodeDrop();
-
-        _deployThirdwebProxiesAndInit();
+        wentokens_airdrop = new Wentokens_Airdrop();
     }
 
-    function _deployThirdwebProxiesAndInit() internal {
-        // Deploy proxies
+    function _deploy_ERC20() internal virtual {
+        // Token
+        erc20 = new Mock_ERC20(TOTAL_AMOUNT_ERC20);
+
+        // Custom
+        airdropClaimMapping_erc20 = new AirdropClaimMapping_ERC20(erc20);
+        airdropClaimMerkle_erc20 = new AirdropClaimMerkle_ERC20(erc20, ROOT_ERC20);
+        airdropClaimSignature_erc20 = new AirdropClaimSignature_ERC20(erc20, SIGNER);
+        bytecodeDrop = new BytecodeDrop();
+
+        // Thirdweb
         thirdweb_airdropERC20 = Thirdweb_AirdropERC20(LibClone.deployERC1967(address(new Thirdweb_AirdropERC20())));
         thirdweb_airdropERC20Claimable =
             Thirdweb_AirdropERC20Claimable(LibClone.deployERC1967(address(new Thirdweb_AirdropERC20Claimable())));
-        thirdweb_airdropERC721 = Thirdweb_AirdropERC721(LibClone.deployERC1967(address(new Thirdweb_AirdropERC721())));
-        thirdweb_airdropERC721Claimable =
-            Thirdweb_AirdropERC721Claimable(LibClone.deployERC1967(address(new Thirdweb_AirdropERC721Claimable())));
-        thirdweb_airdropERC1155 =
-            Thirdweb_AirdropERC1155(LibClone.deployERC1967(address(new Thirdweb_AirdropERC1155())));
-        thirdweb_airdropERC1155Claimable =
-            Thirdweb_AirdropERC1155Claimable(LibClone.deployERC1967(address(new Thirdweb_AirdropERC1155Claimable())));
-
-        // Initialize
         thirdweb_airdropERC20.initialize(address(this), "https://example.com", new address[](0));
         thirdweb_airdropERC20Claimable.initialize(
             new address[](0), address(this), address(erc20), TOTAL_AMOUNT_ERC20, 0, 0, ROOT_ERC20
         );
+    }
+
+    function _deploy_ERC721() internal virtual {
+        // Token
+        erc721 = new Mock_ERC721(TOKEN_IDS_ERC721);
+
+        // Custom
+        airdropClaimMapping_erc721 = new AirdropClaimMapping_ERC721(erc721);
+        airdropClaimMerkle_erc721 = new AirdropClaimMerkle_ERC721(erc721, ROOT_ERC721);
+        airdropClaimSignature_erc721 = new AirdropClaimSignature_ERC721(erc721, SIGNER);
+
+        // Thirdweb
+        thirdweb_airdropERC721 = Thirdweb_AirdropERC721(LibClone.deployERC1967(address(new Thirdweb_AirdropERC721())));
+        thirdweb_airdropERC721Claimable =
+            Thirdweb_AirdropERC721Claimable(LibClone.deployERC1967(address(new Thirdweb_AirdropERC721Claimable())));
         thirdweb_airdropERC721.initialize(address(this), "https://example.com", new address[](0));
         thirdweb_airdropERC721Claimable.initialize(
             new address[](0), address(this), address(erc721), TOKEN_IDS_ERC721, 0, 0, ROOT_ERC721_THIRDWEB
         );
+    }
+
+    function _deploy_ERC1155() internal virtual {
+        // Token
+        erc1155 = new Mock_ERC1155(TOKEN_IDS_AT_INDEX_ERC1155, TOTAL_AMOUNTS_ERC1155);
+
+        // Custom
+        airdropClaimMapping_erc1155 = new AirdropClaimMapping_ERC1155(erc1155);
+        airdropClaimMerkle_erc1155 = new AirdropClaimMerkle_ERC1155(erc1155, ROOT_ERC1155);
+        airdropClaimSignature_erc1155 = new AirdropClaimSignature_ERC1155(erc1155, SIGNER);
+
+        // Gaslite
+        gasliteDrop1155 = new GasliteDrop1155();
+
+        // Thirdweb
+        thirdweb_airdropERC1155 =
+            Thirdweb_AirdropERC1155(LibClone.deployERC1967(address(new Thirdweb_AirdropERC1155())));
+        thirdweb_airdropERC1155Claimable =
+            Thirdweb_AirdropERC1155Claimable(LibClone.deployERC1967(address(new Thirdweb_AirdropERC1155Claimable())));
         thirdweb_airdropERC1155.initialize(address(this), "https://example.com", new address[](0));
         thirdweb_airdropERC1155Claimable.initialize(
             new address[](0),
@@ -309,7 +347,7 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
         root_erc1155 = m.getRoot(data_erc1155);
     }
 
-    function _thirdweb_generateMerkleData(
+    function _generateMerkleData_Thirdweb(
         address[] memory _recipients,
         uint256[] memory _amounts,
         uint256[] memory _tokenIds
