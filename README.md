@@ -7,7 +7,7 @@ This repository contains a series of tests to measure gas usage for popular aird
 - ERC721;
 - ERC1155.
 
-The custom contract ([AirdropClaimMapping.sol](./src/AirdropClaimMapping.sol), and to some extent [AirdropClaimMerkle.sol](./src/AirdropClaimMerkle.sol) and [AirdropClaimSignature.sol](./src/AirdropClaimSignature.sol)) as well, are purposely written poorly to fit common assumptions and patterns found in the wild.
+The custom contract ([`AirdropClaimMapping`](./src/AirdropClaimMapping.sol), and to some extent [`AirdropClaimMerkle`](./src/AirdropClaimMerkle.sol) and [`AirdropClaimSignature`](./src/AirdropClaimSignature.sol)) as well, are purposely written poorly to fit common assumptions and patterns found in the wild.
 
 ## Table of contents
 
