@@ -30,23 +30,23 @@ The custom contract ([AirdropClaimMapping.sol](./src/AirdropClaimMapping.sol), a
 
 ### Airdrop mechanisms (custom contracts):
 
-| Type                                              | Tokens                 | Contract                                                     |
-| ------------------------------------------------- | ---------------------- | ------------------------------------------------------------ |
-| Claimable airdrop (data inscribed into a mapping) | ERC20, ERC721, ERC1155 | [AirdropClaimMapping.sol](./src/AirdropClaimMapping.sol)     |
-| Claimable airdrop (merkle proof)                  | ERC20, ERC721, ERC1155 | [AirdropClaimMerkle.sol](./src/AirdropClaimMerkle.sol)       |
-| Claimable airdrop (signature)                     | ERC20, ERC721, ERC1155 | [AirdropClaimSignature.sol](./src/AirdropClaimSignature.sol) |
-| Airdrop (bytecode contract)                       | ERC20                  | [BytecodeDrop.sol](./src/BytecodeDrop.sol)                   |
+| Type                                              | Tokens                 | Contract                                                   |
+| ------------------------------------------------- | ---------------------- | ---------------------------------------------------------- |
+| Claimable airdrop (data inscribed into a mapping) | ERC20, ERC721, ERC1155 | [`AirdropClaimMapping`](./src/AirdropClaimMapping.sol)     |
+| Claimable airdrop (merkle proof)                  | ERC20, ERC721, ERC1155 | [`AirdropClaimMerkle`](./src/AirdropClaimMerkle.sol)       |
+| Claimable airdrop (signature)                     | ERC20, ERC721, ERC1155 | [`AirdropClaimSignature`](./src/AirdropClaimSignature.sol) |
+| Airdrop (bytecode contract)                       | ERC20                  | [`BytecodeDrop`](./src/BytecodeDrop.sol)                   |
 
 ### Airdrop solutions (including already deployed contracts):
 
-| Type                                       | Tokens                 | Contract                                         | Website/source code                                  |
-| ------------------------------------------ | ---------------------- | ------------------------------------------------ | ---------------------------------------------------- |
-| GasliteDrop (airdrop)                      | ETH, ERC20, ERC721     | [GasliteDrop.sol](./src/GasliteDrop.sol)         | [drop.gaslite.org](https://drop.gaslite.org/)        |
-| GasliteDrop1155 (airdrop)                  | ERC1155                | [GasliteDrop1155.sol](./src/GasliteDrop1155.sol) | [drop.gaslite.org](https://drop.gaslite.org/)        |
-| Disperse.app (airdrop)                     | ETH, ERC20             | [Disperse.sol](./src/Disperse.sol)               | [disperse.app](https://disperse.app/)                |
-| wentokens (airdrop)                        | ETH, ERC20             | [Wentokens.sol](./src/Wentokens.sol)             | [www.wentokens.xyz](https://www.wentokens.xyz/)      |
-| Thirdweb (airdrop)                         | ERC20, ERC721, ERC1155 | [thirdweb.sol](./src/thirdweb.sol)               | [thirdweb.com](https://thirdweb.com/explore/airdrop) |
-| Thirdweb (claimable airdrop, merkle proof) | ERC20, ERC721, ERC1155 | [thirdweb.sol](./src/thirdweb.sol)               | [thirdweb.com](https://thirdweb.com/explore/airdrop) |
+| Type                                       | Tokens                 | Contract                                       | Website/source code                                  |
+| ------------------------------------------ | ---------------------- | ---------------------------------------------- | ---------------------------------------------------- |
+| GasliteDrop (airdrop)                      | ETH, ERC20, ERC721     | [`GasliteDrop`](./src/GasliteDrop.sol)         | [drop.gaslite.org](https://drop.gaslite.org/)        |
+| GasliteDrop1155 (airdrop)                  | ERC1155                | [`GasliteDrop1155`](./src/GasliteDrop1155.sol) | [drop.gaslite.org](https://drop.gaslite.org/)        |
+| Disperse.app (airdrop)                     | ETH, ERC20             | [`Disperse`](./src/Disperse.sol)               | [disperse.app](https://disperse.app/)                |
+| wentokens (airdrop)                        | ETH, ERC20             | [`Airdrop`](./src/Wentokens.sol)               | [www.wentokens.xyz](https://www.wentokens.xyz/)      |
+| Thirdweb (airdrop)                         | ERC20, ERC721, ERC1155 | [thirdweb/](./src/thirdweb)                    | [thirdweb.com](https://thirdweb.com/explore/airdrop) |
+| Thirdweb (claimable airdrop, merkle proof) | ERC20, ERC721, ERC1155 | [thirdweb/](./src/thirdweb)                    | [thirdweb.com](https://thirdweb.com/explore/airdrop) |
 
 ---
 
@@ -87,25 +87,25 @@ The cost of deploying and initializing the Thirdweb direct airdrop contracts (`A
 
 ### ERC20 (direct airdrop)
 
-| Rank | Contract                                                     | Gas (1,000 recipients) | Difference from #1 |
-| ---- | ------------------------------------------------------------ | ---------------------- | ------------------ |
-| 1    | [GasliteDrop](./src//GasliteDrop.sol#L86)                    | 24,946,244             | 0                  |
-| 2    | [Wentokens](./src/Wentokens.sol#L77)                         | 24,991,295             | +45,051 (+0.2%)    |
-| 3    | [Disperse](./src/Disperse.sol#L20) (`disperseToken`)         | 25,747,105             | +800,861 (+3%)     |
-| 4    | [Disperse](./src//Disperse.sol#L31) (`disperseTokenSimple`)  | 26,237,332             | +1,291,088 (+5%)   |
-| 5    | [Thirdweb AirdropERC20](./src/thirdweb/AirdropERC20.sol#L96) | 26,906,458             | +1,960,214 (+8%)   |
+| Rank | Contract                                                       | Gas (1,000 recipients) | Difference from #1 |
+| ---- | -------------------------------------------------------------- | ---------------------- | ------------------ |
+| 1    | [`GasliteDrop`](./src//GasliteDrop.sol#L86)                    | 24,946,244             | 0                  |
+| 2    | [Wentokens `Airdrop`](./src/Wentokens.sol#L77)                 | 24,991,295             | +45,051 (+0.2%)    |
+| 3    | [`Disperse`](./src/Disperse.sol#L20) (`disperseToken`)         | 25,747,105             | +800,861 (+3%)     |
+| 4    | [`Disperse`](./src//Disperse.sol#L31) (`disperseTokenSimple`)  | 26,237,332             | +1,291,088 (+5%)   |
+| 5    | [Thirdweb `AirdropERC20`](./src/thirdweb/AirdropERC20.sol#L96) | 26,906,458             | +1,960,214 (+8%)   |
 
 [!NOTE]
 BytecodeDrop is not included yet, but it should be able to be measured consistently against the other contracts with Hardhat.
 
 ### ERC20 (claim-based airdrop)
 
-| Rank | Contract                                                                   | Gas deployment (1,000 recipients) | Difference from #1    | Gas claim (1 recipient) | Difference from #1 |
-| ---- | -------------------------------------------------------------------------- | --------------------------------- | --------------------- | ----------------------- | ------------------ |
-| 1    | [AirdropClaimMerkle](./src/custom/AirdropClaimMerkle_ERC20.sol)            | 381,660 (381,660 + 0)             | 0                     | 51,217                  | 0                  |
-| 2    | [AirdropClaimSignature](./src/custom/AirdropClaimSignature_ERC20.sol)      | 410,807 (410,807 + 0)             | +29,147 (+8%)         | 53,376                  | +2,159 (+4%)       |
-| 3    | [Thirdweb AirdropERC20Claimable](./src/thirdweb/AirdropERC20Claimable.sol) | 207,525 (66,769 + 140,756)        | -174,135 (-46%)       | 60,563                  | +9,346 (+18%)      |
-| 4    | [AirdropClaimMapping](./src/custom/AirdropClaimMapping_ERC20.sol)          | 24,959,529 (450,852 + 24,508,677) | +24,577,869 (+6,440%) | 27,272                  | -23,945 (-47%)     |
+| Rank | Contract                                                                     | Gas deployment (1,000 recipients) | Difference from #1    | Gas claim (1 recipient) | Difference from #1 |
+| ---- | ---------------------------------------------------------------------------- | --------------------------------- | --------------------- | ----------------------- | ------------------ |
+| 1    | [`AirdropClaimMerkle`](./src/custom/AirdropClaimMerkle_ERC20.sol)            | 381,660 (381,660 + 0)             | 0                     | 51,217                  | 0                  |
+| 2    | [`AirdropClaimSignature`](./src/custom/AirdropClaimSignature_ERC20.sol)      | 410,807 (410,807 + 0)             | +29,147 (+8%)         | 53,376                  | +2,159 (+4%)       |
+| 3    | [Thirdweb `AirdropERC20Claimable`](./src/thirdweb/AirdropERC20Claimable.sol) | 207,525 (66,769 + 140,756)        | -174,135 (-46%)       | 60,563                  | +9,346 (+18%)      |
+| 4    | [`AirdropClaimMapping`](./src/custom/AirdropClaimMapping_ERC20.sol)          | 24,959,529 (450,852 + 24,508,677) | +24,577,869 (+6,440%) | 27,272                  | -23,945 (-47%)     |
 
 This comparison is opinionated. Some arguments to support it:
 
@@ -118,19 +118,19 @@ It's also worth noting that Thirdweb does not allow for claiming on behalf of an
 
 ### ERC721 (direct airdrop)
 
-| Rank | Contract                                                       | Gas (1,000 recipients) | Difference from #1 |
-| ---- | -------------------------------------------------------------- | ---------------------- | ------------------ |
-| 1    | [GasliteDrop](./src/GasliteDrop.sol#L46)                       | 27,760,844             | 0                  |
-| 2    | [Thirdweb AirdropERC721](./src/thirdweb/AirdropERC721.sol#L93) | 31,028,627             | +3,267,783 (+12%)  |
+| Rank | Contract                                                         | Gas (1,000 recipients) | Difference from #1 |
+| ---- | ---------------------------------------------------------------- | ---------------------- | ------------------ |
+| 1    | [`GasliteDrop`](./src/GasliteDrop.sol#L46)                       | 27,760,844             | 0                  |
+| 2    | [Thirdweb `AirdropERC721`](./src/thirdweb/AirdropERC721.sol#L93) | 31,028,627             | +3,267,783 (+12%)  |
 
 ### ERC721 (claim-based airdrop)
 
-| Rank | Contract                                                                     | Gas deployment (1,000 recipients) | Difference from #1    | Gas claim (1 recipient) | Difference from #1 |
-| ---- | ---------------------------------------------------------------------------- | --------------------------------- | --------------------- | ----------------------- | ------------------ |
-| 1    | [AirdropClaimMerkle](./src/custom/AirdropClaimMerkle_ERC721.sol)             | 366,041 (366,041 + 0)             | 0                     | 51,897                  | 0                  |
-| 2    | [AirdropClaimSignature](./src/custom/AirdropClaimSignature_ERC721.sol)       | 394,994 (394,994 + 0)             | +28,953 (+8%)         | 53,968                  | +2,071 (+4%)       |
-| 3    | [AirdropClaimMapping](./src/custom/AirdropClaimMapping_ERC721.sol)           | 31,039,669 (433,833 + 30,605,836) | +30,673,628 (+8,380%) | 28,003                  | -23,894 (-46%%)    |
-| 4    | [Thirdweb AirdropERC721Claimable](./src/thirdweb/AirdropERC721Claimable.sol) | 22,452,426 (66,769 + 22,385,657)  | +22,086,385 (+3,034%) | 219,101                 | +167,204 (+322%)   |
+| Rank | Contract                                                                       | Gas deployment (1,000 recipients) | Difference from #1    | Gas claim (1 recipient) | Difference from #1 |
+| ---- | ------------------------------------------------------------------------------ | --------------------------------- | --------------------- | ----------------------- | ------------------ |
+| 1    | [`AirdropClaimMerkle`](./src/custom/AirdropClaimMerkle_ERC721.sol)             | 366,041 (366,041 + 0)             | 0                     | 51,897                  | 0                  |
+| 2    | [`AirdropClaimSignature`](./src/custom/AirdropClaimSignature_ERC721.sol)       | 394,994 (394,994 + 0)             | +28,953 (+8%)         | 53,968                  | +2,071 (+4%)       |
+| 3    | [`AirdropClaimMapping`](./src/custom/AirdropClaimMapping_ERC721.sol)           | 31,039,669 (433,833 + 30,605,836) | +30,673,628 (+8,380%) | 28,003                  | -23,894 (-46%%)    |
+| 4    | [Thirdweb `AirdropERC721Claimable`](./src/thirdweb/AirdropERC721Claimable.sol) | 22,452,426 (66,769 + 22,385,657)  | +22,086,385 (+3,034%) | 219,101                 | +167,204 (+322%)   |
 
 It really hurts to not put `AirdropClaimMapping` in the last place, but Thirdweb's `AirdropERC721Claimable` really is too much with both the ~30M gas deployment and the ~218k gas claims. With 1,000 recipients, it is more than 219M in gas just for users to claim their tokens...
 
@@ -138,10 +138,10 @@ Also, `AirdropERC721Claimable` does not allow for airdroping specific tokens to 
 
 ### ERC1155 (direct airdrop)
 
-| Rank | Contract                                                         | Gas (1,000 recipients) | Difference from #1 |
-| ---- | ---------------------------------------------------------------- | ---------------------- | ------------------ |
-| 1    | [GasliteDrop1155](./src/GasliteDrop1155.sol#L64)                 | 28,890,255             | 0                  |
-| 2    | [Thirdweb AirdropERC1155](./src/thirdweb/AirdropERC1155.sol#L93) | 29,483,628             | +593,373 (+2%)     |
+| Rank | Contract                                                           | Gas (1,000 recipients) | Difference from #1 |
+| ---- | ------------------------------------------------------------------ | ---------------------- | ------------------ |
+| 1    | [`GasliteDrop1155`](./src/GasliteDrop1155.sol#L64)                 | 28,890,255             | 0                  |
+| 2    | [Thirdweb `AirdropERC1155`](./src/thirdweb/AirdropERC1155.sol#L93) | 29,483,628             | +593,373 (+2%)     |
 
 It's worth noting that `GasliteDrop1155` takes advantage of multiple recipients with same amount by packing them into a single struct. Which much better simulates real world scenarios (e.g. users being rewarded the same amounts for the same token IDs after accomplishing a similar task). See:
 
@@ -156,22 +156,22 @@ In these tests, there are ~14% of recipients aggregated with the same amount. As
 
 ### ERC1155 (claim-based airdrop)
 
-| Rank | Contract                                                                       | Gas deployment (1,000 recipients) | Difference from #1    | Gas claim (1 recipient) | Difference from #1 |
-| ---- | ------------------------------------------------------------------------------ | --------------------------------- | --------------------- | ----------------------- | ------------------ |
-| 1    | [AirdropClaimMerkle](./src/custom/AirdropClaimMerkle_ERC1155.sol)              | 486,360 (486360 + 0)              | 0                     | 52,873                  | 0                  |
-| 2    | [AirdropClaimSignature](./src/custom/AirdropClaimSignature_ERC1155.sol)        | 516,113 (516113 + 0)              | +29,753 (+6%)         | 54,966                  | +2,093 (+4%)       |
-| 3    | [Thirdweb AirdropERC1155Claimable](./src/thirdweb/AirdropERC1155Claimable.sol) | 1,556,310 (66769 + 1489541)       | +1,069,950 (+220%)    | 62,083                  | +9,210 (+17%)      |
-| 4    | [AirdropClaimMapping](./src/custom/AirdropClaimMapping_ERC1155.sol)            | 27,069,815 (598196 + 26471619)    | +26,583,455 (+5,466%) | 28,995                  | -23,878 (-45%)     |
+| Rank | Contract                                                                         | Gas deployment (1,000 recipients) | Difference from #1    | Gas claim (1 recipient) | Difference from #1 |
+| ---- | -------------------------------------------------------------------------------- | --------------------------------- | --------------------- | ----------------------- | ------------------ |
+| 1    | [`AirdropClaimMerkle`](./src/custom/AirdropClaimMerkle_ERC1155.sol)              | 486,360 (486360 + 0)              | 0                     | 52,873                  | 0                  |
+| 2    | [`AirdropClaimSignature`](./src/custom/AirdropClaimSignature_ERC1155.sol)        | 516,113 (516113 + 0)              | +29,753 (+6%)         | 54,966                  | +2,093 (+4%)       |
+| 3    | [Thirdweb `AirdropERC1155Claimable`](./src/thirdweb/AirdropERC1155Claimable.sol) | 1,556,310 (66769 + 1489541)       | +1,069,950 (+220%)    | 62,083                  | +9,210 (+17%)      |
+| 4    | [`AirdropClaimMapping`](./src/custom/AirdropClaimMapping_ERC1155.sol)            | 27,069,815 (598196 + 26471619)    | +26,583,455 (+5,466%) | 28,995                  | -23,878 (-45%)     |
 
 These contracts allow only for claiming a single token ID per recipient, to fit the Thirdweb pattern.
 
 ### ETH (direct airdrop)
 
-| Rank | Contract                                  | Gas (1,000 recipients) | Difference from #1 |
-| ---- | ----------------------------------------- | ---------------------- | ------------------ |
-| 1    | [GasliteDrop](./src/GasliteDrop.sol#L137) | 34,383,749             | 0                  |
-| 2    | [Wentokens](./src/Wentokens.sol#L32)      | 34,437,735             | +53,986 (+0.2%)    |
-| 3    | [Disperse](./src/Disperse.sol#L10)        | 34,702,386             | +318,637 (+1%)     |
+| Rank | Contract                                       | Gas (1,000 recipients) | Difference from #1 |
+| ---- | ---------------------------------------------- | ---------------------- | ------------------ |
+| 1    | [`GasliteDrop`](./src/GasliteDrop.sol#L137)    | 34,383,749             | 0                  |
+| 2    | [Wentokens `Airdrop`](./src/Wentokens.sol#L32) | 34,437,735             | +53,986 (+0.2%)    |
+| 3    | [`Disperse`](./src/Disperse.sol#L10)           | 34,702,386             | +318,637 (+1%)     |
 
 ## How to run
 
