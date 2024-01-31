@@ -30,23 +30,23 @@ The custom contract ([`AirdropClaimMapping`](./src/AirdropClaimMapping.sol), and
 
 ### Airdrop mechanisms (custom contracts):
 
-| Type                                              | Tokens                 | Contract                                                   |
-| ------------------------------------------------- | ---------------------- | ---------------------------------------------------------- |
-| Claimable airdrop (data inscribed into a mapping) | ERC20, ERC721, ERC1155 | [`AirdropClaimMapping`](./src/AirdropClaimMapping.sol)     |
-| Claimable airdrop (merkle proof)                  | ERC20, ERC721, ERC1155 | [`AirdropClaimMerkle`](./src/AirdropClaimMerkle.sol)       |
-| Claimable airdrop (signature)                     | ERC20, ERC721, ERC1155 | [`AirdropClaimSignature`](./src/AirdropClaimSignature.sol) |
-| Airdrop (bytecode contract)                       | ERC20                  | [`BytecodeDrop`](./src/BytecodeDrop.sol)                   |
+| Type                                              | Tokens                 | Contract                                                                                                                                                                                                                                          |
+| ------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Claimable airdrop (data inscribed into a mapping) | ERC20, ERC721, ERC1155 | [`AirdropClaimMapping_ERC20`](./src/custom/AirdropClaimMapping_ERC20.sol), [`AirdropClaimMapping_ERC721`](./src/custom/AirdropClaimMapping_ERC721.sol), [`AirdropClaimMapping_ERC1155`](./src/custom/AirdropClaimMapping_ERC1155.sol)             |
+| Claimable airdrop (merkle proof)                  | ERC20, ERC721, ERC1155 | [`AirdropClaimMerkle_ERC20`](./src/custom/AirdropClaimMerkle_ERC20.sol), [`AirdropClaimMerkle_ERC721`](./src/custom/AirdropClaimMerkle_ERC721.sol), [`AirdropClaimMerkle_ERC1155`](./src/custom/AirdropClaimMerkle_ERC1155.sol)                   |
+| Claimable airdrop (signature)                     | ERC20, ERC721, ERC1155 | [`AirdropClaimSignature_ERC20`](./src/custom/AirdropClaimSignature_ERC20.sol), [`AirdropClaimSignature_ERC721`](./src/custom/AirdropClaimSignature_ERC721.sol), [`AirdropClaimSignature_ERC1155`](./src/custom/AirdropClaimSignature_ERC1155.sol) |
+| Airdrop (bytecode contract)                       | ERC20                  | [`BytecodeDrop`](./src/BytecodeDrop.sol)                                                                                                                                                                                                          |
 
 ### Airdrop solutions (including already deployed contracts):
 
-| Type                                       | Tokens                 | Contract                                       | Website/source code                                  |
-| ------------------------------------------ | ---------------------- | ---------------------------------------------- | ---------------------------------------------------- |
-| GasliteDrop (airdrop)                      | ETH, ERC20, ERC721     | [`GasliteDrop`](./src/GasliteDrop.sol)         | [drop.gaslite.org](https://drop.gaslite.org/)        |
-| GasliteDrop1155 (airdrop)                  | ERC1155                | [`GasliteDrop1155`](./src/GasliteDrop1155.sol) | [drop.gaslite.org](https://drop.gaslite.org/)        |
-| Disperse.app (airdrop)                     | ETH, ERC20             | [`Disperse`](./src/Disperse.sol)               | [disperse.app](https://disperse.app/)                |
-| wentokens (airdrop)                        | ETH, ERC20             | [`Airdrop`](./src/Wentokens.sol)               | [www.wentokens.xyz](https://www.wentokens.xyz/)      |
-| Thirdweb (airdrop)                         | ERC20, ERC721, ERC1155 | [thirdweb/](./src/thirdweb)                    | [thirdweb.com](https://thirdweb.com/explore/airdrop) |
-| Thirdweb (claimable airdrop, merkle proof) | ERC20, ERC721, ERC1155 | [thirdweb/](./src/thirdweb)                    | [thirdweb.com](https://thirdweb.com/explore/airdrop) |
+| Type                                       | Tokens                 | Contract                                                                                                                                                                                                            | Website/source code                                  |
+| ------------------------------------------ | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| GasliteDrop (airdrop)                      | ETH, ERC20, ERC721     | [`GasliteDrop`](./src/GasliteDrop.sol)                                                                                                                                                                              | [drop.gaslite.org](https://drop.gaslite.org/)        |
+| GasliteDrop1155 (airdrop)                  | ERC1155                | [`GasliteDrop1155`](./src/GasliteDrop1155.sol)                                                                                                                                                                      | [drop.gaslite.org](https://drop.gaslite.org/)        |
+| Disperse.app (airdrop)                     | ETH, ERC20             | [`Disperse`](./src/Disperse.sol)                                                                                                                                                                                    | [disperse.app](https://disperse.app/)                |
+| wentokens (airdrop)                        | ETH, ERC20             | [`Airdrop`](./src/Wentokens.sol)                                                                                                                                                                                    | [www.wentokens.xyz](https://www.wentokens.xyz/)      |
+| Thirdweb (airdrop)                         | ERC20, ERC721, ERC1155 | [`AirdropERC20`](./src/thirdweb/AirdropERC20.sol), [`AirdropERC721`](./src/thirdweb/AirdropERC721.sol), [`AirdropERC1155`](./src/thirdweb/AirdropERC1155.sol)                                                       | [thirdweb.com](https://thirdweb.com/explore/airdrop) |
+| Thirdweb (claimable airdrop, merkle proof) | ERC20, ERC721, ERC1155 | [`AirdropERC20Claimable`](./src/thirdweb/AirdropERC20Claimable.sol), [`AirdropERC721Claimable`](./src/thirdweb/AirdropERC721Claimable.sol), [`AirdropERC1155Claimable`](./src/thirdweb/AirdropERC1155Claimable.sol) | [thirdweb.com](https://thirdweb.com/explore/airdrop) |
 
 ---
 
