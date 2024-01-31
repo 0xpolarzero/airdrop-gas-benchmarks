@@ -12,8 +12,8 @@ The custom contract ([AirdropClaimMapping.sol](./src/AirdropClaimMapping.sol), a
 ## Table of contents
 
 - [Overview](#overview)
-  - [Airdrop mechanisms (custom contracts):](#airdrop-mechanisms-custom-contracts)
-  - [Airdrop solutions (including already deployed contracts):](#airdrop-solutions-including-already-deployed-contracts)
+  - [Airdrop mechanisms (custom contracts)](#airdrop-mechanisms-custom-contracts)
+  - [Airdrop solutions (including already deployed contracts)](#airdrop-solutions-including-already-deployed-contracts)
 - [Results](#results)
   - [ERC20 (direct airdrop)](#erc20-direct-airdrop)
   - [ERC20 (claim-based airdrop)](#erc20-claim-based-airdrop)
