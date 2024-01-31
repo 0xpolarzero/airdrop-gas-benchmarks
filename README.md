@@ -52,8 +52,8 @@ The custom mapping-based contracts ([`AirdropClaimMapping_ERC{20/721/1155}`](./s
 
 This Readme is an attempt to showcase the results in an organized and sorted manner.
 
-[!WARNING]
-The benchmarks do not include the gas consumption for [the bytecode contract](./src/BytecodeDrop.sol), as [a current limitation with Forge](https://github.com/foundry-rs/foundry/issues/6129); this should actually be the most efficient way for airdropping ERC20 tokens.
+> [!WARNING]
+> The benchmarks do not include the gas consumption for [the bytecode contract](./src/BytecodeDrop.sol), as [a current limitation with Forge](https://github.com/foundry-rs/foundry/issues/6129); this should actually be the most efficient way for airdropping ERC20 tokens.
 
 ## Results
 
@@ -95,8 +95,8 @@ The cost of deploying and initializing the Thirdweb direct airdrop contracts (`A
 | 4    | [`Disperse`](./src//Disperse.sol#L31) (`disperseTokenSimple`)  | 26,237,332             | +1,291,088 (+5%)   |
 | 5    | [Thirdweb `AirdropERC20`](./src/thirdweb/AirdropERC20.sol#L96) | 26,906,458             | +1,960,214 (+8%)   |
 
-[!NOTE]
-BytecodeDrop is not included yet, but it should be able to be measured consistently against the other contracts with Hardhat.
+> [!NOTE]
+> BytecodeDrop is not included yet, but it should be able to be measured consistently against the other contracts with Hardhat.
 
 ### ERC20 (claim-based airdrop)
 
@@ -230,3 +230,7 @@ forge test --mt AirdropClaimMapping --gas-report
 # See the name of each test
 forge test --mt test_ERC20_GasliteDrop --gas-report
 ```
+
+## Disclaimer
+
+The custom contracts shared in this repository are not meant to be used in production. They are not audited, and some of them are written precisely to showcase how inefficient airdrops can be if not properly designed. This does not only apply to gas consumption, but also to security and usability.
