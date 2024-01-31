@@ -230,4 +230,5 @@ forge test --mt test_ERC20_GasliteDrop --gas-report
 
 ## Disclaimer
 
-The custom contracts shared in this repository are not meant to be used in production. They are not audited, and some of them are written precisely to showcase how inefficient airdrops can be if not properly designed. This does not only apply to gas consumption, but also to security and usability.
+> [!WARNING]
+> The custom contracts shared in this repository are not meant to be used in production. They are not audited, and some of them are written precisely to showcase how inefficient airdrops can be if not properly designed. This does not only apply to gas consumption, but also to security and usability.
