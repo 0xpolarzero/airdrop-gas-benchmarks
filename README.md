@@ -126,7 +126,7 @@ It's also worth noting that Thirdweb does not allow for claiming on behalf of an
 | ---- | ------------------------------------------------------------------------------ | --------------------------------- | --------------------- | ----------------------- | ------------------ |
 | 1    | [`AirdropClaimMerkle`](./src/custom/AirdropClaimMerkle_ERC721.sol)             | 366,041 (366,041 + 0)             | 0                     | 51,897                  | 0                  |
 | 2    | [`AirdropClaimSignature`](./src/custom/AirdropClaimSignature_ERC721.sol)       | 394,994 (394,994 + 0)             | +28,953 (+8%)         | 53,968                  | +2,071 (+4%)       |
-| 3    | [`AirdropClaimMapping`](./src/custom/AirdropClaimMapping_ERC721.sol)           | 31,039,669 (433,833 + 30,605,836) | +30,673,628 (+8,380%) | 28,003                  | -23,894 (-46%%)    |
+| 3    | [`AirdropClaimMapping`](./src/custom/AirdropClaimMapping_ERC721.sol)           | 31,039,669 (433,833 + 30,605,836) | +30,673,628 (+8,380%) | 28,003                  | -23,894 (-46%)     |
 | 4    | Thirdweb [`AirdropERC721Claimable`](./src/thirdweb/AirdropERC721Claimable.sol) | 22,452,426 (66,769 + 22,385,657)  | +22,086,385 (+3,034%) | 219,101                 | +167,204 (+322%)   |
 
 It really hurts to not put `AirdropClaimMapping` in the last place, but Thirdweb's `AirdropERC721Claimable` really is too much with both the ~30M gas deployment and the ~218k gas claims. With 1,000 recipients, it is more than 219M in gas just for users to claim their tokens...
