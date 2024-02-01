@@ -15,13 +15,13 @@ The custom mapping-based contracts ([`AirdropClaimMapping_ERC{20/721/1155}`](./s
   - [Airdrop mechanisms (custom contracts)](#airdrop-mechanisms-custom-contracts)
   - [Airdrop solutions (including already deployed contracts)](#airdrop-solutions-including-already-deployed-contracts)
 - [Results](#results)
-  - [ERC20 (direct airdrop)](#erc20-direct-airdrop)
-  - [ERC20 (claim-based airdrop)](#erc20-claim-based-airdrop)
-  - [ERC721 (direct airdrop)](#erc721-direct-airdrop)
-  - [ERC721 (claim-based airdrop)](#erc721-claim-based-airdrop)
-  - [ERC1155 (direct airdrop)](#erc1155-direct-airdrop)
-  - [ERC1155 (claim-based airdrop)](#erc1155-claim-based-airdrop)
-  - [ETH (direct airdrop)](#eth-direct-airdrop)
+  - [ERC20 (push-based)](#erc20-direct-airdrop)
+  - [ERC20 (claim-based)](#erc20-claim-based-airdrop)
+  - [ERC721 (push-based)](#erc721-direct-airdrop)
+  - [ERC721 (claim-based)](#erc721-claim-based-airdrop)
+  - [ERC1155 (push-based)](#erc1155-direct-airdrop)
+  - [ERC1155 (claim-based)](#erc1155-claim-based-airdrop)
+  - [ETH (push-based)](#eth-direct-airdrop)
 - [How to run](#how-to-run)
   - [Setup](#setup)
   - [Usage](#usage)
@@ -78,14 +78,14 @@ For **claim-based airdrops**, multiple measurements are taken into account:
 
 Steps 1 and 2 are aggregated into `Gas deployment`, with the details for each amount in such way: `total (deployment/initialization + deposit/airdrop)`.
 
-For **direct airdrops**, the gas cost of deploying and initializing the contract is ignored, as all solutions, excluding Thirdweb, are already deployed and available for use (direct call to the airdrop function).
+For **push-based airdrops**, the gas cost of deploying and initializing the contract is ignored, as all solutions, excluding Thirdweb, are already deployed and available for use (direct call to the airdrop function).
 
-The cost of deploying and initializing the Thirdweb direct airdrop contracts (`AirdropERC20`, `AirdropERC721`, `AirdropERC1155`) is actually very consistent, so it can be at least mentioned here (with a 1e3 underestimation):
+The cost of deploying and initializing the Thirdweb push-based airdrop contracts (`AirdropERC20`, `AirdropERC721`, `AirdropERC1155`) is actually very consistent, so it can be at least mentioned here (with a 1e3 underestimation):
 
 - Deploying proxy: ~66,000 gas
 - Initializing proxy: ~144,000
 
-### ERC20 (direct airdrop)
+### ERC20 (push-based)
 
 | Rank | Contract                                                       | Gas (1,000 recipients) | Difference from #1 |
 | ---- | -------------------------------------------------------------- | ---------------------- | ------------------ |
@@ -95,7 +95,7 @@ The cost of deploying and initializing the Thirdweb direct airdrop contracts (`A
 | 4    | [`Disperse`](./src//Disperse.sol#L31) (`disperseTokenSimple`)  | 26,237,332             | +1,291,088 (+5%)   |
 | 5    | [Thirdweb `AirdropERC20`](./src/thirdweb/AirdropERC20.sol#L96) | 26,906,458             | +1,960,214 (+8%)   |
 
-### ERC20 (claim-based airdrop)
+### ERC20 (claim-based)
 
 | Rank | Contract                                                                     | Gas deployment (1,000 recipients) | Difference from #1    | Gas claim (1 recipient) | Difference from #1 |
 | ---- | ---------------------------------------------------------------------------- | --------------------------------- | --------------------- | ----------------------- | ------------------ |
@@ -113,14 +113,14 @@ In any case, these are only benchmarks, with a ranking provided for convenience.
 
 It's also worth noting that Thirdweb does not allow for claiming on behalf of another account, e.g. to sponsor gas fees for a claimer.
 
-### ERC721 (direct airdrop)
+### ERC721 (push-based)
 
 | Rank | Contract                                                         | Gas (1,000 recipients) | Difference from #1 |
 | ---- | ---------------------------------------------------------------- | ---------------------- | ------------------ |
 | 1    | [`GasliteDrop`](./src/GasliteDrop.sol#L46)                       | 27,760,844             | 0                  |
 | 2    | [Thirdweb `AirdropERC721`](./src/thirdweb/AirdropERC721.sol#L93) | 31,028,627             | +3,267,783 (+12%)  |
 
-### ERC721 (claim-based airdrop)
+### ERC721 (claim-based)
 
 | Rank | Contract                                                                       | Gas deployment (1,000 recipients) | Difference from #1    | Gas claim (1 recipient) | Difference from #1 |
 | ---- | ------------------------------------------------------------------------------ | --------------------------------- | --------------------- | ----------------------- | ------------------ |
@@ -133,7 +133,7 @@ It really hurts to not put `AirdropClaimMapping` in the last place, but Thirdweb
 
 Also, `AirdropERC721Claimable` does not allow for airdroping specific tokens to specific accounts, it will just allow to claim `n` amount of tokens, and read the tokenIds array in ascending order. So it basically looks like a minting function.
 
-### ERC1155 (direct airdrop)
+### ERC1155 (push-based)
 
 | Rank | Contract                                                           | Gas (1,000 recipients) | Difference from #1 |
 | ---- | ------------------------------------------------------------------ | ---------------------- | ------------------ |
@@ -151,7 +151,7 @@ struct AirdropTokenAmount {
 
 In these tests, there are ~14% of recipients aggregated with the same amount. As the proportion of recipients with the same amount increases, the gap in gas consumption between `GasliteDrop1155` and Thirdweb's `AirdropERC1155` contract will increase as well.
 
-### ERC1155 (claim-based airdrop)
+### ERC1155 (claim-based)
 
 | Rank | Contract                                                                         | Gas deployment (1,000 recipients) | Difference from #1    | Gas claim (1 recipient) | Difference from #1 |
 | ---- | -------------------------------------------------------------------------------- | --------------------------------- | --------------------- | ----------------------- | ------------------ |
@@ -162,7 +162,7 @@ In these tests, there are ~14% of recipients aggregated with the same amount. As
 
 These contracts allow only for claiming a single token ID per recipient, to fit the Thirdweb pattern.
 
-### ETH (direct airdrop)
+### ETH (push-based)
 
 | Rank | Contract                                       | Gas (1,000 recipients) | Difference from #1 |
 | ---- | ---------------------------------------------- | ---------------------- | ------------------ |
