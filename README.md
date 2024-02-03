@@ -153,12 +153,12 @@ In these tests, there are ~14% of recipients aggregated with the same amount. As
 
 ### ERC1155 (claim-based)
 
-| Rank | Contract                                                                         | Gas deployment (1,000 recipients)         | Difference from #1               | Gas claim (1 recipient) | Difference from #1        |
-| ---- | -------------------------------------------------------------------------------- | ----------------------------------------- | -------------------------------- | ----------------------- | ------------------------- |
-| 1    | [`AirdropClaimMerkle`](./src/custom/AirdropClaimMerkle_ERC1155.sol)              | 486,360 (486360 + 0) <!-- g -->           | 0                                | 52,873 <!-- g -->       | 0                         |
-| 2    | [`AirdropClaimSignature`](./src/custom/AirdropClaimSignature_ERC1155.sol)        | 516,113 (516113 + 0) <!-- g -->           | +29,753 (+6%) <!-- g -->         | 54,966 <!-- g -->       | +2,093 (+4%) <!-- g -->   |
-| 3    | Thirdweb [`AirdropERC1155Claimable`](./src/thirdweb/AirdropERC1155Claimable.sol) | 1,556,310 (66769 + 1489541) <!-- g -->    | +1,069,950 (+220%) <!-- g -->    | 62,083 <!-- g -->       | +9,210 (+17%) <!-- g -->  |
-| 4    | [`AirdropClaimMapping`](./src/custom/AirdropClaimMapping_ERC1155.sol)            | 27,069,815 (598196 + 26471619) <!-- g --> | +26,583,455 (+5,466%) <!-- g --> | 28,995 <!-- g -->       | -23,878 (-45%) <!-- g --> |
+| Rank | Contract                                                                         | Gas deployment (1,000 recipients)            | Difference from #1               | Gas claim (1 recipient) | Difference from #1        |
+| ---- | -------------------------------------------------------------------------------- | -------------------------------------------- | -------------------------------- | ----------------------- | ------------------------- |
+| 1    | [`AirdropClaimMerkle`](./src/custom/AirdropClaimMerkle_ERC1155.sol)              | 486,360 (486,360 + 0) <!-- g -->             | 0                                | 52,873 <!-- g -->       | 0                         |
+| 2    | [`AirdropClaimSignature`](./src/custom/AirdropClaimSignature_ERC1155.sol)        | 516,113 (516,113 + 0) <!-- g -->             | +29,753 (+6%) <!-- g -->         | 54,966 <!-- g -->       | +2,093 (+4%) <!-- g -->   |
+| 3    | Thirdweb [`AirdropERC1155Claimable`](./src/thirdweb/AirdropERC1155Claimable.sol) | 1,556,310 (66,769 + 1,489,541) <!-- g -->    | +1,069,950 (+220%) <!-- g -->    | 62,083 <!-- g -->       | +9,210 (+17%) <!-- g -->  |
+| 4    | [`AirdropClaimMapping`](./src/custom/AirdropClaimMapping_ERC1155.sol)            | 27,069,815 (598,196 + 26,471,619) <!-- g --> | +26,583,455 (+5,466%) <!-- g --> | 28,995 <!-- g -->       | -23,878 (-45%) <!-- g --> |
 
 These contracts allow only for claiming a single token ID per recipient, to fit the Thirdweb pattern.
 
