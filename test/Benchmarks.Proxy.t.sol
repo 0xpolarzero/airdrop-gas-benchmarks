@@ -12,7 +12,7 @@ contract ProxyDeployer {
     }
 }
 
-contract Benchmarks_Proxy is SoladyTest {
+contract BenchmarksProxy is SoladyTest {
     ProxyDeployer deployer;
 
     function setUp() public {

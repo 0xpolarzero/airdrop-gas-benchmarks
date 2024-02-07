@@ -11,9 +11,9 @@ import {LibClone} from "@solady/utils/LibClone.sol";
 import {Merkle} from "murky/src/Merkle.sol";
 
 // Mocks
-import {Mock_ERC20} from "test/mocks/Mock_ERC20.sol";
-import {Mock_ERC721} from "test/mocks/Mock_ERC721.sol";
-import {Mock_ERC1155} from "test/mocks/Mock_ERC1155.sol";
+import {MockERC20} from "test/mocks/Mock.ERC20.sol";
+import {MockERC721} from "test/mocks/Mock.ERC721.sol";
+import {MockERC1155} from "test/mocks/Mock.ERC1155.sol";
 
 // Tested contracts
 import {BytecodeDrop} from "src/BytecodeDrop.sol";
@@ -47,21 +47,21 @@ uint256 constant NUM_ERC1155_IDS = 20;
 abstract contract Benchmarks_Base is SoladyTest, StdCheats {
     using LibPRNG for LibPRNG.PRNG;
 
-    Mock_ERC20 erc20;
-    Mock_ERC721 erc721;
-    Mock_ERC1155 erc1155;
+    MockERC20 erc20;
+    MockERC721 erc721;
+    MockERC1155 erc1155;
     Merkle m;
 
     // Custom
-    AirdropClaimMapping_ERC20 airdropClaimMapping_erc20;
-    AirdropClaimMapping_ERC721 airdropClaimMapping_erc721;
-    AirdropClaimMapping_ERC1155 airdropClaimMapping_erc1155;
-    AirdropClaimMerkle_ERC20 airdropClaimMerkle_erc20;
-    AirdropClaimMerkle_ERC721 airdropClaimMerkle_erc721;
-    AirdropClaimMerkle_ERC1155 airdropClaimMerkle_erc1155;
-    AirdropClaimSignature_ERC20 airdropClaimSignature_erc20;
-    AirdropClaimSignature_ERC721 airdropClaimSignature_erc721;
-    AirdropClaimSignature_ERC1155 airdropClaimSignature_erc1155;
+    AirdropClaimMappingERC20 airdropClaimMapping_erc20;
+    AirdropClaimMappingERC721 airdropClaimMapping_erc721;
+    AirdropClaimMappingERC1155 airdropClaimMapping_erc1155;
+    AirdropClaimMerkleERC20 airdropClaimMerkle_erc20;
+    AirdropClaimMerkleERC721 airdropClaimMerkle_erc721;
+    AirdropClaimMerkleERC1155 airdropClaimMerkle_erc1155;
+    AirdropClaimSignatureERC20 airdropClaimSignature_erc20;
+    AirdropClaimSignatureERC721 airdropClaimSignature_erc721;
+    AirdropClaimSignatureERC1155 airdropClaimSignature_erc1155;
     BytecodeDrop bytecodeDrop;
     // Solutions
     Wentokens_Airdrop wentokens_airdrop;
@@ -170,12 +170,12 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
 
     function _deploy_ERC20() internal virtual {
         // Token
-        erc20 = new Mock_ERC20(TOTAL_AMOUNT_ERC20);
+        erc20 = new MockERC20(TOTAL_AMOUNT_ERC20);
 
         // Custom
-        airdropClaimMapping_erc20 = new AirdropClaimMapping_ERC20(erc20);
-        airdropClaimMerkle_erc20 = new AirdropClaimMerkle_ERC20(erc20, ROOT_ERC20);
-        airdropClaimSignature_erc20 = new AirdropClaimSignature_ERC20(erc20, SIGNER);
+        airdropClaimMapping_erc20 = new AirdropClaimMappingERC20(erc20);
+        airdropClaimMerkle_erc20 = new AirdropClaimMerkleERC20(erc20, ROOT_ERC20);
+        airdropClaimSignature_erc20 = new AirdropClaimSignatureERC20(erc20, SIGNER);
         bytecodeDrop = new BytecodeDrop();
 
         // Thirdweb
@@ -190,12 +190,12 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
 
     function _deploy_ERC721() internal virtual {
         // Token
-        erc721 = new Mock_ERC721(TOKEN_IDS_ERC721);
+        erc721 = new MockERC721(TOKEN_IDS_ERC721);
 
         // Custom
-        airdropClaimMapping_erc721 = new AirdropClaimMapping_ERC721(erc721);
-        airdropClaimMerkle_erc721 = new AirdropClaimMerkle_ERC721(erc721, ROOT_ERC721);
-        airdropClaimSignature_erc721 = new AirdropClaimSignature_ERC721(erc721, SIGNER);
+        airdropClaimMapping_erc721 = new AirdropClaimMappingERC721(erc721);
+        airdropClaimMerkle_erc721 = new AirdropClaimMerkleERC721(erc721, ROOT_ERC721);
+        airdropClaimSignature_erc721 = new AirdropClaimSignatureERC721(erc721, SIGNER);
 
         // Thirdweb
         thirdweb_airdropERC721 = Thirdweb_AirdropERC721(LibClone.deployERC1967(address(new Thirdweb_AirdropERC721())));
@@ -209,12 +209,12 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
 
     function _deploy_ERC1155() internal virtual {
         // Token
-        erc1155 = new Mock_ERC1155(TOKEN_IDS_AT_INDEX_ERC1155, TOTAL_AMOUNTS_ERC1155);
+        erc1155 = new MockERC1155(TOKEN_IDS_AT_INDEX_ERC1155, TOTAL_AMOUNTS_ERC1155);
 
         // Custom
-        airdropClaimMapping_erc1155 = new AirdropClaimMapping_ERC1155(erc1155);
-        airdropClaimMerkle_erc1155 = new AirdropClaimMerkle_ERC1155(erc1155, ROOT_ERC1155);
-        airdropClaimSignature_erc1155 = new AirdropClaimSignature_ERC1155(erc1155, SIGNER);
+        airdropClaimMapping_erc1155 = new AirdropClaimMappingERC1155(erc1155);
+        airdropClaimMerkle_erc1155 = new AirdropClaimMerkleERC1155(erc1155, ROOT_ERC1155);
+        airdropClaimSignature_erc1155 = new AirdropClaimSignatureERC1155(erc1155, SIGNER);
 
         // Gaslite
         gasliteDrop1155 = new GasliteDrop1155();

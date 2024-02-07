@@ -6,10 +6,10 @@ import {ERC1155} from "@solady/tokens/ERC1155.sol";
 import {ECDSA} from "@solady/utils/ECDSA.sol";
 import {Ownable} from "@solady/auth/Ownable.sol";
 
-/// @title AirdropClaimSignature_ERC1155
+/// @title AirdropClaimSignatureERC1155
 /// @notice ERC1155 claimable with signature
 /// @dev Just an example - not audited
-contract AirdropClaimSignature_ERC1155 is Ownable {
+contract AirdropClaimSignatureERC1155 is Ownable {
     ERC1155 public token;
 
     /* -------------------------------------------------------------------------- */

@@ -5,14 +5,14 @@ pragma solidity 0.8.20;
 import {ERC1155} from "@solady/tokens/ERC1155.sol";
 import {Ownable} from "@solady/auth/Ownable.sol";
 
-/// @title AirdropClaimMapping_ERC1155
+/// @title AirdropClaimMappingERC1155
 /// @notice ERC1155 claimable with mapping set by owner
 /// Note: This is a highly inefficient approach to highlight common mistakes done with such claim-based airdrops.
 /// Especially, to show how much these mistakes can cost in terms of gas.
 /// This attempts to write the logic the way a beginner would find it intuitive.
 /// Note: It allows only for a single ERC1155 tokenId to be claimed per address.
 /// @dev Just an example - not audited
-contract AirdropClaimMapping_ERC1155 is Ownable {
+contract AirdropClaimMappingERC1155 is Ownable {
     ERC1155 public token;
 
     /* -------------------------------------------------------------------------- */

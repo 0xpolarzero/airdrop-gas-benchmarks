@@ -6,10 +6,10 @@ import {ERC721} from "@solady/tokens/ERC721.sol";
 import {MerkleProofLib} from "@solady/utils/MerkleProofLib.sol";
 import {Ownable} from "@solady/auth/Ownable.sol";
 
-/// @title AirdropClaimMerkle_ERC721
+/// @title AirdropClaimMerkleERC721
 /// @notice ERC721 claimable with Merkle tree
 /// @dev Just an example - not audited
-contract AirdropClaimMerkle_ERC721 is Ownable {
+contract AirdropClaimMerkleERC721 is Ownable {
     ERC721 public token;
 
     /* -------------------------------------------------------------------------- */

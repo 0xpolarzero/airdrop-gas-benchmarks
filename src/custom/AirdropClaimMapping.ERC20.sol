@@ -5,13 +5,13 @@ pragma solidity 0.8.20;
 import {ERC20} from "@solady/tokens/ERC20.sol";
 import {Ownable} from "@solady/auth/Ownable.sol";
 
-/// @title AirdropClaimMapping_ERC20
+/// @title AirdropClaimMappingERC20
 /// @notice ERC20 claimable with mapping set by owner
 /// Note: This is a highly inefficient approach to highlight common mistakes done with such claim-based airdrops.
 /// Especially, to show how much these mistakes can cost in terms of gas.
 /// This attempts to write the logic the way a beginner would find it intuitive.
 /// @dev Just an example - not audited
-contract AirdropClaimMapping_ERC20 is Ownable {
+contract AirdropClaimMappingERC20 is Ownable {
     ERC20 public token;
 
     /* -------------------------------------------------------------------------- */

@@ -13,7 +13,7 @@ import {IAirdropERC721} from "src/thirdweb/deps/IAirdropERC721.sol";
 // 5. THIRDWEB AIRDROP (airdrop)
 // 6. THIRDWEB AIRDROP (claim)
 
-contract Benchmarks_ERC721 is Benchmarks_Base {
+contract BenchmarksERC721 is Benchmarks_Base {
     /* -------------------------------------------------------------------------- */
     /*                                    SETUP                                   */
     /* -------------------------------------------------------------------------- */

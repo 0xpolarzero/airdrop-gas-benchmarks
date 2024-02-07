@@ -14,7 +14,7 @@ import {IAirdropERC1155} from "src/thirdweb/deps/IAirdropERC1155.sol";
 // 5. THIRDWEB AIRDROP (airdrop)
 // 6. THIRDWEB AIRDROP (claim)
 
-contract Benchmarks_ERC1155 is Benchmarks_Base, ERC1155Holder {
+contract BenchmarksERC1155 is Benchmarks_Base, ERC1155Holder {
     /* -------------------------------------------------------------------------- */
     /*                                    SETUP                                   */
     /* -------------------------------------------------------------------------- */

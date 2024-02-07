@@ -17,7 +17,7 @@ import {IAirdropERC20} from "src/thirdweb/deps/IAirdropERC20.sol";
 // 8. THIRDWEB AIRDROP (airdrop)
 // 9. THIRDWEB AIRDROP (claim)
 
-contract Benchmarks_ERC20 is Benchmarks_Base {
+contract BenchmarksERC20 is Benchmarks_Base {
     /* -------------------------------------------------------------------------- */
     /*                                    SETUP                                   */
     /* -------------------------------------------------------------------------- */

@@ -7,7 +7,7 @@ This repository contains a series of tests to measure gas usage for popular aird
 - ERC721;
 - ERC1155.
 
-The custom mapping-based contracts ([`AirdropClaimMapping_ERC{20/721/1155}`](./src/custom/AirdropClaimMapping_ERC20.sol)), and to some extent [`AirdropClaimMerkle_ERC{20/721/1155}`](./src/custom/AirdropClaimMerkle_ERC20.sol) and [`AirdropClaimSignature_ERC{20/721/1155}`](./src/custom/AirdropClaimSignature_ERC20.sol) as well, are purposely written poorly to fit common assumptions and patterns found in the wild.
+The custom mapping-based contracts ([`AirdropClaimMappingERC{20/721/1155}`](./src/custom/AirdropClaimMapping.ERC20.sol)), and to some extent [`AirdropClaimMerkleERC{20/721/1155}`](./src/custom/AirdropClaimMerkle.ERC20.sol) and [`AirdropClaimSignatureERC{20/721/1155}`](./src/custom/AirdropClaimSignature.ERC20.sol) as well, are purposely written poorly to fit common assumptions and patterns found in the wild.
 
 ## Table of contents
 
@@ -30,12 +30,12 @@ The custom mapping-based contracts ([`AirdropClaimMapping_ERC{20/721/1155}`](./s
 
 ### Airdrop mechanisms (custom contracts):
 
-| Type                                              | Tokens                 | Contract                                                                                                                                                                                                                                          |
-| ------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Claimable airdrop (data inscribed into a mapping) | ERC20, ERC721, ERC1155 | [`AirdropClaimMapping_ERC20`](./src/custom/AirdropClaimMapping_ERC20.sol), [`AirdropClaimMapping_ERC721`](./src/custom/AirdropClaimMapping_ERC721.sol), [`AirdropClaimMapping_ERC1155`](./src/custom/AirdropClaimMapping_ERC1155.sol)             |
-| Claimable airdrop (merkle proof)                  | ERC20, ERC721, ERC1155 | [`AirdropClaimMerkle_ERC20`](./src/custom/AirdropClaimMerkle_ERC20.sol), [`AirdropClaimMerkle_ERC721`](./src/custom/AirdropClaimMerkle_ERC721.sol), [`AirdropClaimMerkle_ERC1155`](./src/custom/AirdropClaimMerkle_ERC1155.sol)                   |
-| Claimable airdrop (signature)                     | ERC20, ERC721, ERC1155 | [`AirdropClaimSignature_ERC20`](./src/custom/AirdropClaimSignature_ERC20.sol), [`AirdropClaimSignature_ERC721`](./src/custom/AirdropClaimSignature_ERC721.sol), [`AirdropClaimSignature_ERC1155`](./src/custom/AirdropClaimSignature_ERC1155.sol) |
-| Airdrop (bytecode contract)                       | ERC20                  | [`BytecodeDrop`](./src/BytecodeDrop.sol)                                                                                                                                                                                                          |
+| Type                                              | Tokens                 | Contract                                                                                                                                                                                                                                       |
+| ------------------------------------------------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Claimable airdrop (data inscribed into a mapping) | ERC20, ERC721, ERC1155 | [`AirdropClaimMappingERC20`](./src/custom/AirdropClaimMapping.ERC20.sol), [`AirdropClaimMappingERC721`](./src/custom/AirdropClaimMapping.ERC721.sol), [`AirdropClaimMappingERC1155`](./src/custom/AirdropClaimMapping.ERC1155.sol)             |
+| Claimable airdrop (merkle proof)                  | ERC20, ERC721, ERC1155 | [`AirdropClaimMerkleERC20`](./src/custom/AirdropClaimMerkle.ERC20.sol), [`AirdropClaimMerkleERC721`](./src/custom/AirdropClaimMerkle.ERC721.sol), [`AirdropClaimMerkleERC1155`](./src/custom/AirdropClaimMerkle.ERC1155.sol)                   |
+| Claimable airdrop (signature)                     | ERC20, ERC721, ERC1155 | [`AirdropClaimSignatureERC20`](./src/custom/AirdropClaimSignature.ERC20.sol), [`AirdropClaimSignatureERC721`](./src/custom/AirdropClaimSignature.ERC721.sol), [`AirdropClaimSignatureERC1155`](./src/custom/AirdropClaimSignature.ERC1155.sol) |
+| Airdrop (bytecode contract)                       | ERC20                  | [`BytecodeDrop`](./src/BytecodeDrop.sol)                                                                                                                                                                                                       |
 
 ### Airdrop solutions (including already deployed contracts):
 
@@ -99,10 +99,10 @@ The cost of deploying and initializing the Thirdweb push-based airdrop contracts
 
 | Rank | Contract                                                                     | Gas deployment (1,000 recipients)            | Difference from #1               | Gas claim (1 recipient) | Difference from #1        |
 | ---- | ---------------------------------------------------------------------------- | -------------------------------------------- | -------------------------------- | ----------------------- | ------------------------- |
-| 1    | [`AirdropClaimMerkle`](./src/custom/AirdropClaimMerkle_ERC20.sol)            | 381,660 (381,660 + 0) <!-- g -->             | 0                                | 51,217 <!-- g -->       | 0                         |
-| 2    | [`AirdropClaimSignature`](./src/custom/AirdropClaimSignature_ERC20.sol)      | 410,807 (410,807 + 0) <!-- g -->             | +29,147 (+8%) <!-- g -->         | 53,376 <!-- g -->       | +2,159 (+4%) <!-- g -->   |
+| 1    | [`AirdropClaimMerkle`](./src/custom/AirdropClaimMerkle.ERC20.sol)            | 381,660 (381,660 + 0) <!-- g -->             | 0                                | 51,217 <!-- g -->       | 0                         |
+| 2    | [`AirdropClaimSignature`](./src/custom/AirdropClaimSignature.ERC20.sol)      | 410,807 (410,807 + 0) <!-- g -->             | +29,147 (+8%) <!-- g -->         | 53,376 <!-- g -->       | +2,159 (+4%) <!-- g -->   |
 | 3    | Thirdweb [`AirdropERC20Claimable`](./src/thirdweb/AirdropERC20Claimable.sol) | 207,525 (66,769 + 140,756) <!-- g -->        | -174,135 (-46%) <!-- g -->       | 60,563 <!-- g -->       | +9,346 (+18%) <!-- g -->  |
-| 4    | [`AirdropClaimMapping`](./src/custom/AirdropClaimMapping_ERC20.sol)          | 24,959,529 (450,852 + 24,508,677) <!-- g --> | +24,577,869 (+6,440%) <!-- g --> | 27,272 <!-- g -->       | -23,945 (-47%) <!-- g --> |
+| 4    | [`AirdropClaimMapping`](./src/custom/AirdropClaimMapping.ERC20.sol)          | 24,959,529 (450,852 + 24,508,677) <!-- g --> | +24,577,869 (+6,440%) <!-- g --> | 27,272 <!-- g -->       | -23,945 (-47%) <!-- g --> |
 
 This comparison is opinionated. Some arguments to support it:
 
@@ -124,9 +124,9 @@ It's also worth noting that Thirdweb does not allow for claiming on behalf of an
 
 | Rank | Contract                                                                       | Gas deployment (1,000 recipients)            | Difference from #1               | Gas claim (1 recipient) | Difference from #1          |
 | ---- | ------------------------------------------------------------------------------ | -------------------------------------------- | -------------------------------- | ----------------------- | --------------------------- |
-| 1    | [`AirdropClaimMerkle`](./src/custom/AirdropClaimMerkle_ERC721.sol)             | 366,041 (366,041 + 0) <!-- g -->             | 0                                | 51,897 <!-- g -->       | 0                           |
-| 2    | [`AirdropClaimSignature`](./src/custom/AirdropClaimSignature_ERC721.sol)       | 394,994 (394,994 + 0) <!-- g -->             | +28,953 (+8%) <!-- g -->         | 53,968 <!-- g -->       | +2,071 (+4%) <!-- g -->     |
-| 3    | [`AirdropClaimMapping`](./src/custom/AirdropClaimMapping_ERC721.sol)           | 31,039,669 (433,833 + 30,605,836) <!-- g --> | +30,673,628 (+8,380%) <!-- g --> | 28,003 <!-- g -->       | -23,894 (-46%) <!-- g -->   |
+| 1    | [`AirdropClaimMerkle`](./src/custom/AirdropClaimMerkle.ERC721.sol)             | 366,041 (366,041 + 0) <!-- g -->             | 0                                | 51,897 <!-- g -->       | 0                           |
+| 2    | [`AirdropClaimSignature`](./src/custom/AirdropClaimSignature.ERC721.sol)       | 394,994 (394,994 + 0) <!-- g -->             | +28,953 (+8%) <!-- g -->         | 53,968 <!-- g -->       | +2,071 (+4%) <!-- g -->     |
+| 3    | [`AirdropClaimMapping`](./src/custom/AirdropClaimMapping.ERC721.sol)           | 31,039,669 (433,833 + 30,605,836) <!-- g --> | +30,673,628 (+8,380%) <!-- g --> | 28,003 <!-- g -->       | -23,894 (-46%) <!-- g -->   |
 | 4    | Thirdweb [`AirdropERC721Claimable`](./src/thirdweb/AirdropERC721Claimable.sol) | 22,452,426 (66,769 + 22,385,657) <!-- g -->  | +22,086,385 (+3,034%) <!-- g --> | 219,101 <!-- g -->      | +167,204 (+322%) <!-- g --> |
 
 It really hurts to not put `AirdropClaimMapping` in the last place, but Thirdweb's `AirdropERC721Claimable` really is too much with both the ~30M gas deployment and the ~218k gas claims. With 1,000 recipients, it is more than 219M in gas just for users to claim their tokens...
@@ -155,10 +155,10 @@ In these tests, there are ~14% of recipients aggregated with the same amount. As
 
 | Rank | Contract                                                                         | Gas deployment (1,000 recipients)            | Difference from #1               | Gas claim (1 recipient) | Difference from #1        |
 | ---- | -------------------------------------------------------------------------------- | -------------------------------------------- | -------------------------------- | ----------------------- | ------------------------- |
-| 1    | [`AirdropClaimMerkle`](./src/custom/AirdropClaimMerkle_ERC1155.sol)              | 486,360 (486,360 + 0) <!-- g -->             | 0                                | 52,873 <!-- g -->       | 0                         |
-| 2    | [`AirdropClaimSignature`](./src/custom/AirdropClaimSignature_ERC1155.sol)        | 516,113 (516,113 + 0) <!-- g -->             | +29,753 (+6%) <!-- g -->         | 54,966 <!-- g -->       | +2,093 (+4%) <!-- g -->   |
+| 1    | [`AirdropClaimMerkle`](./src/custom/AirdropClaimMerkle.ERC1155.sol)              | 486,360 (486,360 + 0) <!-- g -->             | 0                                | 52,873 <!-- g -->       | 0                         |
+| 2    | [`AirdropClaimSignature`](./src/custom/AirdropClaimSignature.ERC1155.sol)        | 516,113 (516,113 + 0) <!-- g -->             | +29,753 (+6%) <!-- g -->         | 54,966 <!-- g -->       | +2,093 (+4%) <!-- g -->   |
 | 3    | Thirdweb [`AirdropERC1155Claimable`](./src/thirdweb/AirdropERC1155Claimable.sol) | 1,556,310 (66,769 + 1,489,541) <!-- g -->    | +1,069,950 (+220%) <!-- g -->    | 62,083 <!-- g -->       | +9,210 (+17%) <!-- g -->  |
-| 4    | [`AirdropClaimMapping`](./src/custom/AirdropClaimMapping_ERC1155.sol)            | 27,069,815 (598,196 + 26,471,619) <!-- g --> | +26,583,455 (+5,466%) <!-- g --> | 28,995 <!-- g -->       | -23,878 (-45%) <!-- g --> |
+| 4    | [`AirdropClaimMapping`](./src/custom/AirdropClaimMapping.ERC1155.sol)            | 27,069,815 (598,196 + 26,471,619) <!-- g --> | +26,583,455 (+5,466%) <!-- g --> | 28,995 <!-- g -->       | -23,878 (-45%) <!-- g --> |
 
 These contracts allow only for claiming a single token ID per recipient, to fit the Thirdweb pattern.
 
@@ -199,11 +199,11 @@ forge test --gas-report > gas-report.txt
 2. Run benchmarks for a specific token/currency
 
 ```sh
-# Benchmarks_ERC20
-# Benchmarks_ERC721
-# Benchmarks_ERC1155
-# Benchmarks_ETH
-forge test --mc Benchmarks_ERC20 --gas-report
+# BenchmarksERC20
+# BenchmarksERC721
+# BenchmarksERC1155
+# BenchmarksETH
+forge test --mc BenchmarksERC20 --gas-report
 ```
 
 3. Run benchmarks for a specific contract/solution
@@ -218,7 +218,7 @@ forge test --mc Benchmarks_ERC20 --gas-report
 # BytecodeDrop
 # Thirdweb
 # ...
-forge test --mt AirdropClaimMapping --gas-report
+forge test --mt AirdropClaimMapping_ERC20 --gas-report
 ```
 
 4. Run a specific test

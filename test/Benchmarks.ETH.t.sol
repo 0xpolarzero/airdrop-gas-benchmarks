@@ -9,7 +9,7 @@ import "./Benchmarks.base.sol";
 // 5. WENTOKENS
 // 6. GASLITE DROP
 
-contract Benchmarks_ETH is Benchmarks_Base {
+contract BenchmarksETH is Benchmarks_Base {
     /* -------------------------------------------------------------------------- */
     /*                                    SETUP                                   */
     /* -------------------------------------------------------------------------- */
