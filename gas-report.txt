@@ -1,57 +1,59 @@
 No files changed, compilation skipped
 
-Running 2 tests for test/Benchmarks_Proxy.t.sol:Benchmarks_Proxy
+Running 2 tests for test/Benchmarks.Proxy.t.sol:BenchmarksProxy
 [32m[PASS][0m test__codesize() (gas: 1997)
-[32m[PASS][0m test_deployProxy_Thirdweb(uint256) (runs: 256, μ: 94582, ~: 94509)
-Test result: [32mok[0m. [32m2[0m passed; [31m0[0m failed; [33m0[0m skipped; finished in 33.86s
+[32m[PASS][0m test_deployProxy_Thirdweb(uint256) (runs: 256, μ: 94593, ~: 94509)
+Test result: [32mok[0m. [32m2[0m passed; [31m0[0m failed; [33m0[0m skipped; finished in 15.79ms
 
-Running 4 tests for test/Benchmarks_ETH.t.sol:Benchmarks_ETH
-[32m[PASS][0m test_ETH_AirdropWentokens(uint256) (runs: 256, μ: 306650885, ~: 306657647)
-[32m[PASS][0m test_ETH_Disperse(uint256) (runs: 256, μ: 307746954, ~: 307761973)
-[32m[PASS][0m test_ETH_GasliteDrop(uint256) (runs: 256, μ: 306602421, ~: 306608338)
-[32m[PASS][0m test__codesize() (gas: 84055)
-Test result: [32mok[0m. [32m4[0m passed; [31m0[0m failed; [33m0[0m skipped; finished in 68.29s
+Running 7 tests for test/Benchmarks.ERC1155.t.sol:BenchmarksERC1155
+[32m[PASS][0m test_ERC1155_AirdropClaimMapping(uint256) (runs: 256, μ: 316605724, ~: 316585543)
+[32m[PASS][0m test_ERC1155_AirdropClaimMerkle(uint256) (runs: 256, μ: 996693084, ~: 996680041)
+[32m[PASS][0m test_ERC1155_AirdropClaimSignature(uint256) (runs: 256, μ: 341133376, ~: 341139901)
+[32m[PASS][0m test_ERC1155_AirdropERC1155ClaimableThirdweb(uint256) (runs: 256, μ: 1002803481, ~: 1002798348)
+[32m[PASS][0m test_ERC1155_AirdropERC1155Thirdweb(uint256) (runs: 256, μ: 312144137, ~: 312156763)
+[32m[PASS][0m test_ERC1155_GasliteDrop1155(uint256) (runs: 256, μ: 385748922, ~: 386288985)
+[32m[PASS][0m test__codesize() (gas: 95178)
+Test result: [32mok[0m. [32m7[0m passed; [31m0[0m failed; [33m0[0m skipped; finished in 812.99s
 
-Running 11 tests for test/Benchmarks_ERC20.sol:Benchmarks_ERC20
-[32m[PASS][0m test_ERC20_AirdropClaimMapping(uint256) (runs: 256, μ: 310554602, ~: 310559273)
-[32m[PASS][0m test_ERC20_AirdropClaimMerkle(uint256) (runs: 256, μ: 992668226, ~: 992677022)
-[32m[PASS][0m test_ERC20_AirdropClaimSignature(uint256) (runs: 256, μ: 336644010, ~: 336665618)
-[32m[PASS][0m test_ERC20_AirdropERC20ClaimableThirdweb(uint256) (runs: 256, μ: 1002666425, ~: 1002628847)
-[32m[PASS][0m test_ERC20_AirdropERC20Thirdweb(uint256) (runs: 256, μ: 306248612, ~: 306272502)
-[32m[PASS][0m test_ERC20_BytecodeDrop(uint256) (runs: 256, μ: 302218732, ~: 302253663)
-[32m[PASS][0m test_ERC20_Disperse_disperseToken(uint256) (runs: 256, μ: 303858495, ~: 303858056)
-[32m[PASS][0m test_ERC20_Disperse_disperseTokenSimple(uint256) (runs: 256, μ: 304342656, ~: 304351561)
-[32m[PASS][0m test_ERC20_GasliteDrop(uint256) (runs: 256, μ: 302213495, ~: 302227444)
-[32m[PASS][0m test_ERC20_wentokens_airdrop(uint256) (runs: 256, μ: 302254964, ~: 302253408)
-[32m[PASS][0m test__codesize() (gas: 89412)
-Test result: [32mok[0m. [32m11[0m passed; [31m0[0m failed; [33m0[0m skipped; finished in 688.95s
+Running 12 tests for test/Benchmarks.ERC20.sol:BenchmarksERC20
+[32m[PASS][0m test_ERC20_AirdropClaimMapping(uint256) (runs: 256, μ: 311109283, ~: 311122885)
+[32m[PASS][0m test_ERC20_AirdropClaimMerkle(uint256) (runs: 256, μ: 993209658, ~: 993223999)
+[32m[PASS][0m test_ERC20_AirdropClaimSignature(uint256) (runs: 256, μ: 337176786, ~: 337189299)
+[32m[PASS][0m test_ERC20_AirdropERC20ClaimableThirdweb(uint256) (runs: 256, μ: 1003214560, ~: 1003161905)
+[32m[PASS][0m test_ERC20_AirdropERC20Thirdweb(uint256) (runs: 256, μ: 306818625, ~: 306836159)
+[32m[PASS][0m test_ERC20_BytecodeDrop(uint256) (runs: 256, μ: 302781809, ~: 302800480)
+[32m[PASS][0m test_ERC20_Disperse_disperseToken(uint256) (runs: 256, μ: 304397405, ~: 304385628)
+[32m[PASS][0m test_ERC20_Disperse_disperseTokenSimple(uint256) (runs: 256, μ: 304919510, ~: 304916206)
+[32m[PASS][0m test_ERC20_GasliteDrop(uint256) (runs: 256, μ: 302775166, ~: 302775547)
+[32m[PASS][0m test_ERC20_GasliteMerkleDT(uint256) (runs: 256, μ: 992320309, ~: 992329901)
+[32m[PASS][0m test_ERC20_wentokens_airdrop(uint256) (runs: 256, μ: 302818519, ~: 302820910)
+[32m[PASS][0m test__codesize() (gas: 94945)
+Test result: [32mok[0m. [32m12[0m passed; [31m0[0m failed; [33m0[0m skipped; finished in 833.32s
 
-Running 7 tests for test/Benchmarks_ERC1155.t.sol:Benchmarks_ERC1155
-[32m[PASS][0m test_ERC1155_AirdropClaimMapping(uint256) (runs: 256, μ: 316611268, ~: 316616392)
-[32m[PASS][0m test_ERC1155_AirdropClaimMerkle(uint256) (runs: 256, μ: 996723294, ~: 996729704)
-[32m[PASS][0m test_ERC1155_AirdropClaimSignature(uint256) (runs: 256, μ: 341144898, ~: 341141588)
-[32m[PASS][0m test_ERC1155_AirdropERC1155ClaimableThirdweb(uint256) (runs: 256, μ: 1002809131, ~: 1002806529)
-[32m[PASS][0m test_ERC1155_AirdropERC1155Thirdweb(uint256) (runs: 256, μ: 312124225, ~: 312137944)
-[32m[PASS][0m test_ERC1155_GasliteDrop1155(uint256) (runs: 256, μ: 385376596, ~: 385354176)
-[32m[PASS][0m test__codesize() (gas: 90387)
-Test result: [32mok[0m. [32m7[0m passed; [31m0[0m failed; [33m0[0m skipped; finished in 768.10s
+Running 7 tests for test/Benchmarks.ERC721.sol:BenchmarksERC721
+[32m[PASS][0m test_ERC721_AirdropClaimMapping(uint256) (runs: 256, μ: 364597521, ~: 364614309)
+[32m[PASS][0m test_ERC721_AirdropClaimMerkle(uint256) (runs: 256, μ: 1047145555, ~: 1047135437)
+[32m[PASS][0m test_ERC721_AirdropClaimSignature(uint256) (runs: 256, μ: 391022925, ~: 391031922)
+[32m[PASS][0m test_ERC721_AirdropERC721ClaimableThirdweb(uint256) (runs: 256, μ: 1207804970, ~: 1207815492)
+[32m[PASS][0m test_ERC721_AirdropERC721Thirdweb(uint256) (runs: 256, μ: 357548623, ~: 357538562)
+[32m[PASS][0m test_ERC721_GasliteDrop(uint256) (runs: 256, μ: 352249134, ~: 352269278)
+[32m[PASS][0m test__codesize() (gas: 92365)
+Test result: [32mok[0m. [32m7[0m passed; [31m0[0m failed; [33m0[0m skipped; finished in 893.87s
 
-Running 7 tests for test/Benchmarks_ERC721.sol:Benchmarks_ERC721
-[32m[PASS][0m test_ERC721_AirdropClaimMapping(uint256) (runs: 256, μ: 364589045, ~: 364576009)
-[32m[PASS][0m test_ERC721_AirdropClaimMerkle(uint256) (runs: 256, μ: 1047149317, ~: 1047135599)
-[32m[PASS][0m test_ERC721_AirdropClaimSignature(uint256) (runs: 256, μ: 391012542, ~: 391011529)
-[32m[PASS][0m test_ERC721_AirdropERC721ClaimableThirdweb(uint256) (runs: 256, μ: 1207784076, ~: 1207784729)
-[32m[PASS][0m test_ERC721_AirdropERC721Thirdweb(uint256) (runs: 256, μ: 357562402, ~: 357539951)
-[32m[PASS][0m test_ERC721_GasliteDrop(uint256) (runs: 256, μ: 352283095, ~: 352289943)
-[32m[PASS][0m test__codesize() (gas: 87569)
-Test result: [32mok[0m. [32m7[0m passed; [31m0[0m failed; [33m0[0m skipped; finished in 768.10s
+Running 5 tests for test/Benchmarks.ETH.t.sol:BenchmarksETH
+[32m[PASS][0m test_ETH_AirdropWentokens(uint256) (runs: 256, μ: 307109867, ~: 307113843)
+[32m[PASS][0m test_ETH_Disperse(uint256) (runs: 256, μ: 308215655, ~: 308224685)
+[32m[PASS][0m test_ETH_GasliteDrop(uint256) (runs: 256, μ: 307065202, ~: 307070857)
+[32m[PASS][0m test_ETH_GasliteMerkleDN(uint256) (runs: 256, μ: 993002371, ~: 992987123)
+[32m[PASS][0m test__codesize() (gas: 89919)
+Test result: [32mok[0m. [32m5[0m passed; [31m0[0m failed; [33m0[0m skipped; finished in 893.87s
 | lib/murky/src/Merkle.sol:Merkle contract |                 |        |        |        |         |
 |------------------------------------------|-----------------|--------|--------|--------|---------|
 | Deployment Cost                          | Deployment Size |        |        |        |         |
 | 457493                                   | 2317            |        |        |        |         |
 | Function Name                            | min             | avg    | median | max    | # calls |
-| getProof                                 | 474062          | 477435 | 478066 | 478286 | 6000    |
-| getRoot                                  | 469959          | 470997 | 470394 | 474559 | 600     |
+| getProof                                 | 474026          | 477639 | 478062 | 478546 | 8000    |
+| getRoot                                  | 469879          | 470991 | 470379 | 474689 | 648     |
 
 
 | src/Disperse.sol:Disperse contract |                 |          |          |          |         |
@@ -77,10 +79,29 @@ Test result: [32mok[0m. [32m7[0m passed; [31m0[0m failed; [33m0[0m skipp
 | src/GasliteDrop1155.sol:GasliteDrop1155 contract |                 |          |          |          |         |
 |--------------------------------------------------|-----------------|----------|----------|----------|---------|
 | Deployment Cost                                  | Deployment Size |          |          |          |         |
-| 95174                                            | 529             |          |          |          |         |
+| 45759                                            | 238             |          |          |          |         |
 | Function Name                                    | min             | avg      | median   | max      | # calls |
-| airdropERC1155                                   | 28890255        | 28890255 | 28890255 | 28890255 | 1       |
+| airdropERC1155                                   | 28895361        | 28895361 | 28895361 | 28895361 | 1       |
 | airdropERC20                                     | 24950604        | 24950604 | 24950604 | 24950604 | 1       |
+
+
+| src/GasliteMerkleDN.sol:GasliteMerkleDN contract |                 |       |        |       |         |
+|--------------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                                  | Deployment Size |       |        |       |         |
+| 407127                                           | 1999            |       |        |       |         |
+| Function Name                                    | min             | avg   | median | max   | # calls |
+| claim                                            | 56506           | 56506 | 56506  | 56506 | 1000    |
+| receive                                          | 55              | 55    | 55     | 55    | 1       |
+| toggleActive                                     | 20455           | 20455 | 20455  | 20455 | 1       |
+
+
+| src/GasliteMerkleDT.sol:GasliteMerkleDT contract |                 |       |        |       |         |
+|--------------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                                  | Deployment Size |       |        |       |         |
+| 509040                                           | 2665            |       |        |       |         |
+| Function Name                                    | min             | avg   | median | max   | # calls |
+| claim                                            | 50654           | 50654 | 50654  | 50654 | 1000    |
+| toggleActive                                     | 20455           | 20455 | 20455  | 20455 | 1       |
 
 
 | src/Wentokens.sol:Airdrop contract |                 |          |          |          |         |
@@ -92,82 +113,82 @@ Test result: [32mok[0m. [32m7[0m passed; [31m0[0m failed; [33m0[0m skipp
 | airdropETH                         | 34437735        | 34437735 | 34437735 | 34437735 | 1       |
 
 
-| src/custom/AirdropClaimMapping_ERC1155.sol:AirdropClaimMapping_ERC1155 contract |                 |          |          |          |         |
-|---------------------------------------------------------------------------------|-----------------|----------|----------|----------|---------|
-| Deployment Cost                                                                 | Deployment Size |          |          |          |         |
-| 598196                                                                          | 3002            |          |          |          |         |
-| Function Name                                                                   | min             | avg      | median   | max      | # calls |
-| airdropERC1155                                                                  | 26471619        | 26471619 | 26471619 | 26471619 | 1       |
-| claimERC1155                                                                    | 28995           | 28995    | 28995    | 28995    | 1000    |
-| onERC1155BatchReceived                                                          | 1346            | 1346     | 1346     | 1346     | 1       |
+| src/custom/AirdropClaimMapping.ERC1155.sol:AirdropClaimMappingERC1155 contract |                 |          |          |          |         |
+|--------------------------------------------------------------------------------|-----------------|----------|----------|----------|---------|
+| Deployment Cost                                                                | Deployment Size |          |          |          |         |
+| 598196                                                                         | 3002            |          |          |          |         |
+| Function Name                                                                  | min             | avg      | median   | max      | # calls |
+| airdropERC1155                                                                 | 26471619        | 26471619 | 26471619 | 26471619 | 1       |
+| claimERC1155                                                                   | 28995           | 28995    | 28995    | 28995    | 1000    |
+| onERC1155BatchReceived                                                         | 1346            | 1346     | 1346     | 1346     | 1       |
 
 
-| src/custom/AirdropClaimMapping_ERC20.sol:AirdropClaimMapping_ERC20 contract |                 |          |          |          |         |
-|-----------------------------------------------------------------------------|-----------------|----------|----------|----------|---------|
-| Deployment Cost                                                             | Deployment Size |          |          |          |         |
-| 450852                                                                      | 2266            |          |          |          |         |
-| Function Name                                                               | min             | avg      | median   | max      | # calls |
-| airdropERC20                                                                | 24508677        | 24508677 | 24508677 | 24508677 | 1       |
-| claimERC20                                                                  | 27272           | 27272    | 27272    | 27272    | 1000    |
+| src/custom/AirdropClaimMapping.ERC20.sol:AirdropClaimMappingERC20 contract |                 |          |          |          |         |
+|----------------------------------------------------------------------------|-----------------|----------|----------|----------|---------|
+| Deployment Cost                                                            | Deployment Size |          |          |          |         |
+| 450852                                                                     | 2266            |          |          |          |         |
+| Function Name                                                              | min             | avg      | median   | max      | # calls |
+| airdropERC20                                                               | 24508677        | 24508677 | 24508677 | 24508677 | 1       |
+| claimERC20                                                                 | 27272           | 27272    | 27272    | 27272    | 1000    |
 
 
-| src/custom/AirdropClaimMapping_ERC721.sol:AirdropClaimMapping_ERC721 contract |                 |          |          |          |         |
-|-------------------------------------------------------------------------------|-----------------|----------|----------|----------|---------|
-| Deployment Cost                                                               | Deployment Size |          |          |          |         |
-| 433833                                                                        | 2181            |          |          |          |         |
-| Function Name                                                                 | min             | avg      | median   | max      | # calls |
-| airdropERC721                                                                 | 30605836        | 30605836 | 30605836 | 30605836 | 1       |
-| claimERC721                                                                   | 28003           | 28003    | 28003    | 28003    | 1000    |
+| src/custom/AirdropClaimMapping.ERC721.sol:AirdropClaimMappingERC721 contract |                 |          |          |          |         |
+|------------------------------------------------------------------------------|-----------------|----------|----------|----------|---------|
+| Deployment Cost                                                              | Deployment Size |          |          |          |         |
+| 433833                                                                       | 2181            |          |          |          |         |
+| Function Name                                                                | min             | avg      | median   | max      | # calls |
+| airdropERC721                                                                | 30605836        | 30605836 | 30605836 | 30605836 | 1       |
+| claimERC721                                                                  | 28003           | 28003    | 28003    | 28003    | 1000    |
 
 
-| src/custom/AirdropClaimMerkle_ERC1155.sol:AirdropClaimMerkle_ERC1155 contract |                 |       |        |       |         |
-|-------------------------------------------------------------------------------|-----------------|-------|--------|-------|---------|
-| Deployment Cost                                                               | Deployment Size |       |        |       |         |
-| 486360                                                                        | 2509            |       |        |       |         |
-| Function Name                                                                 | min             | avg   | median | max   | # calls |
-| claimERC1155                                                                  | 52873           | 52873 | 52873  | 52873 | 1000    |
-| onERC1155BatchReceived                                                        | 1280            | 1280  | 1280   | 1280  | 1       |
+| src/custom/AirdropClaimMerkle.ERC1155.sol:AirdropClaimMerkleERC1155 contract |                 |       |        |       |         |
+|------------------------------------------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                                                              | Deployment Size |       |        |       |         |
+| 486360                                                                       | 2509            |       |        |       |         |
+| Function Name                                                                | min             | avg   | median | max   | # calls |
+| claimERC1155                                                                 | 52873           | 52873 | 52873  | 52873 | 1000    |
+| onERC1155BatchReceived                                                       | 1280            | 1280  | 1280   | 1280  | 1       |
 
 
-| src/custom/AirdropClaimMerkle_ERC20.sol:AirdropClaimMerkle_ERC20 contract |                 |       |        |       |         |
-|---------------------------------------------------------------------------|-----------------|-------|--------|-------|---------|
-| Deployment Cost                                                           | Deployment Size |       |        |       |         |
-| 381660                                                                    | 1986            |       |        |       |         |
-| Function Name                                                             | min             | avg   | median | max   | # calls |
-| claimERC20                                                                | 51217           | 51217 | 51217  | 51217 | 1000    |
+| src/custom/AirdropClaimMerkle.ERC20.sol:AirdropClaimMerkleERC20 contract |                 |       |        |       |         |
+|--------------------------------------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                                                          | Deployment Size |       |        |       |         |
+| 381660                                                                   | 1986            |       |        |       |         |
+| Function Name                                                            | min             | avg   | median | max   | # calls |
+| claimERC20                                                               | 51217           | 51217 | 51217  | 51217 | 1000    |
 
 
-| src/custom/AirdropClaimMerkle_ERC721.sol:AirdropClaimMerkle_ERC721 contract |                 |       |        |       |         |
-|-----------------------------------------------------------------------------|-----------------|-------|--------|-------|---------|
-| Deployment Cost                                                             | Deployment Size |       |        |       |         |
-| 366041                                                                      | 1908            |       |        |       |         |
-| Function Name                                                               | min             | avg   | median | max   | # calls |
-| claimERC721                                                                 | 51897           | 51897 | 51897  | 51897 | 1000    |
+| src/custom/AirdropClaimMerkle.ERC721.sol:AirdropClaimMerkleERC721 contract |                 |       |        |       |         |
+|----------------------------------------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                                                            | Deployment Size |       |        |       |         |
+| 366041                                                                     | 1908            |       |        |       |         |
+| Function Name                                                              | min             | avg   | median | max   | # calls |
+| claimERC721                                                                | 51897           | 51897 | 51897  | 51897 | 1000    |
 
 
-| src/custom/AirdropClaimSignature_ERC1155.sol:AirdropClaimSignature_ERC1155 contract |                 |       |        |       |         |
-|-------------------------------------------------------------------------------------|-----------------|-------|--------|-------|---------|
-| Deployment Cost                                                                     | Deployment Size |       |        |       |         |
-| 516113                                                                              | 2684            |       |        |       |         |
-| Function Name                                                                       | min             | avg   | median | max   | # calls |
-| claimERC1155                                                                        | 54966           | 54966 | 54966  | 54966 | 1000    |
-| onERC1155BatchReceived                                                              | 1280            | 1280  | 1280   | 1280  | 1       |
+| src/custom/AirdropClaimSignature.ERC1155.sol:AirdropClaimSignatureERC1155 contract |                 |       |        |       |         |
+|------------------------------------------------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                                                                    | Deployment Size |       |        |       |         |
+| 516113                                                                             | 2684            |       |        |       |         |
+| Function Name                                                                      | min             | avg   | median | max   | # calls |
+| claimERC1155                                                                       | 54966           | 54966 | 54966  | 54966 | 1000    |
+| onERC1155BatchReceived                                                             | 1280            | 1280  | 1280   | 1280  | 1       |
 
 
-| src/custom/AirdropClaimSignature_ERC20.sol:AirdropClaimSignature_ERC20 contract |                 |       |        |       |         |
-|---------------------------------------------------------------------------------|-----------------|-------|--------|-------|---------|
-| Deployment Cost                                                                 | Deployment Size |       |        |       |         |
-| 410807                                                                          | 2158            |       |        |       |         |
-| Function Name                                                                   | min             | avg   | median | max   | # calls |
-| claimERC20                                                                      | 53376           | 53376 | 53376  | 53376 | 1000    |
+| src/custom/AirdropClaimSignature.ERC20.sol:AirdropClaimSignatureERC20 contract |                 |       |        |       |         |
+|--------------------------------------------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                                                                | Deployment Size |       |        |       |         |
+| 410807                                                                         | 2158            |       |        |       |         |
+| Function Name                                                                  | min             | avg   | median | max   | # calls |
+| claimERC20                                                                     | 53376           | 53376 | 53376  | 53376 | 1000    |
 
 
-| src/custom/AirdropClaimSignature_ERC721.sol:AirdropClaimSignature_ERC721 contract |                 |       |        |       |         |
-|-----------------------------------------------------------------------------------|-----------------|-------|--------|-------|---------|
-| Deployment Cost                                                                   | Deployment Size |       |        |       |         |
-| 394994                                                                            | 2079            |       |        |       |         |
-| Function Name                                                                     | min             | avg   | median | max   | # calls |
-| claimERC721                                                                       | 53968           | 53968 | 53968  | 53968 | 1000    |
+| src/custom/AirdropClaimSignature.ERC721.sol:AirdropClaimSignatureERC721 contract |                 |       |        |       |         |
+|----------------------------------------------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                                                                  | Deployment Size |       |        |       |         |
+| 394994                                                                           | 2079            |       |        |       |         |
+| Function Name                                                                    | min             | avg   | median | max   | # calls |
+| claimERC721                                                                      | 53968           | 53968 | 53968  | 53968 | 1000    |
 
 
 | src/thirdweb/AirdropERC1155.sol:AirdropERC1155 contract |                 |          |          |          |         |
@@ -184,7 +205,7 @@ Test result: [32mok[0m. [32m7[0m passed; [31m0[0m failed; [33m0[0m skipp
 | Deployment Cost                                                           | Deployment Size |         |         |         |         |
 | 1102409                                                                   | 5625            |         |         |         |         |
 | Function Name                                                             | min             | avg     | median  | max     | # calls |
-| claim                                                                     | 61759           | 62083   | 62063   | 62443   | 1000    |
+| claim                                                                     | 61759           | 62088   | 62063   | 62443   | 1000    |
 | initialize                                                                | 1489541         | 1489541 | 1489541 | 1489541 | 6       |
 
 
@@ -194,7 +215,7 @@ Test result: [32mok[0m. [32m7[0m passed; [31m0[0m failed; [33m0[0m skipp
 | 1637576                                             | 8298            |          |          |          |         |
 | Function Name                                       | min             | avg      | median   | max      | # calls |
 | airdropERC20                                        | 26906458        | 26906458 | 26906458 | 26906458 | 1       |
-| initialize                                          | 144533          | 144533   | 144533   | 144533   | 10      |
+| initialize                                          | 144533          | 144533   | 144533   | 144533   | 11      |
 
 
 | src/thirdweb/AirdropERC20Claimable.sol:AirdropERC20Claimable contract |                 |        |        |        |         |
@@ -203,7 +224,7 @@ Test result: [32mok[0m. [32m7[0m passed; [31m0[0m failed; [33m0[0m skipp
 | 912611                                                                | 4677            |        |        |        |         |
 | Function Name                                                         | min             | avg    | median | max    | # calls |
 | claim                                                                 | 60184           | 60563  | 60564  | 60944  | 1000    |
-| initialize                                                            | 140756          | 140756 | 140756 | 140756 | 10      |
+| initialize                                                            | 140756          | 140756 | 140756 | 140756 | 11      |
 
 
 | src/thirdweb/AirdropERC721.sol:AirdropERC721 contract |                 |          |          |          |         |
@@ -224,15 +245,15 @@ Test result: [32mok[0m. [32m7[0m passed; [31m0[0m failed; [33m0[0m skipp
 | initialize                                                              | 22385657        | 22385657 | 22385657 | 22385657 | 6       |
 
 
-| test/Benchmarks_ERC1155.t.sol:Benchmarks_ERC1155 contract |                 |      |        |      |         |
-|-----------------------------------------------------------|-----------------|------|--------|------|---------|
-| Deployment Cost                                           | Deployment Size |      |        |      |         |
-| 36894757                                                  | 91132           |      |        |      |         |
-| Function Name                                             | min             | avg  | median | max  | # calls |
-| onERC1155BatchReceived                                    | 4641            | 4641 | 4641   | 4641 | 6       |
+| test/Benchmarks.ERC1155.t.sol:BenchmarksERC1155 contract |                 |      |        |      |         |
+|----------------------------------------------------------|-----------------|------|--------|------|---------|
+| Deployment Cost                                          | Deployment Size |      |        |      |         |
+| 37853407                                                 | 95924           |      |        |      |         |
+| Function Name                                            | min             | avg  | median | max  | # calls |
+| onERC1155BatchReceived                                   | 4641            | 4641 | 4641   | 4641 | 6       |
 
 
-| test/Benchmarks_Proxy.t.sol:ProxyDeployer contract |                 |       |        |       |         |
+| test/Benchmarks.Proxy.t.sol:ProxyDeployer contract |                 |       |        |       |         |
 |----------------------------------------------------|-----------------|-------|--------|-------|---------|
 | Deployment Cost                                    | Deployment Size |       |        |       |         |
 | 68917                                              | 376             |       |        |       |         |
@@ -240,36 +261,37 @@ Test result: [32mok[0m. [32m7[0m passed; [31m0[0m failed; [33m0[0m skipp
 | deployProxy                                        | 66769           | 66769 | 66769  | 66769 | 1       |
 
 
-| test/mocks/Mock_ERC1155.sol:Mock_ERC1155 contract |                 |        |        |         |         |
-|---------------------------------------------------|-----------------|--------|--------|---------|---------|
-| Deployment Cost                                   | Deployment Size |        |        |         |         |
-| 988262                                            | 4894            |        |        |         |         |
-| Function Name                                     | min             | avg    | median | max     | # calls |
-| safeBatchTransferFrom                             | 468606          | 867894 | 468606 | 1666470 | 3       |
-| safeTransferFrom                                  | 25923           | 26840  | 26007  | 28592   | 6000    |
-| setApprovalForAll                                 | 24370           | 24370  | 24370  | 24370   | 4       |
+| test/mocks/Mock.ERC1155.sol:MockERC1155 contract |                 |        |        |         |         |
+|--------------------------------------------------|-----------------|--------|--------|---------|---------|
+| Deployment Cost                                  | Deployment Size |        |        |         |         |
+| 988262                                           | 4894            |        |        |         |         |
+| Function Name                                    | min             | avg    | median | max     | # calls |
+| safeBatchTransferFrom                            | 468606          | 867894 | 468606 | 1666470 | 3       |
+| safeTransferFrom                                 | 25923           | 26840  | 26007  | 28592   | 6000    |
+| setApprovalForAll                                | 24370           | 24370  | 24370  | 24370   | 4       |
 
 
-| test/mocks/Mock_ERC20.sol:Mock_ERC20 contract |                 |       |        |       |         |
-|-----------------------------------------------|-----------------|-------|--------|-------|---------|
-| Deployment Cost                               | Deployment Size |       |        |       |         |
-| 430298                                        | 2180            |       |        |       |         |
-| Function Name                                 | min             | avg   | median | max   | # calls |
-| approve                                       | 24392           | 24392 | 24392  | 24392 | 8       |
-| transfer                                      | 24727           | 24727 | 24727  | 24727 | 7002    |
-| transferFrom                                  | 25189           | 25189 | 25189  | 25189 | 3005    |
+| test/mocks/Mock.ERC20.sol:MockERC20 contract |                 |       |        |       |         |
+|----------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                              | Deployment Size |       |        |       |         |
+| 430098                                       | 2179            |       |        |       |         |
+| Function Name                                | min             | avg   | median | max   | # calls |
+| approve                                      | 24392           | 24392 | 24392  | 24392 | 8       |
+| balanceOf                                    | 522             | 522   | 522    | 522   | 1000    |
+| transfer                                     | 24727           | 24727 | 24727  | 24727 | 8003    |
+| transferFrom                                 | 25189           | 25189 | 25189  | 25189 | 3005    |
 
 
-| test/mocks/Mock_ERC721.sol:Mock_ERC721 contract |                 |       |        |       |         |
-|-------------------------------------------------|-----------------|-------|--------|-------|---------|
-| Deployment Cost                                 | Deployment Size |       |        |       |         |
-| 25220561                                        | 35043           |       |        |       |         |
-| Function Name                                   | min             | avg   | median | max   | # calls |
-| safeTransferFrom                                | 27748           | 28998 | 28998  | 30248 | 2000    |
-| setApprovalForAll                               | 24370           | 24370 | 24370  | 24370 | 4       |
-| transferFrom                                    | 5506            | 17218 | 25406  | 27567 | 7000    |
+| test/mocks/Mock.ERC721.sol:MockERC721 contract |                 |       |        |       |         |
+|------------------------------------------------|-----------------|-------|--------|-------|---------|
+| Deployment Cost                                | Deployment Size |       |        |       |         |
+| 25220361                                       | 35042           |       |        |       |         |
+| Function Name                                  | min             | avg   | median | max   | # calls |
+| safeTransferFrom                               | 27748           | 28998 | 28998  | 30248 | 2000    |
+| setApprovalForAll                              | 24370           | 24370 | 24370  | 24370 | 4       |
+| transferFrom                                   | 5506            | 17218 | 25406  | 27567 | 7000    |
 
 
 
  
-Ran 5 test suites: [32m31[0m tests passed, [31m0[0m failed, [33m0[0m skipped (31 total tests)
+Ran 5 test suites: [32m33[0m tests passed, [31m0[0m failed, [33m0[0m skipped (33 total tests)

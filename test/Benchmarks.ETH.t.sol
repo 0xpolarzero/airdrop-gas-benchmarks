@@ -8,9 +8,10 @@ import "./Benchmarks.base.sol";
 // ! These benchmarks are not available due to inconsistencies in Forge's estimations.
 // ! See: https://github.com/foundry-rs/foundry/issues/7047
 
-// 4. DISPERSE APP
-// 5. WENTOKENS
-// 6. GASLITE DROP
+// 1. DISPERSE APP
+// 2. WENTOKENS
+// 3. GASLITE DROP
+// 4. GASLITE MERKLE DN
 
 contract BenchmarksETH is Benchmarks_Base {
     /* -------------------------------------------------------------------------- */
@@ -57,5 +58,26 @@ contract BenchmarksETH is Benchmarks_Base {
 
         // Airdrop
         gasliteDrop.airdropETH{value: TOTAL_AMOUNT_ERC20}(RECIPIENTS, AMOUNTS);
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /*                            4. GASLITE MERKLE DN                            */
+    /* -------------------------------------------------------------------------- */
+
+    function test_ETH_GasliteMerkleDN(uint256) public {
+        setup();
+
+        // Deposit
+        (bool success,) = address(gasliteMerkleDN).call{value: TOTAL_AMOUNT_ERC20}("");
+        if (!success) revert("test_ETH_GasliteMerkle_FAILED");
+        // Set active
+        gasliteMerkleDN.toggleActive();
+
+        // Claim
+        for (uint256 i = 0; i < RECIPIENTS.length; i++) {
+            bytes32[] memory proof = m.getProof(DATA_ERC20, i);
+            vm.prank(RECIPIENTS[i]);
+            gasliteMerkleDN.claim(proof, AMOUNTS[i]);
+        }
     }
 }

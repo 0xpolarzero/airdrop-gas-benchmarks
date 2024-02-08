@@ -13,9 +13,10 @@ import {IAirdropERC20} from "src/thirdweb/deps/IAirdropERC20.sol";
 // 4. DISPERSE APP (airdrop)
 // 5. WENTOKENS (airdrop)
 // 6. GASLITE DROP (airdrop)
-// 7. BYTECODE DROP (airdrop)
-// 8. THIRDWEB AIRDROP (airdrop)
-// 9. THIRDWEB AIRDROP (claim)
+// 7. GASLITE MERKLE DT (claim)
+// 8. BYTECODE DROP (airdrop)
+// 9. THIRDWEB AIRDROP (airdrop)
+// 10. THIRDWEB AIRDROP (claim)
 
 contract BenchmarksERC20 is Benchmarks_Base {
     /* -------------------------------------------------------------------------- */
@@ -141,7 +142,27 @@ contract BenchmarksERC20 is Benchmarks_Base {
     }
 
     /* -------------------------------------------------------------------------- */
-    /*                              7. BYTECODE DROP                              */
+    /*                            7. GASLITE MERKLE DT                            */
+    /* -------------------------------------------------------------------------- */
+
+    function test_ERC20_GasliteMerkleDT(uint256) public {
+        setup();
+
+        // Transfer
+        erc20.transfer(address(gasliteMerkleDT), TOTAL_AMOUNT_ERC20);
+        // Set to active
+        gasliteMerkleDT.toggleActive();
+
+        // Claim
+        for (uint256 i = 0; i < RECIPIENTS.length; i++) {
+            bytes32[] memory proof = m.getProof(DATA_ERC20, i);
+            vm.prank(RECIPIENTS[i]);
+            gasliteMerkleDT.claim(proof, AMOUNTS[i]);
+        }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /*                              8. BYTECODE DROP                              */
     /* -------------------------------------------------------------------------- */
 
     /// Note: Forge won't report gas usage for a bytecode contract, so we'll just use
@@ -149,38 +170,14 @@ contract BenchmarksERC20 is Benchmarks_Base {
     /// This is not consistent with the other benchmarks, but it's good enough.
     function test_ERC20_BytecodeDrop(uint256) public {
         setup();
-        // (address deployed, uint256 gasUsed) = _deployAndReturnGas("BytecodeDrop.sol");
-        // console.log("Deployment: %s gas", gasUsed);
 
         // Airdrop
         erc20.approve(address(bytecodeDrop), TOTAL_AMOUNT_ERC20);
-        // console.log(
-        //     "Approval: %s gas",
-        //     _callAndReturnGas(
-        //         address(erc20),
-        //         abi.encodeWithSignature("approve(address,uint256)", deployed, TOTAL_AMOUNT_ERC20),
-        //         "test_ERC20_BytecodeDrop_FAILED"
-        //     )
-        // );
         bytecodeDrop.airdropERC20(address(erc20), RECIPIENTS, AMOUNTS, TOTAL_AMOUNT_ERC20);
-        // console.log(
-        //     "Airdrop: %s gas",
-        //     _callAndReturnGas(
-        //         deployed,
-        //         abi.encodeWithSignature(
-        //             "airdropERC20(address,address[],uint256[],uint256)",
-        //             address(erc20),
-        //             RECIPIENTS,
-        //             AMOUNTS,
-        //             TOTAL_AMOUNT_ERC20
-        //         ),
-        //         "test_ERC20_BytecodeDrop_FAILED"
-        //     )
-        // );
     }
 
     /* -------------------------------------------------------------------------- */
-    /*                             8. THIRDWEB AIRDROP                            */
+    /*                             9. THIRDWEB AIRDROP                            */
     /* -------------------------------------------------------------------------- */
 
     function test_ERC20_AirdropERC20Thirdweb(uint256) public {
@@ -203,7 +200,7 @@ contract BenchmarksERC20 is Benchmarks_Base {
     }
 
     /* -------------------------------------------------------------------------- */
-    /*                             9. THIRDWEB CLAIM                             */
+    /*                             10. THIRDWEB CLAIM                             */
     /* -------------------------------------------------------------------------- */
 
     function test_ERC20_AirdropERC20ClaimableThirdweb(uint256) public {

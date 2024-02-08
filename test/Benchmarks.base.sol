@@ -24,6 +24,8 @@ import {Airdrop as Wentokens_Airdrop} from "src/Wentokens.sol";
 // Gaslite
 import {GasliteDrop} from "src/GasliteDrop.sol";
 import {GasliteDrop1155} from "src/GasliteDrop1155.sol";
+import {GasliteMerkleDN} from "src/GasliteMerkleDN.sol";
+import {GasliteMerkleDT} from "src/GasliteMerkleDT.sol";
 // Thirdweb
 import {AirdropERC20 as Thirdweb_AirdropERC20} from "src/thirdweb/AirdropERC20.sol";
 import {AirdropERC20Claimable as Thirdweb_AirdropERC20Claimable} from "src/thirdweb/AirdropERC20Claimable.sol";
@@ -67,6 +69,8 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
     Wentokens_Airdrop wentokens_airdrop;
     GasliteDrop gasliteDrop;
     GasliteDrop1155 gasliteDrop1155;
+    GasliteMerkleDN gasliteMerkleDN;
+    GasliteMerkleDT gasliteMerkleDT;
     Thirdweb_AirdropERC20 thirdweb_airdropERC20;
     Thirdweb_AirdropERC20Claimable thirdweb_airdropERC20Claimable;
     Thirdweb_AirdropERC721 thirdweb_airdropERC721;
@@ -162,6 +166,8 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
             _deploy_ERC721();
         } else if (testType == TEST_TYPE.ERC1155) {
             _deploy_ERC1155();
+        } else {
+            _deploy_ETH();
         }
 
         gasliteDrop = new GasliteDrop();
@@ -176,6 +182,8 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
         airdropClaimMapping_erc20 = new AirdropClaimMappingERC20(erc20);
         airdropClaimMerkle_erc20 = new AirdropClaimMerkleERC20(erc20, ROOT_ERC20);
         airdropClaimSignature_erc20 = new AirdropClaimSignatureERC20(erc20, SIGNER);
+
+        gasliteMerkleDT = new GasliteMerkleDT(address(erc20), ROOT_ERC20);
         bytecodeDrop = new BytecodeDrop();
 
         // Thirdweb
@@ -235,6 +243,10 @@ abstract contract Benchmarks_Base is SoladyTest, StdCheats {
             new uint256[](NUM_ERC1155_IDS),
             ROOT_ERC1155_THIRDWEB
         );
+    }
+
+    function _deploy_ETH() internal virtual {
+        gasliteMerkleDN = new GasliteMerkleDN(ROOT_ERC20);
     }
 
     /* -------------------------------------------------------------------------- */

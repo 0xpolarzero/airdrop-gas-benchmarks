@@ -39,14 +39,16 @@ The custom mapping-based contracts ([`AirdropClaimMappingERC{20/721/1155}`](./sr
 
 ### Airdrop solutions (including already deployed contracts):
 
-| Type                                       | Tokens                 | Contract                                                                                                                                                                                                            | Website/source code                                  |
-| ------------------------------------------ | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| GasliteDrop (airdrop)                      | ETH, ERC20, ERC721     | [`GasliteDrop`](./src/GasliteDrop.sol)                                                                                                                                                                              | [drop.gaslite.org](https://drop.gaslite.org/)        |
-| GasliteDrop1155 (airdrop)                  | ERC1155                | [`GasliteDrop1155`](./src/GasliteDrop1155.sol)                                                                                                                                                                      | [drop.gaslite.org](https://drop.gaslite.org/)        |
-| Disperse.app (airdrop)                     | ETH, ERC20             | [`Disperse`](./src/Disperse.sol)                                                                                                                                                                                    | [disperse.app](https://disperse.app/)                |
-| wentokens (airdrop)                        | ETH, ERC20             | [`Airdrop`](./src/Wentokens.sol)                                                                                                                                                                                    | [www.wentokens.xyz](https://www.wentokens.xyz/)      |
-| Thirdweb (airdrop)                         | ERC20, ERC721, ERC1155 | [`AirdropERC20`](./src/thirdweb/AirdropERC20.sol), [`AirdropERC721`](./src/thirdweb/AirdropERC721.sol), [`AirdropERC1155`](./src/thirdweb/AirdropERC1155.sol)                                                       | [thirdweb.com](https://thirdweb.com/explore/airdrop) |
-| Thirdweb (claimable airdrop, merkle proof) | ERC20, ERC721, ERC1155 | [`AirdropERC20Claimable`](./src/thirdweb/AirdropERC20Claimable.sol), [`AirdropERC721Claimable`](./src/thirdweb/AirdropERC721Claimable.sol), [`AirdropERC1155Claimable`](./src/thirdweb/AirdropERC1155Claimable.sol) | [thirdweb.com](https://thirdweb.com/explore/airdrop) |
+| Type                                              | Tokens                 | Contract                                                                                                                                                                                                            | Website/source code                                  |
+| ------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| GasliteDrop (airdrop)                             | ETH, ERC20, ERC721     | [`GasliteDrop`](./src/GasliteDrop.sol)                                                                                                                                                                              | [drop.gaslite.org](https://drop.gaslite.org/)        |
+| GasliteDrop1155 (airdrop)                         | ERC1155                | [`GasliteDrop1155`](./src/GasliteDrop1155.sol)                                                                                                                                                                      | [drop.gaslite.org](https://drop.gaslite.org/)        |
+| GasliteMerkleDN (claimable airdrop, merkle proof) | ETH                    | [`GasliteMerkleDN`](./src/GasliteMerkleDN.sol)                                                                                                                                                                      | [gaslite.org](https://gaslite.org/)                  |
+| GasliteMerkleDT (claimable airdrop, merkle proof) | ERC20                  | [`GasliteMerkleDT`](./src/GasliteMerkleDT.sol)                                                                                                                                                                      | [gaslite.org](https://gaslite.org/)                  |
+| Disperse.app (airdrop)                            | ETH, ERC20             | [`Disperse`](./src/Disperse.sol)                                                                                                                                                                                    | [disperse.app](https://disperse.app/)                |
+| wentokens (airdrop)                               | ETH, ERC20             | [`Airdrop`](./src/Wentokens.sol)                                                                                                                                                                                    | [www.wentokens.xyz](https://www.wentokens.xyz/)      |
+| Thirdweb (airdrop)                                | ERC20, ERC721, ERC1155 | [`AirdropERC20`](./src/thirdweb/AirdropERC20.sol), [`AirdropERC721`](./src/thirdweb/AirdropERC721.sol), [`AirdropERC1155`](./src/thirdweb/AirdropERC1155.sol)                                                       | [thirdweb.com](https://thirdweb.com/explore/airdrop) |
+| Thirdweb (claimable airdrop, merkle proof)        | ERC20, ERC721, ERC1155 | [`AirdropERC20Claimable`](./src/thirdweb/AirdropERC20Claimable.sol), [`AirdropERC721Claimable`](./src/thirdweb/AirdropERC721Claimable.sol), [`AirdropERC1155Claimable`](./src/thirdweb/AirdropERC1155Claimable.sol) | [thirdweb.com](https://thirdweb.com/explore/airdrop) |
 
 ---
 
@@ -99,15 +101,17 @@ The cost of deploying and initializing the Thirdweb push-based airdrop contracts
 
 | Rank | Contract                                                                     | Gas deployment (1,000 recipients)            | Difference from #1               | Gas claim (1 recipient) | Difference from #1        |
 | ---- | ---------------------------------------------------------------------------- | -------------------------------------------- | -------------------------------- | ----------------------- | ------------------------- |
-| 1    | [`AirdropClaimMerkle`](./src/custom/AirdropClaimMerkle.ERC20.sol)            | 381,660 (381,660 + 0) <!-- g -->             | 0                                | 51,217 <!-- g -->       | 0                         |
-| 2    | [`AirdropClaimSignature`](./src/custom/AirdropClaimSignature.ERC20.sol)      | 410,807 (410,807 + 0) <!-- g -->             | +29,147 (+8%) <!-- g -->         | 53,376 <!-- g -->       | +2,159 (+4%) <!-- g -->   |
-| 3    | Thirdweb [`AirdropERC20Claimable`](./src/thirdweb/AirdropERC20Claimable.sol) | 207,525 (66,769 + 140,756) <!-- g -->        | -174,135 (-46%) <!-- g -->       | 60,563 <!-- g -->       | +9,346 (+18%) <!-- g -->  |
-| 4    | [`AirdropClaimMapping`](./src/custom/AirdropClaimMapping.ERC20.sol)          | 24,959,529 (450,852 + 24,508,677) <!-- g --> | +24,577,869 (+6,440%) <!-- g --> | 27,272 <!-- g -->       | -23,945 (-47%) <!-- g --> |
+| 1    | [`GasliteMerkleDT`](./src/GasliteMerkleDT.sol)                               | 529,495 (509,040 + 20,455) <!-- g -->        | 0                                | 50,654 <!-- g -->       | 0                         |
+| 2    | [`AirdropClaimMerkle`](./src/custom/AirdropClaimMerkle.ERC20.sol)            | 381,660 (381,660 + 0) <!-- g -->             | -147,835 (-28%) <!-- g -->       | 51,217 <!-- g -->       | +563 (+1%) <!-- g -->     |
+| 3    | [`AirdropClaimSignature`](./src/custom/AirdropClaimSignature.ERC20.sol)      | 410,807 (410,807 + 0) <!-- g -->             | -118,688 (-22%) <!-- g -->       | 53,376 <!-- g -->       | +2,722 (+5%) <!-- g -->   |
+| 4    | Thirdweb [`AirdropERC20Claimable`](./src/thirdweb/AirdropERC20Claimable.sol) | 207,525 (66,769 + 140,756) <!-- g -->        | -321,970 (-61%) <!-- g -->       | 60,563 <!-- g -->       | +9,909 (+20%) <!-- g -->  |
+| 5    | [`AirdropClaimMapping`](./src/custom/AirdropClaimMapping.ERC20.sol)          | 24,959,529 (450,852 + 24,508,677) <!-- g --> | +24,430,034 (+4,614%) <!-- g --> | 27,272 <!-- g -->       | -23,382 (-46%) <!-- g --> |
 
 This comparison is opinionated. Some arguments to support it:
 
 - The difference in deployment cost is too significant for `AirdropClaimMapping` to be considered a viable solution. Although, in pure gas terms, for 1,000 recipients, it's still cheaper than the Thirdweb and signature-based solutions, i.e. it will spend less gas in total.
 - Although the deployment for Thirdweb's `AirdropERC20Claimable` is half the cost of `AirdropClaimMerkle` or `AirdropClaimSignature`, the increase in gas for claiming is too significant to have it ranked higher. I believe that the deployer paying ~200,000 gas instead of ~400,000 can absolutely not justify each single claimer having to pay ~60,000 gas instead of ~50,000.
+- `GasliteMerkleDT` is the cheapest, but it doesn't allow for claiming on behalf of another account (`msg.sender` is encoded in the proof, instead of a provided recipient).
 
 In any case, these are only benchmarks, with a ranking provided for convenience.
 
@@ -163,7 +167,7 @@ In these tests, there are ~14% of recipients aggregated with the same amount. As
 These contracts allow only for claiming a single token ID per recipient, to fit the Thirdweb pattern.
 
 > [!WARNING]
-> The following benchmarks (ETH (push based)) are incorrect, due to inconsistencies in Forge's gas report. However, even though the gas amounts are significantly overestimated, they are still correct relative to each other.
+> The following benchmarks (ETH (push-based) & ETH (claim-based)) are incorrect, due to inconsistencies in Forge's gas report. However, even though the gas amounts are significantly overestimated, they are still correct relative to each other.
 
 ### ETH (push-based)
 
@@ -172,6 +176,12 @@ These contracts allow only for claiming a single token ID per recipient, to fit 
 | 1    | [`GasliteDrop`](./src/GasliteDrop.sol#L137)    | 34,383,749 <!-- g -->  | 0                          |
 | 2    | Wentokens [`Airdrop`](./src/Wentokens.sol#L32) | 34,437,735 <!-- g -->  | +53,986 (+0.2%) <!-- g --> |
 | 3    | [`Disperse`](./src/Disperse.sol#L10)           | 34,702,386 <!-- g -->  | +318,637 (+1%) <!-- g -->  |
+
+### ETH (claim-based)
+
+| Rank | Contract                                       | Gas deployment (1,000 recipients)     | Difference from #1 | Gas claim (1 recipient) | Difference from #1 |
+| ---- | ---------------------------------------------- | ------------------------------------- | ------------------ | ----------------------- | ------------------ |
+| 1    | [`GasliteMerkleDN`](./src/GasliteMerkleDN.sol) | 427,582 (407,127 + 20,455) <!-- g --> | 0                  | 56,506 <!-- g -->       | 0                  |
 
 ## How to run
 
