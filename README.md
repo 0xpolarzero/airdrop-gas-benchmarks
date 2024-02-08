@@ -162,6 +162,9 @@ In these tests, there are ~14% of recipients aggregated with the same amount. As
 
 These contracts allow only for claiming a single token ID per recipient, to fit the Thirdweb pattern.
 
+> [!WARNING]
+> The following benchmarks (ETH (push based)) are incorrect, due to inconsistencies in Forge's gas report. However, even though the gas amounts are significantly overestimated, they are still correct relative to each other.
+
 ### ETH (push-based)
 
 | Rank | Contract                                       | Gas (1,000 recipients) | Difference from #1         |

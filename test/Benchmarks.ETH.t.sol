@@ -5,6 +5,9 @@ import "./Benchmarks.base.sol";
 
 // See Benchmarks.base.sol for more info and to modify the amount of recipients to test with
 
+// ! These benchmarks are not available due to inconsistencies in Forge's estimations.
+// ! See: https://github.com/foundry-rs/foundry/issues/7047
+
 // 4. DISPERSE APP
 // 5. WENTOKENS
 // 6. GASLITE DROP
