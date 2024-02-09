@@ -166,16 +166,17 @@ In these tests, there are ~14% of recipients aggregated with the same amount. As
 
 These contracts allow only for claiming a single token ID per recipient, to fit the Thirdweb pattern.
 
-> [!WARNING]
-> The following benchmarks (ETH (push-based) & ETH (claim-based)) are incorrect, due to inconsistencies in Forge's gas report. However, even though the gas amounts are significantly overestimated, they are still correct relative to each other.
-
 ### ETH (push-based)
 
 | Rank | Contract                                       | Gas (1,000 recipients) | Difference from #1         |
 | ---- | ---------------------------------------------- | ---------------------- | -------------------------- |
-| 1    | [`GasliteDrop`](./src/GasliteDrop.sol#L137)    | 34,383,749 <!-- g -->  | 0                          |
-| 2    | Wentokens [`Airdrop`](./src/Wentokens.sol#L32) | 34,437,735 <!-- g -->  | +53,986 (+0.2%) <!-- g --> |
-| 3    | [`Disperse`](./src/Disperse.sol#L10)           | 34,702,386 <!-- g -->  | +318,637 (+1%) <!-- g -->  |
+| 1    | [`GasliteDrop`](./src/GasliteDrop.sol#L137)    | 6,883,749 <!-- g -->   | 0                          |
+| 2    | Wentokens [`Airdrop`](./src/Wentokens.sol#L32) | 6,937,735 <!-- g -->   | +53,986 (+0.2%) <!-- g --> |
+| 3    | [`Disperse`](./src/Disperse.sol#L10)           | 7,202,386 <!-- g -->   | +318,637 (+1%) <!-- g -->  |
+
+> [!NOTE]
+> There tests use already initialized accounts—that is, accounts that were sent 1 wei prior to the measurement—to better simulate real world scenarios. This helps to avoid the cost of both the cold account access (2,500 gas) and the initialization surcharges (25,000 gas).
+> [See here for reference](https://github.com/foundry-rs/foundry/issues/7047#issuecomment-1935424409)
 
 ### ETH (claim-based)
 

@@ -5,9 +5,6 @@ import "./Benchmarks.base.sol";
 
 // See Benchmarks.base.sol for more info and to modify the amount of recipients to test with
 
-// ! These benchmarks are not available due to inconsistencies in Forge's estimations.
-// ! See: https://github.com/foundry-rs/foundry/issues/7047
-
 // 1. DISPERSE APP
 // 2. WENTOKENS
 // 3. GASLITE DROP
@@ -28,6 +25,8 @@ contract BenchmarksETH is Benchmarks_Base {
 
     function test_ETH_Disperse(uint256) public {
         setup();
+        _initializeAccounts();
+
         // Deploy Disperse with cheatcode because of the pragma solidity ^0.4.25
         address deployed = deployCode("Disperse.sol");
 
@@ -44,6 +43,7 @@ contract BenchmarksETH is Benchmarks_Base {
 
     function test_ETH_AirdropWentokens(uint256) public {
         setup();
+        _initializeAccounts();
 
         // Airdrop
         wentokens_airdrop.airdropETH{value: TOTAL_AMOUNT_ERC20}(RECIPIENTS, AMOUNTS);
@@ -55,6 +55,7 @@ contract BenchmarksETH is Benchmarks_Base {
 
     function test_ETH_GasliteDrop(uint256) public {
         setup();
+        _initializeAccounts();
 
         // Airdrop
         gasliteDrop.airdropETH{value: TOTAL_AMOUNT_ERC20}(RECIPIENTS, AMOUNTS);
@@ -78,6 +79,21 @@ contract BenchmarksETH is Benchmarks_Base {
             bytes32[] memory proof = m.getProof(DATA_ERC20, i);
             vm.prank(RECIPIENTS[i]);
             gasliteMerkleDN.claim(proof, AMOUNTS[i]);
+        }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /*                                    UTILS                                   */
+    /* -------------------------------------------------------------------------- */
+
+    // Initialize accounts; that is, send some native tokens so the measurement won't account
+    // for both the cold account access (2,500 gas) and the initialization surcharges (25,000 gas).
+    // It would not really make sense to airdrop only a bunch of uninitialized accounts.
+    //  See: https://github.com/foundry-rs/foundry/issues/7047
+    function _initializeAccounts() internal {
+        for (uint256 i = 0; i < RECIPIENTS.length; i++) {
+            (bool success,) = RECIPIENTS[i].call{value: 1 wei}("");
+            if (!success) revert("initializeAccounts_FAILED");
         }
     }
 }

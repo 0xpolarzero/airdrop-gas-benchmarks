@@ -41,9 +41,9 @@ Running 7 tests for test/Benchmarks.ERC721.sol:BenchmarksERC721
 Test result: [32mok[0m. [32m7[0m passed; [31m0[0m failed; [33m0[0m skipped; finished in 893.87s
 
 Running 5 tests for test/Benchmarks.ETH.t.sol:BenchmarksETH
-[32m[PASS][0m test_ETH_AirdropWentokens(uint256) (runs: 256, μ: 307109867, ~: 307113843)
-[32m[PASS][0m test_ETH_Disperse(uint256) (runs: 256, μ: 308215655, ~: 308224685)
-[32m[PASS][0m test_ETH_GasliteDrop(uint256) (runs: 256, μ: 307065202, ~: 307070857)
+[32m[PASS][0m test_ETH_AirdropWentokens(uint256) (runs: 256, μ: 314556860, ~: 314566602)
+[32m[PASS][0m test_ETH_Disperse(uint256) (runs: 256, μ: 315646468, ~: 315657841)
+[32m[PASS][0m test_ETH_GasliteDrop(uint256) (runs: 256, μ: 314484689, ~: 314489108)
 [32m[PASS][0m test_ETH_GasliteMerkleDN(uint256) (runs: 256, μ: 993002371, ~: 992987123)
 [32m[PASS][0m test__codesize() (gas: 89919)
 Test result: [32mok[0m. [32m5[0m passed; [31m0[0m failed; [33m0[0m skipped; finished in 893.87s
@@ -61,7 +61,7 @@ Test result: [32mok[0m. [32m5[0m passed; [31m0[0m failed; [33m0[0m skipp
 | Deployment Cost                    | Deployment Size |          |          |          |         |
 | 225869                             | 1160            |          |          |          |         |
 | Function Name                      | min             | avg      | median   | max      | # calls |
-| disperseEther                      | 34702386        | 34702386 | 34702386 | 34702386 | 1       |
+| disperseEther                      | 7202386         | 7202386  | 7202386  | 7202386  | 1       |
 | disperseToken                      | 25747105        | 25747105 | 25747105 | 25747105 | 1       |
 | disperseTokenSimple                | 26237332        | 26237332 | 26237332 | 26237332 | 1       |
 
@@ -73,7 +73,7 @@ Test result: [32mok[0m. [32m5[0m passed; [31m0[0m failed; [33m0[0m skipp
 | Function Name                            | min             | avg      | median   | max      | # calls |
 | airdropERC20                             | 24946244        | 24946244 | 24946244 | 24946244 | 1       |
 | airdropERC721                            | 27760844        | 27760844 | 27760844 | 27760844 | 1       |
-| airdropETH                               | 34383749        | 34383749 | 34383749 | 34383749 | 1       |
+| airdropETH                               | 6883749         | 6883749  | 6883749  | 6883749  | 1       |
 
 
 | src/GasliteDrop1155.sol:GasliteDrop1155 contract |                 |          |          |          |         |
@@ -110,7 +110,7 @@ Test result: [32mok[0m. [32m5[0m passed; [31m0[0m failed; [33m0[0m skipp
 | 145590                             | 759             |          |          |          |         |
 | Function Name                      | min             | avg      | median   | max      | # calls |
 | airdropERC20                       | 24991295        | 24991295 | 24991295 | 24991295 | 1       |
-| airdropETH                         | 34437735        | 34437735 | 34437735 | 34437735 | 1       |
+| airdropETH                         | 6937735         | 6937735  | 6937735  | 6937735  | 1       |
 
 
 | src/custom/AirdropClaimMapping.ERC1155.sol:AirdropClaimMappingERC1155 contract |                 |          |          |          |         |
