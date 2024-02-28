@@ -82,56 +82,50 @@ Steps 1 and 2 are aggregated into `Gas deployment`, with the details for each am
 
 For **push-based airdrops**, the gas cost of deploying and initializing the contract is ignored, as all solutions, excluding Thirdweb, are already deployed and available for use (direct call to the airdrop function).
 
-The cost of deploying and initializing the Thirdweb push-based airdrop contracts (`AirdropERC20`, `AirdropERC721`, `AirdropERC1155`) is actually very consistent, so it can be at least mentioned here (with a 1e3 underestimation):
-
-- Deploying proxy: ~66,000 gas
-- Initializing proxy: ~144,000
-
 ### ERC20 (push-based)
 
-| Rank | Contract                                                       | Gas (1,000 recipients) | Difference from #1          |
-| ---- | -------------------------------------------------------------- | ---------------------- | --------------------------- |
-| 1    | [`GasliteDrop`](./src//GasliteDrop.sol#L86)                    | 24,946,244 <!-- g -->  | 0                           |
-| 2    | Wentokens [`Airdrop`](./src/Wentokens.sol#L77)                 | 24,991,295 <!-- g -->  | +45,051 (+0.2%) <!-- g -->  |
-| 3    | [`Disperse`](./src/Disperse.sol#L20) (`disperseToken`)         | 25,747,105 <!-- g -->  | +800,861 (+3%) <!-- g -->   |
-| 4    | [`Disperse`](./src//Disperse.sol#L31) (`disperseTokenSimple`)  | 26,237,332 <!-- g -->  | +1,291,088 (+5%) <!-- g --> |
-| 5    | Thirdweb [`AirdropERC20`](./src/thirdweb/AirdropERC20.sol#L96) | 26,906,458 <!-- g -->  | +1,960,214 (+8%) <!-- g --> |
+| Rank | Contract                                                       | Gas (1,000 recipients) | Difference from #1             |
+| ---- | -------------------------------------------------------------- | ---------------------- | ------------------------------ |
+| 1    | [`GasliteDrop`](./src//GasliteDrop.sol#L86)                    | 25,542,088 <!-- g -->  | 0                              |
+| 2    | Wentokens [`Airdrop`](./src/Wentokens.sol#L77)                 | 25,586,923 <!-- g -->  | +44,835 (+0.18%) <!-- g -->    |
+| 3    | [`Disperse`](./src/Disperse.sol#L20) (`disperseToken`)         | 26,342,497 <!-- g -->  | +800,409 (+3.13%) <!-- g -->   |
+| 4    | [`Disperse`](./src//Disperse.sol#L31) (`disperseTokenSimple`)  | 26,852,552 <!-- g -->  | +1,310,464 (+5.13%) <!-- g --> |
+| 5    | Thirdweb [`AirdropERC20`](./src/thirdweb/AirdropERC20.sol#L96) | 26,925,358 <!-- g -->  | +1,383,270 (+5.41%) <!-- g --> |
 
 ### ERC20 (claim-based)
 
-| Rank | Contract                                                                     | Gas deployment (1,000 recipients)            | Difference from #1               | Gas claim (1 recipient) | Difference from #1        |
-| ---- | ---------------------------------------------------------------------------- | -------------------------------------------- | -------------------------------- | ----------------------- | ------------------------- |
-| 1    | [`GasliteMerkleDT`](./src/GasliteMerkleDT.sol)                               | 529,495 (509,040 + 20,455) <!-- g -->        | 0                                | 50,654 <!-- g -->       | 0                         |
-| 2    | [`AirdropClaimMerkle`](./src/custom/AirdropClaimMerkle.ERC20.sol)            | 381,660 (381,660 + 0) <!-- g -->             | -147,835 (-28%) <!-- g -->       | 51,217 <!-- g -->       | +563 (+1%) <!-- g -->     |
-| 3    | [`AirdropClaimSignature`](./src/custom/AirdropClaimSignature.ERC20.sol)      | 410,807 (410,807 + 0) <!-- g -->             | -118,688 (-22%) <!-- g -->       | 53,376 <!-- g -->       | +2,722 (+5%) <!-- g -->   |
-| 4    | Thirdweb [`AirdropERC20Claimable`](./src/thirdweb/AirdropERC20Claimable.sol) | 207,525 (66,769 + 140,756) <!-- g -->        | -321,970 (-61%) <!-- g -->       | 60,563 <!-- g -->       | +9,909 (+20%) <!-- g -->  |
-| 5    | [`AirdropClaimMapping`](./src/custom/AirdropClaimMapping.ERC20.sol)          | 24,959,529 (450,852 + 24,508,677) <!-- g --> | +24,430,034 (+4,614%) <!-- g --> | 27,272 <!-- g -->       | -23,382 (-46%) <!-- g --> |
+| Rank | Contract                                                                     | Gas deployment (1,000 recipients)            | Difference from #1                  | Gas claim (1 recipient) | Difference from #1           |
+| ---- | ---------------------------------------------------------------------------- | -------------------------------------------- | ----------------------------------- | ----------------------- | ---------------------------- |
+| 1    | [`AirdropClaimSignature`](./src/custom/AirdropClaimSignature.ERC20.sol)      | 496,127 (496,127 + 0) <!-- g -->             | 0                                   | 85,766 <!-- g -->       | 0                            |
+| 2    | [`AirdropClaimMerkle`](./src/custom/AirdropClaimMerkle.ERC20.sol)            | 464,492 (464,492 + 0) <!-- g -->             | -31,635 (-6.81%) <!-- g -->         | 87,547 <!-- g -->       | +1,781 (+2.03%) <!-- g -->   |
+| 3    | [`GasliteMerkleDT`](./src/GasliteMerkleDT.sol)                               | 647,007 (601,488 + 45,519) <!-- g -->        | +150,880 (+30.41%) <!-- g -->       | 88,613 <!-- g -->       | +2,847 (+3.32%) <!-- g -->   |
+| 4    | Thirdweb [`AirdropERC20Claimable`](./src/thirdweb/AirdropERC20Claimable.sol) | 207,525 (66,769 + 140,756) <!-- g -->        | -288,602 (-58.17%) <!-- g -->       | 90,267 <!-- g -->       | +4,501 (+5.25%) <!-- g -->   |
+| 5    | [`AirdropClaimMapping`](./src/custom/AirdropClaimMapping.ERC20.sol)          | 25,666,389 (538,776 + 25,127,613) <!-- g --> | +25,170,262 (+5,073.25%) <!-- g --> | 57,631 <!-- g -->       | -28,135 (-32.80%) <!-- g --> |
 
 This comparison is opinionated. Some arguments to support it:
 
 - The difference in deployment cost is too significant for `AirdropClaimMapping` to be considered a viable solution. Although, in pure gas terms, for 1,000 recipients, it's still cheaper than the Thirdweb and signature-based solutions, i.e. it will spend less gas in total.
-- Although the deployment for Thirdweb's `AirdropERC20Claimable` is half the cost of `AirdropClaimMerkle` or `AirdropClaimSignature`, the increase in gas for claiming is too significant to have it ranked higher. I believe that the deployer paying ~200,000 gas instead of ~400,000 can absolutely not justify each single claimer having to pay ~60,000 gas instead of ~50,000.
-- `GasliteMerkleDT` is the cheapest, but it doesn't allow for claiming on behalf of another account (`msg.sender` is encoded in the proof, instead of a provided recipient).
+- Although the deployment for Thirdweb's `AirdropERC20Claimable` is half the cost of `AirdropClaimMerkle` or `AirdropClaimSignature`, the increase in gas for claiming is too significant to have it ranked higher. I believe that the deployer paying ~400-500,000 gas instead of ~200,000 cannot justify each single claimer having to pay ~90,000 gas instead of ~86,000.
 
 In any case, these are only benchmarks, with a ranking provided for convenience.
 
-It's also worth noting that Thirdweb does not allow for claiming on behalf of another account, e.g. to sponsor gas fees for a claimer.
+It's also worth noting that the top 1 and 2 custom contracts are really just mock implementations. Although they do allow claiming on behalf of another account, they lack some checks and utility functions (e.g. pausing the claim)—the position of these contracts in the ranking is not a recommendation to use them, but rather based on the gas consumption.
 
 ### ERC721 (push-based)
 
-| Rank | Contract                                                         | Gas (1,000 recipients) | Difference from #1           |
-| ---- | ---------------------------------------------------------------- | ---------------------- | ---------------------------- |
-| 1    | [`GasliteDrop`](./src/GasliteDrop.sol#L46)                       | 27,760,844 <!-- g -->  | 0                            |
-| 2    | Thirdweb [`AirdropERC721`](./src/thirdweb/AirdropERC721.sol#L93) | 31,028,627 <!-- g -->  | +3,267,783 (+12%) <!-- g --> |
+| Rank | Contract                                                         | Gas (1,000 recipients) | Difference from #1             |
+| ---- | ---------------------------------------------------------------- | ---------------------- | ------------------------------ |
+| 1    | [`GasliteDrop`](./src/GasliteDrop.sol#L46)                       | 33,103,232 <!-- g -->  | 0                              |
+| 2    | Thirdweb [`AirdropERC721`](./src/thirdweb/AirdropERC721.sol#L93) | 35,844,727 <!-- g -->  | +2,741,495 (+8.28%) <!-- g --> |
 
 ### ERC721 (claim-based)
 
-| Rank | Contract                                                                       | Gas deployment (1,000 recipients)            | Difference from #1               | Gas claim (1 recipient) | Difference from #1          |
-| ---- | ------------------------------------------------------------------------------ | -------------------------------------------- | -------------------------------- | ----------------------- | --------------------------- |
-| 1    | [`AirdropClaimMerkle`](./src/custom/AirdropClaimMerkle.ERC721.sol)             | 366,041 (366,041 + 0) <!-- g -->             | 0                                | 51,897 <!-- g -->       | 0                           |
-| 2    | [`AirdropClaimSignature`](./src/custom/AirdropClaimSignature.ERC721.sol)       | 394,994 (394,994 + 0) <!-- g -->             | +28,953 (+8%) <!-- g -->         | 53,968 <!-- g -->       | +2,071 (+4%) <!-- g -->     |
-| 3    | [`AirdropClaimMapping`](./src/custom/AirdropClaimMapping.ERC721.sol)           | 31,039,669 (433,833 + 30,605,836) <!-- g --> | +30,673,628 (+8,380%) <!-- g --> | 28,003 <!-- g -->       | -23,894 (-46%) <!-- g -->   |
-| 4    | Thirdweb [`AirdropERC721Claimable`](./src/thirdweb/AirdropERC721Claimable.sol) | 22,452,426 (66,769 + 22,385,657) <!-- g -->  | +22,086,385 (+3,034%) <!-- g --> | 219,101 <!-- g -->      | +167,204 (+322%) <!-- g --> |
+| Rank | Contract                                                                       | Gas deployment (1,000 recipients)            | Difference from #1                  | Gas claim (1 recipient) | Difference from #1                 |
+| ---- | ------------------------------------------------------------------------------ | -------------------------------------------- | ----------------------------------- | ----------------------- | ---------------------------------- |
+| 1    | [`AirdropClaimSignature`](./src/custom/AirdropClaimSignature.ERC721.sol)       | 479,098 (479,098 + 0) <!-- g -->             | 0                                   | 93,072 <!-- g -->       | 0                                  |
+| 2    | [`AirdropClaimMerkle`](./src/custom/AirdropClaimMerkle.ERC721.sol)             | 447,613 (447,613 + 0) <!-- g -->             | -31,485 (-6.57%) <!-- g -->         | 94,953 <!-- g -->       | +1,881 (+2.02%) <!-- g -->         |
+| 3    | [`AirdropClaimMapping`](./src/custom/AirdropClaimMapping.ERC721.sol)           | 36,472,337 (520,397 + 35,951,940) <!-- g --> | +35,993,239 (+7,512.71%) <!-- g --> | 65,162 <!-- g -->       | -27,910 (-29.99%) <!-- g -->       |
+| 4    | Thirdweb [`AirdropERC721Claimable`](./src/thirdweb/AirdropERC721Claimable.sol) | 22,452,426 (66,769 + 22,385,657) <!-- g -->  | +21,973,328 (+4,586.40%) <!-- g --> | 2,257,594 <!-- g -->    | +2,164,522 (+2,325.64%) <!-- g --> |
 
 It really hurts to not put `AirdropClaimMapping` in the last place, but Thirdweb's `AirdropERC721Claimable` really is too much with both the ~30M gas deployment and the ~218k gas claims. With 1,000 recipients, it is more than 219M in gas just for users to claim their tokens...
 
@@ -139,10 +133,10 @@ Also, `AirdropERC721Claimable` does not allow for airdroping specific tokens to 
 
 ### ERC1155 (push-based)
 
-| Rank | Contract                                                           | Gas (1,000 recipients) | Difference from #1        |
-| ---- | ------------------------------------------------------------------ | ---------------------- | ------------------------- |
-| 1    | [`GasliteDrop1155`](./src/GasliteDrop1155.sol#L64)                 | 28,890,255 <!-- g -->  | 0                         |
-| 2    | Thirdweb [`AirdropERC1155`](./src/thirdweb/AirdropERC1155.sol#L93) | 29,483,628 <!-- g -->  | +593,373 (+2%) <!-- g --> |
+| Rank | Contract                                                           | Gas (1,000 recipients) | Difference from #1           |
+| ---- | ------------------------------------------------------------------ | ---------------------- | ---------------------------- |
+| 1    | [`GasliteDrop1155`](./src/GasliteDrop1155.sol#L64)                 | 29,819,855 <!-- g -->  | 0                            |
+| 2    | Thirdweb [`AirdropERC1155`](./src/thirdweb/AirdropERC1155.sol#L93) | 29,590,928 <!-- g -->  | -228,927 (-0.77%) <!-- g --> |
 
 It's worth noting that `GasliteDrop1155` takes advantage of multiple recipients with same amount by packing them into a single struct. Which much better simulates real world scenarios (e.g. users being rewarded the same amounts for the same token IDs after accomplishing a similar task). See:
 
@@ -157,22 +151,22 @@ In these tests, there are ~14% of recipients aggregated with the same amount. As
 
 ### ERC1155 (claim-based)
 
-| Rank | Contract                                                                         | Gas deployment (1,000 recipients)            | Difference from #1               | Gas claim (1 recipient) | Difference from #1        |
-| ---- | -------------------------------------------------------------------------------- | -------------------------------------------- | -------------------------------- | ----------------------- | ------------------------- |
-| 1    | [`AirdropClaimMerkle`](./src/custom/AirdropClaimMerkle.ERC1155.sol)              | 486,360 (486,360 + 0) <!-- g -->             | 0                                | 52,873 <!-- g -->       | 0                         |
-| 2    | [`AirdropClaimSignature`](./src/custom/AirdropClaimSignature.ERC1155.sol)        | 516,113 (516,113 + 0) <!-- g -->             | +29,753 (+6%) <!-- g -->         | 54,966 <!-- g -->       | +2,093 (+4%) <!-- g -->   |
-| 3    | Thirdweb [`AirdropERC1155Claimable`](./src/thirdweb/AirdropERC1155Claimable.sol) | 1,556,310 (66,769 + 1,489,541) <!-- g -->    | +1,069,950 (+220%) <!-- g -->    | 62,083 <!-- g -->       | +9,210 (+17%) <!-- g -->  |
-| 4    | [`AirdropClaimMapping`](./src/custom/AirdropClaimMapping.ERC1155.sol)            | 27,069,815 (598,196 + 26,471,619) <!-- g --> | +26,583,455 (+5,466%) <!-- g --> | 28,995 <!-- g -->       | -23,878 (-45%) <!-- g --> |
+| Rank | Contract                                                                         | Gas deployment (1,000 recipients)            | Difference from #1                  | Gas claim (1 recipient) | Difference from #1           |
+| ---- | -------------------------------------------------------------------------------- | -------------------------------------------- | ----------------------------------- | ----------------------- | ---------------------------- |
+| 1    | [`AirdropClaimSignature`](./src/custom/AirdropClaimSignature.ERC1155.sol)        | 609,717 (609717 + 0) <!-- g -->              | 0                                   | 87,405 <!-- g -->       | 0                            |
+| 2    | [`AirdropClaimMerkle`](./src/custom/AirdropClaimMerkle.ERC1155.sol)              | 577,332 (577,332 + 0) <!-- g -->             | -32,385 (-5.31%) <!-- g -->         | 89,236 <!-- g -->       | +1,831 (+2.10%) <!-- g -->   |
+| 3    | Thirdweb [`AirdropERC1155Claimable`](./src/thirdweb/AirdropERC1155Claimable.sol) | 1,556,310 (66,769 + 1,489,541) <!-- g -->    | +946,593 (+155.25%) <!-- g -->      | 88,990 <!-- g -->       | +1,585 (+1.81%) <!-- g -->   |
+| 4    | [`AirdropClaimMapping`](./src/custom/AirdropClaimMapping.ERC1155.sol)            | 27,929,999 (697,536 + 27,232,463) <!-- g --> | +27,320,282 (+4,480.81%) <!-- g --> | 59,402 <!-- g -->       | -28,003 (-32.03%) <!-- g --> |
 
 These contracts allow only for claiming a single token ID per recipient, to fit the Thirdweb pattern.
 
 ### ETH (push-based)
 
-| Rank | Contract                                       | Gas (1,000 recipients) | Difference from #1         |
-| ---- | ---------------------------------------------- | ---------------------- | -------------------------- |
-| 1    | [`GasliteDrop`](./src/GasliteDrop.sol#L137)    | 6,883,749 <!-- g -->   | 0                          |
-| 2    | Wentokens [`Airdrop`](./src/Wentokens.sol#L32) | 6,937,735 <!-- g -->   | +53,986 (+0.2%) <!-- g --> |
-| 3    | [`Disperse`](./src/Disperse.sol#L10)           | 7,202,386 <!-- g -->   | +318,637 (+1%) <!-- g -->  |
+| Rank | Contract                                       | Gas (1,000 recipients) | Difference from #1           |
+| ---- | ---------------------------------------------- | ---------------------- | ---------------------------- |
+| 1    | [`GasliteDrop`](./src/GasliteDrop.sol#L137)    | 9,996,017 <!-- g -->   | 0                            |
+| 2    | Wentokens [`Airdrop`](./src/Wentokens.sol#L32) | 10,050,255 <!-- g -->  | +54,238 (+0.54%) <!-- g -->  |
+| 3    | [`Disperse`](./src/Disperse.sol#L10)           | 10,314,834 <!-- g -->  | +318,817 (+3.19%) <!-- g --> |
 
 > [!NOTE]
 > There tests use already initialized accounts—that is, accounts that were sent 1 wei prior to the measurement—to better simulate real world scenarios. This helps to avoid the cost of both the cold account access (2,500 gas) and the initialization surcharges (25,000 gas).
@@ -182,7 +176,7 @@ These contracts allow only for claiming a single token ID per recipient, to fit 
 
 | Rank | Contract                                       | Gas deployment (1,000 recipients)     | Difference from #1 | Gas claim (1 recipient) | Difference from #1 |
 | ---- | ---------------------------------------------- | ------------------------------------- | ------------------ | ----------------------- | ------------------ |
-| 1    | [`GasliteMerkleDN`](./src/GasliteMerkleDN.sol) | 427,582 (407,127 + 20,455) <!-- g --> | 0                  | 56,506 <!-- g -->       | 0                  |
+| 1    | [`GasliteMerkleDN`](./src/GasliteMerkleDN.sol) | 536,646 (491,127 + 45,519) <!-- g --> | 0                  | 87,177 <!-- g -->       | 0                  |
 
 ## How to run
 
