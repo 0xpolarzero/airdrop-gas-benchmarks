@@ -133,10 +133,15 @@ Also, `AirdropERC721Claimable` does not allow for airdroping specific tokens to 
 
 ### ERC1155 (push-based)
 
-| Rank | Contract                                                           | Gas (1,000 recipients) | Difference from #1           |
-| ---- | ------------------------------------------------------------------ | ---------------------- | ---------------------------- |
-| 1    | [`GasliteDrop1155`](./src/GasliteDrop1155.sol#L64)                 | 29,819,855 <!-- g -->  | 0                            |
-| 2    | Thirdweb [`AirdropERC1155`](./src/thirdweb/AirdropERC1155.sol#L93) | 29,590,928 <!-- g -->  | -228,927 (-0.77%) <!-- g --> |
+> [!NOTE]
+> The following is measured with Hardhat, due to an issue with Forge gas report.
+>
+> See [hardhat](./hardhat/) for more details.
+
+| Rank | Contract                                                           | Gas (1,000 recipients) | Difference from #1                |
+| ---- | ------------------------------------------------------------------ | ---------------------- | --------------------------------- |
+| 1    | [`GasliteDrop1155`](./src/GasliteDrop1155.sol#L64)                 | 12,755,797 <!-- g -->  | 0                                 |
+| 2    | Thirdweb [`AirdropERC1155`](./src/thirdweb/AirdropERC1155.sol#L93) | 30,320,907 <!-- g -->  | +17,565,110 (+137.70%) <!-- g --> |
 
 It's worth noting that `GasliteDrop1155` takes advantage of multiple recipients with same amount by packing them into a single struct. Which much better simulates real world scenarios (e.g. users being rewarded the same amounts for the same token IDs after accomplishing a similar task). See:
 
