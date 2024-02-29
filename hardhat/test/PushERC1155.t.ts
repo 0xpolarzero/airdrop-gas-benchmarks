@@ -60,7 +60,7 @@ type FormatAirdropDataGaslite = (
 /* -------------------------------------------------------------------------- */
 
 // How many recipients to airdrop to
-const NUM_RECIPIENTS = 1000;
+const NUM_RECIPIENTS = 500;
 // The ids to airdrop [0, NUM_IDS - 1]
 const NUM_IDS = 10;
 const IDS = Array.from({ length: NUM_IDS }, (_, i) => BigInt(i));
@@ -78,7 +78,6 @@ const ENTROPY_LEVELS = [5, 10, 20, 50, 80, 100];
 describe('PushERC1155', function () {
   // Deploy a mock ERC1155, airdrop contracts, and prepare airdrop function
   const deployMockAndContractFixture = async () => {
-    /* -------------------------------- PROVIDERS ------------------------------- */
     /* --------------------------------- PREPARE -------------------------------- */
     const publicClient = await getPublicClient();
     const [deployer] = await getWalletClients();
@@ -114,7 +113,7 @@ describe('PushERC1155', function () {
     // [default admin, contract uri, trusted forwarders]
     await airdropERC1155.write.initialize([deployer.account.address, '', []]);
 
-    /* -------------------------------- GASELITE -------------------------------- */
+    /* --------------------------------- GASLITE -------------------------------- */
     const gasliteDrop1155 = await deployContract('GasliteDrop1155');
 
     /* -------------------------------- FUNCTIONS ------------------------------- */
@@ -149,6 +148,7 @@ describe('PushERC1155', function () {
             mockERC1155.address,
             deployer.account.address
           );
+
           if (instance === airdropERC1155) {
             return instance.write.airdropERC1155(
               formattedData as AirdropArgsThirdweb
@@ -166,10 +166,11 @@ describe('PushERC1155', function () {
       // Get gas used
       return await Promise.all(
         txHashes.map(async (hash: Hex) => {
-          const receipt = await publicClient.waitForTransactionReceipt({
-            hash,
-          });
-          return receipt.gasUsed;
+          return (
+            await publicClient.waitForTransactionReceipt({
+              hash,
+            })
+          ).gasUsed;
         })
       );
     };
