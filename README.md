@@ -133,11 +133,6 @@ Also, `AirdropERC721Claimable` does not allow for airdroping specific tokens to 
 
 ### ERC1155 (push-based)
 
-> [!NOTE]
-> The following is measured with Hardhat, due to an issue with Forge gas report.
->
-> See [hardhat](./hardhat/) for more details.
-
 | Rank | Contract                                                           | Gas (1,000 recipients) | Difference from #1           |
 | ---- | ------------------------------------------------------------------ | ---------------------- | ---------------------------- |
 | 1    | [`GasliteDrop1155`](./src/GasliteDrop1155.sol#L64)                 | 29,910,313 <!-- g -->  | 0                            |
